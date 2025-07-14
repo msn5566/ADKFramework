@@ -1,0 +1,65 @@
+The Magic Explained: It's All in the PromptWhen you send your message to the agent, the ADK framework doesn't just send the text "What time is it in Tokyo?" to the Gemini model. It assembles a much larger, more detailed prompt behind the scenes. This prompt contains three key pieces of information:
+
+1.The Core Instruction: This is the personality and high-level goal you defined.
+
+Java
+"You are a helpful agent who can answer user questions about the time and weather in a city."
+
+2.The "Menu" of Available Tools: This is the most critical part. The framework converts your Java functions into a structured description that the LLM can understand. For your getCurrentTime function, the model receives a description that looks something like this (conceptually):
+    {
+      "tool_name": "getCurrentTime",
+      "description": "Agent to answer questions about the time and weather in a city.",
+      "parameters": [
+        {
+          "name": "city",
+          "type": "string",
+          "description": "The name of the city for which to retrieve the current time"
+        }
+      ]
+    }
+    
+	
+	Notice how the @Schema annotation you wrote becomes the description for the parameter. This description is crucial. It's the primary way the model learns what the tool does and what kind of information it needs.
+	
+	3.The User's Question: Finally, your actual input is added.
+	
+	Kotlin
+	"What time is it in Tokyo?"
+	
+	The LLM's Reasoning ProcessNow,
+		the Gemini model receives this entire package of information and performs a reasoning task:
+		1.Intent Analysis: The model first analyzes the user's question: "What time is it in Tokyo?". It identifies the key intent is to find out the "time" and the key entity is "Tokyo".
+		2.Tool Matching: It then looks at its "menu" of available tools.
+			•It sees a tool named getWeather. It reads its description and sees it's for "weather reports." This doesn't match the user's intent.
+			•It sees a tool named getCurrentTime. It reads its description and sees it's for retrieving the "current time." This is a strong match!
+			
+		3.Parameter Extraction: Having decided on the getCurrentTime tool, the model now looks at the required parameters.
+				•It sees it needs one parameter: city.
+				•The description for city is "The name of the city...".
+				•It looks back at the user's question and easily extracts "Tokyo" as the value for the city parameter.
+		
+		4.Generating the Tool Call: The LLM does not execute the Java code itself. Instead, it outputs a special, structured message that tells the ADK framework what to do. This message looks like this:
+	
+	JSON{
+		"tool_call": {
+			"name": "getCurrentTime",
+			"args": {
+			  "city": "Tokyo"
+			}
+		  }
+		}
+
+
+The Framework's Job
+	The InMemoryRunner in your code receives this structured tool_call message from the model. It then invokes your actual Java method MultiToolAgent.getCurrentTime("Tokyo").
+	The result from your Java method (the Map containing the success status and the time report) is then sent back to the LLM, which uses that information to formulate the final, friendly answer that you see in the console.
+	
+	Summary & Code Quality TipIn short,
+
+		the agent identifies the right tool by matching the user's intent with the descriptions of the tools you provide.This leads to a crucial code quality best practice:Your function names and @Schema descriptions are not just for human developers; they are the primary API for the AI model.The more descriptive and accurate you make them, the better the agent will be at its job. Vague descriptions will lead to the model making mistakes or asking for clarification, while clear, specific descriptions will lead to reliable and accurate tool use.For example, your current descriptions are excellent:Java// The function name is clear: getCurrentTime
+public static Map<String, String> getCurrentTime(
+        // The description is specific and tells the model exactly what to provide.
+        @Schema(description = "The name of the city for which to retrieve the current time")
+        String city) {
+    // ...
+}
