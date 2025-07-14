@@ -1,0 +1,12 @@
+<!--		<dependency>-->
+<!--			<groupId>com.google.adk</groupId>-->
+<!--			<artifactId>google-adk</artifactId>-->
+<!--			<version>0.1.0</version>-->
+<!--		</dependency>-->
+
+		<!-- The ADK Dev Web UI to debug your agent (Optional) -->
+		<dependency>
+			<groupId>com.google.adk</groupId>
+			<artifactId>google-adk-dev</artifactId>
+			<version>0.1.0</version>
+		</dependency>
