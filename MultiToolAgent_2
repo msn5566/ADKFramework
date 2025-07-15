@@ -1,0 +1,234 @@
+package com.msn.agent;
+
+import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.events.Event;
+import com.google.adk.runner.InMemoryRunner;
+import com.google.adk.sessions.Session;
+import com.google.adk.tools.Annotations.Schema;
+import com.google.adk.tools.FunctionTool;
+// New imports for the modern Vertex AI SDK
+import com.google.cloud.vertexai.VertexAI;
+import com.google.cloud.vertexai.api.GenerateContentResponse;
+import com.google.cloud.vertexai.generativeai.GenerationConfig;
+import com.google.cloud.vertexai.generativeai.GenerativeModel;
+import com.google.cloud.vertexai.generativeai.ResponseHandler;
+// ADK's Content/Part classes are still used for the main agent loop
+import com.google.genai.types.Content;
+import com.google.genai.types.Part;
+import io.reactivex.rxjava3.core.Flowable;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Scanner;
+
+public class MultiToolAgent_2 {
+
+    private static final String USER_ID = "student";
+    private static final String NAME = "multi_tool_agent";
+
+    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static variable.
+    public static BaseAgent ROOT_AGENT = initAgent();
+
+    public static BaseAgent initAgent() {
+        // Agent initialization remains the same
+        return LlmAgent.builder()
+                .name(NAME)
+                .model("gemini-1.5-flash-latest") // Switched to a more recent model
+                .description("Agent to answer questions, generate Java code, and handle user interactions.")
+                .instruction(
+                        "You are a helpful and friendly agent. Your capabilities include: "
+                                + "1. Answering questions about the time and weather in a city. "
+                                + "2. Greeting users and acknowledging their login. "
+                                + "3. Generating complete Java code snippets based on user requests.")
+                .tools(
+                        FunctionTool.create(MultiToolAgent_2.class, "getCurrentTime"),
+                        FunctionTool.create(MultiToolAgent_2.class, "getWeather"),
+                        FunctionTool.create(MultiToolAgent_2.class, "handleGreeting"),
+                        FunctionTool.create(MultiToolAgent_2.class, "processLoginInfo"),
+                        FunctionTool.create(MultiToolAgent_2.class, "generateJavaCode"))
+                .build();
+    }
+
+    // --- Other tools like getCurrentTime, getWeather, etc. remain the same ---
+    public static Map<String, String> getCurrentTime(
+            @Schema(description = "The name of the city for which to retrieve the current time")
+            String city) {
+        String normalizedCity =
+                Normalizer.normalize(city, Normalizer.Form.NFD)
+                        .trim()
+                        .toLowerCase()
+                        .replaceAll("(\\p{IsM}+|\\p{IsP}+)", "")
+                        .replaceAll("\\s+", "_");
+
+        return ZoneId.getAvailableZoneIds().stream()
+                .filter(zid -> zid.toLowerCase().endsWith("/" + normalizedCity))
+                .findFirst()
+                .map(
+                        zid ->
+                                Map.of(
+                                        "status",
+                                        "success",
+                                        "report",
+                                        "The current time in "
+                                                + city
+                                                + " is "
+                                                + ZonedDateTime.now(ZoneId.of(zid))
+                                                .format(DateTimeFormatter.ofPattern("HH:mm"))
+                                                + "."))
+                .orElse(
+                        Map.of(
+                                "status",
+                                "error",
+                                "report",
+                                "Sorry, I don't have timezone information for " + city + "."));
+    }
+
+    public static Map<String, String> getWeather(
+            @Schema(description = "The name of the city for which to retrieve the weather report")
+            String city) {
+        if (city.toLowerCase().equals("kolkata")) {
+            return Map.of(
+                    "status",
+                    "success",
+                    "report",
+                    "The weather in "+city+" is sunny with a temperature of 25 degrees Celsius (77 degrees"
+                            + " Fahrenheit).");
+
+        } else {
+            return Map.of(
+                    "status", "error", "report", "Weather information for " + city + " is not available.");
+        }
+    }
+
+
+    public static Map<String, String> handleGreeting(
+            @Schema(description = "The name of the user. Use this to personalize the greeting.")
+            String name) {
+
+        String greeting;
+        if (name != null && !name.isEmpty()) {
+            greeting = "Hello, " + name + "! It's nice to meet you. How can I help you today?";
+        } else {
+            greeting = "Hello! How can I assist you?";
+        }
+
+        return Map.of(
+                "status", "success",
+                "report", greeting
+        );
+    }
+
+    public static Map<String, String> processLoginInfo(
+            @Schema(description = "The username provided by the user after a login action.")
+            String username) {
+
+        if (username == null || username.trim().isEmpty()) {
+            return Map.of(
+                    "status", "error",
+                    "report", "It looks like you mentioned logging in, but I didn't catch a username. Could you please provide it?"
+            );
+        }
+        String report = "Thanks for logging in, " + username + "! I've noted that. How can I help you now?";
+
+        return Map.of(
+                "status", "success",
+                "report", report
+        );
+    }
+
+
+    /**
+     * REFACTORED TOOL: A tool to generate Java code using the modern Vertex AI SDK.
+     *
+     * @param description A detailed natural language description of the Java code to be generated.
+     * @return A map containing the generated Java code.
+     */
+    public static Map<String, String> generateJavaCode(
+            @Schema(
+                    description =
+                            "A detailed description of the Java code to be generated, e.g., 'a function to"
+                                    + " sort a list of strings alphabetically'.")
+            String description) {
+
+        // The Vertex AI SDK requires a Project ID and location.
+        // TODO: Replace with your actual Google Cloud Project ID.
+        String projectId = "gcp-project-id-goes-here";
+        // TODO: Replace with a region where the model is available, e.g., "us-central1".
+        String location = "us-central1";
+        String modelName = "gemini-1.5-pro-latest";
+
+        // This uses Application Default Credentials for authentication.
+        // Before running, authenticate via the gcloud CLI: `gcloud auth application-default login`
+        try (VertexAI vertexAI = new VertexAI(projectId, location)) {
+
+            GenerationConfig generationConfig =
+                    GenerationConfig.newBuilder()
+                            .setTemperature(0.2f)
+                            .setMaxOutputTokens(8192)
+                            .build();
+
+            GenerativeModel model = new GenerativeModel(modelName, vertexAI)
+                    .withGenerationConfig(generationConfig);
+
+            String codePrompt =
+                    "You are an expert Java programmer. Generate a complete, well-formatted, and"
+                            + " documented Java code snippet for the following request. The code should be"
+                            + " production-quality and include necessary imports. Wrap the code in a"
+                            + " markdown block.\n\nREQUEST: "
+                            + description;
+
+            GenerateContentResponse response = model.generateContent(codePrompt);
+            String generatedCode = ResponseHandler.getText(response);
+
+            return Map.of("status", "success", "report", "\n" + generatedCode);
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the exception for debugging
+            return Map.of(
+                    "status", "error", "report", "Sorry, I encountered an error while generating the code: " + e.getMessage());
+        }
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        // This setting tells the ADK to use the Google AI endpoint, which uses API Keys.
+        // The `generateJavaCode` tool will separately use the Vertex AI endpoint with ADC.
+        System.setProperty("GOOGLE_GENAI_USE_VERTEXAI", "FALSE");
+        // It's recommended to load this from an environment variable for security.
+        System.setProperty("GOOGLE_API_KEY", "your-api-key-goes-here");
+
+        InMemoryRunner runner = new InMemoryRunner(ROOT_AGENT);
+
+        Session session =
+                runner
+                        .sessionService()
+                        .createSession(NAME, USER_ID)
+                        .blockingGet();
+
+        try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
+            while (true) {
+                System.out.print("\nYou > ");
+                String userInput = scanner.nextLine();
+
+                if ("quit".equalsIgnoreCase(userInput)) {
+                    break;
+                }
+
+                Content userMsg = Content.fromParts(Part.fromText(userInput));
+                Flowable<Event> events = runner.runAsync(USER_ID, session.id(), userMsg);
+
+                System.out.print("\nAgent > ");
+                // Using a lambda with a block to handle potential multiline outputs better
+                events.blockingForEach(event -> {
+                    System.out.print(event.stringifyContent());
+                });
+                System.out.println(); // Add a newline for cleaner separation
+            }
+        }
+    }
+}
