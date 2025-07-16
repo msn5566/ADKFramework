@@ -12,6 +12,9 @@ import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
+import com.msn.tools.JavaCodeTool;
+import com.msn.tools.JavaJUNIT5TestCaseTool;
+import com.msn.tools.SpringBootTool;
 import io.reactivex.rxjava3.core.Flowable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +33,7 @@ public class MultiToolAgent_2 {
     // The run your agent with Dev UI, the ROOT_AGENT should be a global public static variable.
     public static BaseAgent ROOT_AGENT = initAgent();
 
-    private static final Client client = Client.builder()
+    public static final Client client = Client.builder()
             .apiKey(System.getenv("GOOGLE_API_KEY"))
             .build();
 
@@ -57,9 +60,10 @@ public class MultiToolAgent_2 {
                         FunctionTool.create(MultiToolAgent_2.class, "processLoginInfo"),
 
                         // Granular Code Generation Tools
-                        FunctionTool.create(MultiToolAgent_2.class, "generateJavaCode"),
-                       // FunctionTool.create(MultiToolAgent_2.class, "generateTestCasesOnly"), // The new tool
-                        FunctionTool.create(MultiToolAgent_2.class, "generateCodeAndTests"))
+                        FunctionTool.create(JavaCodeTool.class, "generateJavaCode"),
+                        FunctionTool.create(JavaJUNIT5TestCaseTool.class, "generateTestCase"),
+                        FunctionTool.create(SpringBootTool.class, "generateSpringBootProjectCode")
+                )
                 .build();
     }
 
@@ -98,140 +102,39 @@ public class MultiToolAgent_2 {
                 "report", report
         );
     }
-
-
-    /**
-     * REFACTORED TOOL: A tool to generate Java code using the modern Vertex AI SDK.
-     *
-     * @param description A detailed natural language description of the Java code to be generated.
-     * @return A map containing the generated Java code.
-     */
-    public static Map<String, String> generateJavaCode(
-            @Schema(
-                    description =
-                            "A detailed description of the Java code to be generated, e.g., 'a function to"
-                                    + " sort a list of strings alphabetically'." +
-                                    "Use this tool ONLY when the user asks to generate a Java code snippet." +
-                                    "Do NOT use this if they also ask for test cases.")
-            String description) {
-        try{
-            String codePrompt =
-                    "You are an expert Java programmer. Generate a complete, well-formatted, and"
-                            + " documented Java code snippet for the following request. The code should be"
-                            + " production-quality and include necessary imports. Wrap the code in a"
-                            + " markdown block.\n\nREQUEST: "
-                            + description;
-
-            GenerateContentConfig generationConfig = GenerateContentConfig.builder()
-                    .temperature(0.2f)
-                    .maxOutputTokens(8192)
-                    .build();
-
-            GenerateContentResponse response = client.models.generateContent(
-                    "models/gemini-2.0-flash",
-                    codePrompt,
-                    generationConfig
-            );
-            String generatedCode = response.text();
-            return Map.of("status", "success", "report", "\n" + generatedCode);
-        }catch (IllegalArgumentException e) {
-            return Map.of(
-                    "status", "error",
-                    "report", "❌ Invalid input: " + e.getMessage()
-            );
-        } catch (Exception e) {
-            return Map.of(
-                    "status", "error",
-                    "report", "❌ Failed to generate code: " + e.getMessage()
-            );
-        }
-
-    }
-
-
-    public static String generateTestCase(String javaCode) {
-        try{
-            String prompt = """
-                You are a test code generation agent. For each provided Java source class, generate a corresponding JUnit 5 test class using Mockito for mocking and Spring Boot test annotations where appropriate.
-                
-                - Add the correct class-level annotation: use @SpringBootTest, @WebMvcTest, or @ExtendWith(MockitoExtension.class) depending on the type (e.g., service, controller, etc.).
-                - Include method-level annotations such as @Test, @BeforeEach.
-                - For each public method, write one or more unit tests covering:
-                  - Normal behavior
-                  - Edge cases
-                  - Exception scenarios
-                - Use @Mock and @InjectMocks or constructor injection to set up dependencies.
-                - Follow best practices for test naming, structure, assertions, and mocking.
-                - Ensure the test class mirrors the structure and naming of the original class.
-                - Add minimal JavaDoc or comments to improve clarity.
-                
-                Output only valid Java code. Do not include explanations or markdown. Each test class should be self-contained.
-                
-                METHOD:
-                %s
-                """.formatted(javaCode);
-//            String prompt = """
-//                You are a Expert Java QA engineer.
-//                Given the following Java method, write a proper JUnit 5 test class for it.
-//                Include import statements and wrap everything in a markdown block.
-//                Include required annotation in class level and method level also.
-//                Generate that many
-//
-//
-//                METHOD:
-//                %s
-//                """.formatted(javaCode);
-
-            GenerateContentConfig config = GenerateContentConfig.builder()
-                    .temperature(0.2f)
-                    .maxOutputTokens(2048)
-                    .build();
-
-            GenerateContentResponse response = client.models.generateContent(
-                    "models/gemini-2.0-flash", prompt, config);
-
-            String result = response.text();
-            return (result == null || result.isBlank()) ? "⚠️ Test generation failed." : result;
-
-        } catch (Exception e) {
-            return "Error generating test cases: " + e.getMessage();
-        }
-    }
-
     /**
      * The "Project Manager" Tool.
      * This public tool orchestrates the multi-agent workflow. It calls the specialist
      * methods in the correct order and assembles the final report.
      */
-    public static Map<String, String> generateCodeAndTests(
-            @Schema(
-                    description =
-                            "A detailed description of the Java code to be generated, e.g., 'a function to"
-                                    + " sort a list of strings alphabetically'. This will generate both the"
-                                    + " function and its test case.")
-            String description) {
-
-        // 1. Delegate to the CodeGenerator specialist
-        Map<String, String> codeResult = generateJavaCode(description);
-        if (!"success".equals(codeResult.get("status"))) {
-            return codeResult; // Return early if code generation failed
-        }
-        String generatedCode = codeResult.get("report");
-
-        // 2. Delegate to the TestGenerator specialist
-        String generatedTests = generateTestCase(generatedCode);
-
-        // 3. Assemble the final report for the user
-        String finalReport = new StringBuilder()
-                .append("✅ Here is the code and JUnit 5 test case you requested:\n")
-                .append("\n--- Generated Code ---\n")
-                .append(generatedCode)
-                .append("\n\n--- Generated Test Case ---\n")
-                .append(generatedTests)
-                .toString();
-
-        return Map.of("status", "success", "report", finalReport);
-    }
+//    public static Map<String, String> generateCodeAndTests(
+//            @Schema(
+//                    description =
+//                            "Use this tool ONLY when the user explicitly asks for BOTH Java code AND its"
+//                                    + " corresponding test cases in the same request.")
+//            String description) {
+//
+//        // 1. Delegate to the CodeGenerator specialist
+//        Map<String, String> codeResult = generateJavaCode(description);
+//        if (!"success".equals(codeResult.get("status"))) {
+//            return codeResult; // Return early if code generation failed
+//        }
+//        String generatedCode = codeResult.get("report");
+//
+//        // 2. Delegate to the TestGenerator specialist
+//        String generatedTests = generateTestCase(generatedCode);
+//
+//        // 3. Assemble the final report for the user
+//        String finalReport = new StringBuilder()
+//                .append("✅ Here is the code and JUnit 5 test case you requested:\n")
+//                .append("\n--- Generated Code ---\n")
+//                .append(generatedCode)
+//                .append("\n\n--- Generated Test Case ---\n")
+//                .append(generatedTests)
+//                .toString();
+//
+//        return Map.of("status", "success", "report", finalReport);
+//    }
 
 
     public static void main(String[] args) throws Exception {
@@ -260,7 +163,7 @@ public class MultiToolAgent_2 {
                 events.blockingForEach(event -> {
                     System.out.print(event.stringifyContent());
                 });
-                System.out.println(); // Add a newline for cleaner separation
+                //System.out.println(); // Add a newline for cleaner separation
             }
         }
     }
