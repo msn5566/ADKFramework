@@ -9,40 +9,40 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee details (name, email, department, etc.) in JSON format via a REST API.
-> Output: Confirmation of employee creation with a unique ID, or an error message if creation fails.
-> Constraints: Input data must be validated. `application/json` must be used.
-> Logic: The service should receive employee data via a REST endpoint, validate the data, persist it in the PostgreSQL database, and return a confirmation message with the newly created employee ID.
+> Input: Employee details (name, department, etc.) in JSON format via a POST request to /employees.
+> Output: Confirmation message with employee ID, and HTTP 201 Created status.
+> Constraints: Input data must be validated. RESTful conventions and `application/json` must be followed.
+> Logic: The service should receive employee details, validate the data, and store it in the MongoDB database.
 > 
 > Feature: Read Employee Details
-> Input: Employee ID via a REST API endpoint.
-> Output: Employee details in JSON format, or an error message if the employee ID is invalid or not found.
-> Constraints: The endpoint must follow RESTful conventions. `application/json` must be used.
-> Logic: The service should retrieve employee data from the PostgreSQL database based on the provided ID and return it in JSON format.
+> Input: Employee ID via a GET request to /employees/{id}.
+> Output: Employee details in JSON format with HTTP 200 OK status, or an error message with HTTP 404 Not Found status if the employee does not exist.
+> Constraints: RESTful conventions and `application/json` must be followed.
+> Logic: The service should retrieve employee details from the MongoDB database based on the provided ID.
 > 
 > Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via a REST API.
-> Output: Confirmation of employee update, or an error message if the update fails (e.g., invalid employee ID, data validation failure).
-> Constraints: Input data must be validated. The endpoint must follow RESTful conventions. `application/json` must be used.
-> Logic: The service should receive the employee ID and updated data via a REST endpoint, validate the data, update the corresponding record in the PostgreSQL database, and return a confirmation message.
+> Input: Employee ID via a PUT request to /employees/{id} and updated employee details in JSON format.
+> Output: Confirmation message with updated employee details, and HTTP 200 OK status.
+> Constraints: Input data must be validated. RESTful conventions and `application/json` must be followed.
+> Logic: The service should receive updated employee details, validate the data, and update the corresponding record in the MongoDB database.
 > 
 > Feature: Delete Employee
-> Input: Employee ID via a REST API endpoint.
-> Output: Confirmation of employee deletion, or an error message if the deletion fails (e.g., invalid employee ID).
-> Constraints: The endpoint must follow RESTful conventions. `application/json` must be used.
-> Logic: The service should receive the employee ID via a REST endpoint, delete the corresponding record from the PostgreSQL database, and return a confirmation message.
+> Input: Employee ID via a DELETE request to /employees/{id}.
+> Output: Confirmation message with HTTP 204 No Content status.
+> Constraints: RESTful conventions and `application/json` must be followed.
+> Logic: The service should delete the employee record from the MongoDB database based on the provided ID.
 > 
 > Feature: Expose REST Endpoints
-> Input: HTTP requests to specific endpoints.
-> Output: JSON responses based on the performed operation (create, read, update, delete).
-> Constraints: All endpoints must follow RESTful conventions and use `application/json` for requests and responses.
-> Logic: Expose REST endpoints for creating, reading, updating, and deleting employee data. These endpoints should handle HTTP requests, interact with the service layer, and return appropriate JSON responses.
+> Input: HTTP requests to /employees.
+> Output: Responses in JSON format for CRUD operations.
+> Constraints: RESTful conventions and `application/json` must be followed.
+> Logic: The service should expose REST endpoints for creating, reading, updating, and deleting employees.
 > 
 > Feature: Validate Input Data
-> Input: Employee data received via REST API endpoints.
-> Output: Error messages if the input data is invalid based on defined validation rules.
-> Constraints: Validation rules should be defined for all input fields (e.g., required fields, data type validation, format validation).
-> Logic: Implement data validation logic to ensure that all input data meets the required criteria before processing. Return appropriate error messages if validation fails.
+> Input: Employee details from any endpoint that accepts input.
+> Output: Error message indicating which fields are invalid, and HTTP 400 Bad Request status.
+> Constraints: Input data must be validated.
+> Logic: The service should validate all input data to ensure it meets the required format and constraints.
 
 ### 🛠️ Core Dependencies
 
@@ -51,12 +51,11 @@ The following core dependencies were automatically included to support these req
 | Group ID | Artifact ID | Scope |
 |---|---|---|
 | `org.springframework.boot` | `spring-boot-starter-web` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-data-jpa` | `compile` |
-| `org.postgresql` | `postgresql` | `runtime` |
+| `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
 | `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
 | `org.projectlombok` | `lombok` | `optional` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
 
 
 <!-- AI-SUMMARY-END -->
