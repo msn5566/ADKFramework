@@ -9,40 +9,64 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee details (name, department, salary, etc.) in JSON format via REST API
-> Output: Confirmation message with the ID of the created employee
-> Constraints: Input data must be validated
-> Logic: Receive employee details, validate them, store the data in the database, and return a success message with the created employee ID.
+> Input: Employee details (name, ID, department, etc.) in JSON format via REST API.
+> Output: Confirmation message and assigned employee ID.
+> Constraints: Input data must be validated.
+> Logic: Create a new employee record in the database.
+> 
+> Feature: Create Student
+> Input: Student details (name, ID, major, etc.) in JSON format via REST API.
+> Output: Confirmation message and assigned student ID.
+> Constraints: Input data must be validated.
+> Logic: Create a new student record in the database.
 > 
 > Feature: Read Employee Details
-> Input: Employee ID via REST API
-> Output: Employee details in JSON format
-> Constraints: Employee ID must be valid
-> Logic: Receive employee ID, retrieve employee details from the database based on the provided ID, and return the details in JSON format.
+> Input: Employee ID via REST API.
+> Output: Employee details in JSON format.
+> Constraints: Employee ID must exist in the database.
+> Logic: Retrieve employee record from the database by ID.
+> 
+> Feature: Read Student Details
+> Input: Student ID via REST API.
+> Output: Student details in JSON format.
+> Constraints: Student ID must exist in the database.
+> Logic: Retrieve student record from the database by ID.
 > 
 > Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via REST API
-> Output: Confirmation message indicating successful update
-> Constraints: Employee ID must be valid, and input data must be validated
-> Logic: Receive employee ID and updated employee details, validate the updated data, update the corresponding record in the database, and return a success message.
+> Input: Employee ID and updated employee details in JSON format via REST API.
+> Output: Confirmation message.
+> Constraints: Employee ID must exist in the database. Input data must be validated.
+> Logic: Update the employee record in the database with the new information.
+> 
+> Feature: Update Student Information
+> Input: Student ID and updated student details in JSON format via REST API.
+> Output: Confirmation message.
+> Constraints: Student ID must exist in the database. Input data must be validated.
+> Logic: Update the student record in the database with the new information.
 > 
 > Feature: Delete Employee
-> Input: Employee ID via REST API
-> Output: Confirmation message indicating successful deletion
-> Constraints: Employee ID must be valid
-> Logic: Receive employee ID, delete the corresponding record from the database, and return a success message.
+> Input: Employee ID via REST API.
+> Output: Confirmation message.
+> Constraints: Employee ID must exist in the database.
+> Logic: Delete the employee record from the database.
+> 
+> Feature: Delete Student
+> Input: Student ID via REST API.
+> Output: Confirmation message.
+> Constraints: Student ID must exist in the database.
+> Logic: Delete the student record from the database.
 > 
 > Feature: Expose REST Endpoints
-> Input: REST API requests (create, read, update, delete)
-> Output: JSON responses
-> Constraints: All endpoints must follow RESTful conventions. Use `application/json` for all API responses and requests.
-> Logic: Define REST endpoints for each CRUD operation, handle requests, call appropriate service layer methods, and return appropriate JSON responses.
+> Input: REST API requests.
+> Output: Appropriate responses in JSON format.
+> Constraints: All endpoints must follow RESTful conventions.
+> Logic: Implement REST endpoints for CRUD operations on employees and students.
 > 
 > Feature: Validate Input Data
-> Input: Employee details (name, department, salary, etc.)
-> Output: Error message if input data is invalid
-> Constraints: Validation rules must be defined for each field
-> Logic: Implement validation logic for each input field (e.g., name cannot be empty, salary must be a positive number), and return error messages for invalid data.
+> Input: Employee and Student data.
+> Output: Error message if data is invalid.
+> Constraints: All input data must be validated.
+> Logic: Implement validation logic to ensure data integrity.
 
 ### 🛠️ Core Dependencies
 
@@ -51,12 +75,12 @@ The following core dependencies were automatically included to support these req
 | Group ID | Artifact ID | Scope |
 |---|---|---|
 | `org.springframework.boot` | `spring-boot-starter-web` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-data-jpa` | `compile` |
-| `org.postgresql` | `postgresql` | `runtime` |
+| `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
-| `org.springdoc` | `springdoc-openapi-starter-webmvc` | `2.0.3` |
+| `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
+| `org.mockito` | `mockito-core` | `test` |
 | `org.projectlombok` | `lombok` | `optional` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `compile` |
 
 
 <!-- AI-SUMMARY-END -->

@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "employees")
+@Document(collection = "students")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+public class Student {
 
     @Id
     private String id;
@@ -19,7 +19,7 @@ public class Employee {
     @NotBlank(message = "Name is required")
     private String name;
 
-    private String department;
+    private String major;
 }
 ```
 
