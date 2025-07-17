@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "students")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "students")
 public class Student {
 
     @Id
     private String id;
 
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     private String major;

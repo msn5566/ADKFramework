@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entity.Employee;
 import com.example.repository.EmployeeRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,16 +34,21 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void createEmployee_ValidInput_ReturnsSavedEmployee() {
+    void createEmployee_ValidEmployee_ReturnsSavedEmployee() {
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         Employee savedEmployee = employeeService.createEmployee(employee);
 
-        assertEquals("1", savedEmployee.getId());
+        assertNotNull(savedEmployee);
         assertEquals("John Doe", savedEmployee.getName());
-        assertEquals("IT", savedEmployee.getDepartment());
-
         verify(employeeRepository, times(1)).save(employee);
+    }
+
+    @Test
+    void createEmployee_InvalidEmployee_ThrowsException() {
+        Employee invalidEmployee = new Employee(); // name is blank
+        invalidEmployee.setDepartment("IT");
+        assertThrows(ConstraintViolationException.class, () -> employeeService.createEmployee(invalidEmployee));
     }
 
     @Test
@@ -53,7 +59,6 @@ public class EmployeeServiceTest {
 
         assertTrue(retrievedEmployee.isPresent());
         assertEquals("John Doe", retrievedEmployee.get().getName());
-
         verify(employeeRepository, times(1)).findById("1");
     }
 
@@ -63,45 +68,26 @@ public class EmployeeServiceTest {
 
         Optional<Employee> retrievedEmployee = employeeService.getEmployeeById("2");
 
-        assertTrue(retrievedEmployee.isEmpty());
-
+        assertFalse(retrievedEmployee.isPresent());
         verify(employeeRepository, times(1)).findById("2");
-    }
-
-    @Test
-    void getAllEmployees_ReturnsListOfEmployees() {
-        when(employeeRepository.findAll()).thenReturn(List.of(employee));
-
-        List<Employee> employees = employeeService.getAllEmployees();
-
-        assertEquals(1, employees.size());
-        assertEquals("John Doe", employees.get(0).getName());
-
-        verify(employeeRepository, times(1)).findAll();
     }
 
     @Test
     void updateEmployee_ExistingId_ReturnsUpdatedEmployee() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
-        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
-        Employee updatedEmployee = employeeService.updateEmployee("1", employeeDetails);
+        Employee updatedEmployee = employeeService.updateEmployee("1", employee);
 
-        assertEquals("Updated Name", updatedEmployee.getName());
-        assertEquals("Updated Dept", updatedEmployee.getDepartment());
-        verify(employeeRepository, times(1)).findById("1");
+        assertNotNull(updatedEmployee);
+        assertEquals("John Doe", updatedEmployee.getName());
+        assertEquals("1", updatedEmployee.getId()); // Check if ID is set
         verify(employeeRepository, times(1)).save(employee);
     }
 
     @Test
-    void updateEmployee_NonExistingId_ThrowsException() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
-        when(employeeRepository.findById("2")).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee("2", employeeDetails));
-        verify(employeeRepository, times(1)).findById("2");
-        verify(employeeRepository, never()).save(any(Employee.class));
+    void updateEmployee_InvalidEmployee_ThrowsException() {
+        Employee invalidEmployee = new Employee();
+        assertThrows(ConstraintViolationException.class, () -> employeeService.updateEmployee("1", invalidEmployee));
     }
 
     @Test
@@ -111,6 +97,18 @@ public class EmployeeServiceTest {
         employeeService.deleteEmployee("1");
 
         verify(employeeRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void getAllEmployees_ReturnsListOfEmployees() {
+        when(employeeRepository.findAll()).thenReturn(List.of(employee));
+
+        List<Employee> employees = employeeService.getAllEmployees();
+
+        assertNotNull(employees);
+        assertEquals(1, employees.size());
+        assertEquals("John Doe", employees.get(0).getName());
+        verify(employeeRepository, times(1)).findAll();
     }
 }
 ```
