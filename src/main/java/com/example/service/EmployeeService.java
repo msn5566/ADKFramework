@@ -2,14 +2,16 @@ package com.example.service;
 
 import com.example.entity.Employee;
 import com.example.repository.EmployeeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Validated
 public class EmployeeService {
 
     @Autowired
@@ -19,32 +21,28 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+    public Optional<Employee> getEmployeeById(String id) {
+        return employeeRepository.findById(id);
     }
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
-    public Employee updateEmployee(Long id, @Valid Employee employee) {
-        Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
-
-        existingEmployee.setName(employee.getName());
-        existingEmployee.setJobTitle(employee.getJobTitle());
-        existingEmployee.setEmail(employee.getEmail());
-        existingEmployee.setPhoneNumber(employee.getPhoneNumber());
-
-        return employeeRepository.save(existingEmployee);
+    public Employee updateEmployee(String id, @Valid Employee employee) {
+        if (employeeRepository.existsById(id)) {
+            employee.setId(id);
+            return employeeRepository.save(employee);
+        }
+        return null; // Or throw exception
     }
 
-    public void deleteEmployee(Long id) {
-        if (!employeeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Employee not found with id: " + id);
+    public boolean deleteEmployee(String id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return true;
         }
-        employeeRepository.deleteById(id);
+        return false;
     }
 }
 ```

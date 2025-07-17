@@ -17,7 +17,7 @@ This microservice will handle CRUD operations for employee data. It will be part
 - Must be written in Java 17 using Spring Boot 3.x.
 - Should follow layered architecture (Controller, Service, Repository).
 - Must use Maven for build.
-- Data should be stored in a PostgreSQL database.
+- Data should be stored in a MongoDB database.
 - Should provide API documentation using Swagger/OpenAPI.
 - Unit and integration tests must be written using JUnit and Mockito.
 - Must provide Dockerfile for containerization.

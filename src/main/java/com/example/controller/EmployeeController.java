@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -20,57 +21,67 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    @PostMapping
     @Operation(summary = "Create a new employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Employee created"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
-    @PostMapping
     public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
         Employee createdEmployee = employeeService.createEmployee(employee);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get an employee by ID")
+    @GetMapping("/{id}")
+    @Operation(summary = "Get employee by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Employee found"),
             @ApiResponse(responseCode = "404", description = "Employee not found")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        Employee employee = employeeService.getEmployeeById(id);
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+        Optional<Employee> employee = employeeService.getEmployeeById(id);
+        return employee.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get all employees")
-    @ApiResponse(responseCode = "200", description = "Employees found")
     @GetMapping
+    @Operation(summary = "Get all employees")
+        @ApiResponse(responseCode = "200", description = "List of Employees")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         List<Employee> employees = employeeService.getAllEmployees();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
+
+    @PutMapping("/{id}")
     @Operation(summary = "Update an existing employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Employee updated"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "404", description = "Employee not found")
+            @ApiResponse(responseCode = "404", description = "Employee not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @Valid @RequestBody Employee employee) {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @Valid @RequestBody Employee employee) {
         Employee updatedEmployee = employeeService.updateEmployee(id, employee);
-        return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+        if (updatedEmployee != null) {
+            return ResponseEntity.ok(updatedEmployee);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @DeleteMapping("/{id}")
     @Operation(summary = "Delete an employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Employee deleted"),
             @ApiResponse(responseCode = "404", description = "Employee not found")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployee(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {
+        boolean deleted = employeeService.deleteEmployee(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 ```
