@@ -36,7 +36,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 
 
 GitHub-URL: https://github.com/msn5566/ADKFramework 
-GitHub-Branch: development
+checkout_branch: development
 Repository-Name: ADKFramework
 
 End of Document.

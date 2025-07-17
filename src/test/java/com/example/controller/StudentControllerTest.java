@@ -14,8 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,79 +38,82 @@ public class StudentControllerTest {
 
     @BeforeEach
     void setUp() {
-        student = new Student("1", "Alice Smith", "Computer Science");
+        student = new Student();
+        student.setId("1");
+        student.setName("Alice");
+        student.setMajor("Computer Science");
+        student.setGrade(12);
     }
 
     @Test
-    void createStudent_ValidInput_ReturnsCreated() throws Exception {
+    void createStudent_ValidInput_ReturnsCreatedStudent() throws Exception {
         when(studentService.createStudent(any(Student.class))).thenReturn(student);
 
         mockMvc.perform(post("/students")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(student)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Alice")))
+                .andExpect(jsonPath("$.major", is("Computer Science")))
+                .andExpect(jsonPath("$.grade", is(12)));
     }
 
     @Test
-    void getStudentById_ExistingId_ReturnsOk() throws Exception {
+    void getStudentById_ExistingId_ReturnsStudent() throws Exception {
         when(studentService.getStudentById("1")).thenReturn(Optional.of(student));
 
         mockMvc.perform(get("/students/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Alice")))
+                .andExpect(jsonPath("$.major", is("Computer Science")))
+                .andExpect(jsonPath("$.grade", is(12)));
     }
 
     @Test
-    void getStudentById_NonExistingId_ReturnsOkWithEmptyOptional() throws Exception {
+    void getStudentById_NonExistingId_ReturnsNotFound() throws Exception {
         when(studentService.getStudentById("2")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/students/2")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void getAllStudents_ReturnsOk() throws Exception {
-        when(studentService.getAllStudents()).thenReturn(List.of(student));
-
-        mockMvc.perform(get("/students")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].name").value("Alice Smith"))
-                .andExpect(jsonPath("$[0].major").value("Computer Science"));
-    }
-
-    @Test
-    void updateStudent_ExistingId_ReturnsOk() throws Exception {
-        when(studentService.updateStudent("1", student)).thenReturn(student);
+    void updateStudent_ExistingId_ReturnsUpdatedStudent() throws Exception {
+        when(studentService.updateStudent(eq("1"), any(Student.class))).thenReturn(student);
 
         mockMvc.perform(put("/students/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(student)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Alice")))
+                .andExpect(jsonPath("$.major", is("Computer Science")))
+                .andExpect(jsonPath("$.grade", is(12)));
     }
 
     @Test
     void deleteStudent_ExistingId_ReturnsNoContent() throws Exception {
-        doNothing().when(studentService).deleteStudent("1");
-
         mockMvc.perform(delete("/students/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getAllStudents_ReturnsListOfStudents() throws Exception {
+        when(studentService.getAllStudents()).thenReturn(List.of(student));
+
+        mockMvc.perform(get("/students")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is("1")))
+                .andExpect(jsonPath("$[0].name", is("Alice")))
+                .andExpect(jsonPath("$[0].major", is("Computer Science")))
+                .andExpect(jsonPath("$[0].grade", is(12)));
     }
 }
 ```

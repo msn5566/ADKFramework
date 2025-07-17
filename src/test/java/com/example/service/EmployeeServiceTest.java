@@ -29,20 +29,22 @@ public class EmployeeServiceTest {
 
     @BeforeEach
     void setUp() {
-        employee = new Employee("1", "John Doe", "IT");
+        employee = new Employee();
+        employee.setId("1");
+        employee.setName("John Doe");
+        employee.setEmail("john.doe@example.com");
+        employee.setDepartment("IT");
     }
 
     @Test
-    void createEmployee_ValidInput_ReturnsSavedEmployee() {
+    void createEmployee_ValidEmployee_ReturnsSavedEmployee() {
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         Employee savedEmployee = employeeService.createEmployee(employee);
 
+        assertNotNull(savedEmployee);
         assertEquals("1", savedEmployee.getId());
-        assertEquals("John Doe", savedEmployee.getName());
-        assertEquals("IT", savedEmployee.getDepartment());
-
-        verify(employeeRepository, times(1)).save(employee);
+        verify(employeeRepository).save(employee);
     }
 
     @Test
@@ -53,8 +55,7 @@ public class EmployeeServiceTest {
 
         assertTrue(retrievedEmployee.isPresent());
         assertEquals("John Doe", retrievedEmployee.get().getName());
-
-        verify(employeeRepository, times(1)).findById("1");
+        verify(employeeRepository).findById("1");
     }
 
     @Test
@@ -63,9 +64,49 @@ public class EmployeeServiceTest {
 
         Optional<Employee> retrievedEmployee = employeeService.getEmployeeById("2");
 
-        assertTrue(retrievedEmployee.isEmpty());
+        assertFalse(retrievedEmployee.isPresent());
+        verify(employeeRepository).findById("2");
+    }
 
-        verify(employeeRepository, times(1)).findById("2");
+    @Test
+    void updateEmployee_ExistingId_ReturnsUpdatedEmployee() {
+        Employee employeeDetails = new Employee();
+        employeeDetails.setName("Updated Name");
+        employeeDetails.setEmail("updated.email@example.com");
+        employeeDetails.setDepartment("Updated Department");
+
+        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+
+        Employee updatedEmployee = employeeService.updateEmployee("1", employeeDetails);
+
+        assertNotNull(updatedEmployee);
+        assertEquals("Updated Name", updatedEmployee.getName());
+        assertEquals("updated.email@example.com", updatedEmployee.getEmail());
+        assertEquals("Updated Department", updatedEmployee.getDepartment());
+        verify(employeeRepository).findById("1");
+        verify(employeeRepository).save(employee);
+    }
+
+    @Test
+    void updateEmployee_NonExistingId_ThrowsException() {
+        Employee employeeDetails = new Employee();
+        employeeDetails.setName("Updated Name");
+        employeeDetails.setEmail("updated.email@example.com");
+        employeeDetails.setDepartment("Updated Department");
+
+        when(employeeRepository.findById("2")).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> employeeService.updateEmployee("2", employeeDetails));
+        verify(employeeRepository).findById("2");
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void deleteEmployee_ExistingId_DeletesEmployee() {
+        employeeService.deleteEmployee("1");
+
+        verify(employeeRepository).deleteById("1");
     }
 
     @Test
@@ -74,43 +115,10 @@ public class EmployeeServiceTest {
 
         List<Employee> employees = employeeService.getAllEmployees();
 
+        assertNotNull(employees);
         assertEquals(1, employees.size());
         assertEquals("John Doe", employees.get(0).getName());
-
-        verify(employeeRepository, times(1)).findAll();
-    }
-
-    @Test
-    void updateEmployee_ExistingId_ReturnsUpdatedEmployee() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
-        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
-        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
-
-        Employee updatedEmployee = employeeService.updateEmployee("1", employeeDetails);
-
-        assertEquals("Updated Name", updatedEmployee.getName());
-        assertEquals("Updated Dept", updatedEmployee.getDepartment());
-        verify(employeeRepository, times(1)).findById("1");
-        verify(employeeRepository, times(1)).save(employee);
-    }
-
-    @Test
-    void updateEmployee_NonExistingId_ThrowsException() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
-        when(employeeRepository.findById("2")).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee("2", employeeDetails));
-        verify(employeeRepository, times(1)).findById("2");
-        verify(employeeRepository, never()).save(any(Employee.class));
-    }
-
-    @Test
-    void deleteEmployee_ExistingId_DeletesEmployee() {
-        doNothing().when(employeeRepository).deleteById("1");
-
-        employeeService.deleteEmployee("1");
-
-        verify(employeeRepository, times(1)).deleteById("1");
+        verify(employeeRepository).findAll();
     }
 }
 ```

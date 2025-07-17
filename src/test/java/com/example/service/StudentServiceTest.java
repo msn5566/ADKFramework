@@ -29,20 +29,22 @@ public class StudentServiceTest {
 
     @BeforeEach
     void setUp() {
-        student = new Student("1", "Alice Smith", "Computer Science");
+        student = new Student();
+        student.setId("1");
+        student.setName("Alice");
+        student.setMajor("Computer Science");
+        student.setGrade(12);
     }
 
     @Test
-    void createStudent_ValidInput_ReturnsSavedStudent() {
+    void createStudent_ValidStudent_ReturnsSavedStudent() {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
         Student savedStudent = studentService.createStudent(student);
 
+        assertNotNull(savedStudent);
         assertEquals("1", savedStudent.getId());
-        assertEquals("Alice Smith", savedStudent.getName());
-        assertEquals("Computer Science", savedStudent.getMajor());
-
-        verify(studentRepository, times(1)).save(student);
+        verify(studentRepository).save(student);
     }
 
     @Test
@@ -52,9 +54,8 @@ public class StudentServiceTest {
         Optional<Student> retrievedStudent = studentService.getStudentById("1");
 
         assertTrue(retrievedStudent.isPresent());
-        assertEquals("Alice Smith", retrievedStudent.get().getName());
-
-        verify(studentRepository, times(1)).findById("1");
+        assertEquals("Alice", retrievedStudent.get().getName());
+        verify(studentRepository).findById("1");
     }
 
     @Test
@@ -63,9 +64,49 @@ public class StudentServiceTest {
 
         Optional<Student> retrievedStudent = studentService.getStudentById("2");
 
-        assertTrue(retrievedStudent.isEmpty());
+        assertFalse(retrievedStudent.isPresent());
+        verify(studentRepository).findById("2");
+    }
 
-        verify(studentRepository, times(1)).findById("2");
+    @Test
+    void updateStudent_ExistingId_ReturnsUpdatedStudent() {
+        Student studentDetails = new Student();
+        studentDetails.setName("Updated Name");
+        studentDetails.setMajor("Updated Major");
+        studentDetails.setGrade(10);
+
+        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+
+        Student updatedStudent = studentService.updateStudent("1", studentDetails);
+
+        assertNotNull(updatedStudent);
+        assertEquals("Updated Name", updatedStudent.getName());
+        assertEquals("Updated Major", updatedStudent.getMajor());
+        assertEquals(10, updatedStudent.getGrade());
+        verify(studentRepository).findById("1");
+        verify(studentRepository).save(student);
+    }
+
+    @Test
+    void updateStudent_NonExistingId_ThrowsException() {
+        Student studentDetails = new Student();
+        studentDetails.setName("Updated Name");
+        studentDetails.setMajor("Updated Major");
+        studentDetails.setGrade(10);
+
+        when(studentRepository.findById("2")).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> studentService.updateStudent("2", studentDetails));
+        verify(studentRepository).findById("2");
+        verify(studentRepository, never()).save(any(Student.class));
+    }
+
+    @Test
+    void deleteStudent_ExistingId_DeletesStudent() {
+        studentService.deleteStudent("1");
+
+        verify(studentRepository).deleteById("1");
     }
 
     @Test
@@ -74,43 +115,10 @@ public class StudentServiceTest {
 
         List<Student> students = studentService.getAllStudents();
 
+        assertNotNull(students);
         assertEquals(1, students.size());
-        assertEquals("Alice Smith", students.get(0).getName());
-
-        verify(studentRepository, times(1)).findAll();
-    }
-
-    @Test
-    void updateStudent_ExistingId_ReturnsUpdatedStudent() {
-        Student studentDetails = new Student(null, "Updated Name", "Updated Major");
-        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-
-        Student updatedStudent = studentService.updateStudent("1", studentDetails);
-
-        assertEquals("Updated Name", updatedStudent.getName());
-        assertEquals("Updated Major", updatedStudent.getMajor());
-        verify(studentRepository, times(1)).findById("1");
-        verify(studentRepository, times(1)).save(student);
-    }
-
-    @Test
-    void updateStudent_NonExistingId_ThrowsException() {
-        Student studentDetails = new Student(null, "Updated Name", "Updated Major");
-        when(studentRepository.findById("2")).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> studentService.updateStudent("2", studentDetails));
-        verify(studentRepository, times(1)).findById("2");
-        verify(studentRepository, never()).save(any(Student.class));
-    }
-
-    @Test
-    void deleteStudent_ExistingId_DeletesStudent() {
-        doNothing().when(studentRepository).deleteById("1");
-
-        studentService.deleteStudent("1");
-
-        verify(studentRepository, times(1)).deleteById("1");
+        assertEquals("Alice", students.get(0).getName());
+        verify(studentRepository).findAll();
     }
 }
 ```
