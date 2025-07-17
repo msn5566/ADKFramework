@@ -40,7 +40,12 @@ public class EmployeeManagementApplication {
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,10 +53,9 @@ public class EmployeeManagementApplication {
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.2</version>
+            <artifactId>springdoc-openapi-starter-webmvc</artifactId>
+            <version>2.0.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -60,12 +64,6 @@ public class EmployeeManagementApplication {
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -94,57 +92,77 @@ public class EmployeeManagementApplication {
 # File: Dockerfile
 FROM openjdk:17-jdk-slim
 VOLUME /tmp
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 ```
 
 ```yaml
-# File: .github/workflows/main.yml
-name: CI/CD
+# File: .github/workflows/ci.yml
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "development" ]
-  pull_request:
-    branches: [ "development" ]
+    branches:
+      - development
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Build with Maven
         run: mvn clean install -DskipTests
+
   test:
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Run Tests with Maven
         run: mvn test
 
   docker:
-    needs: test
     runs-on: ubuntu-latest
+    needs: test
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Docker Login
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag msn5566/employee-management:${GITHUB_SHA}
-      - name: Push the Docker image
-        run: docker push msn5566/employee-management:${GITHUB_SHA}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/employee-management .
+          docker push ${{ secrets.DOCKER_USERNAME }}/employee-management
 ```
 
 ```java

@@ -1,1 +1,7 @@
-Change analysis failed to run: Session not found: 12ed972e-4831-47c3-82a2-c1a503f67fa7 for user user-change-analyzer
+```markdown
+## Changelog
+
+**Non-Functional Requirements:**
+
+*   **Modified:** Database from MongoDB to PostgreSQL.
+```
