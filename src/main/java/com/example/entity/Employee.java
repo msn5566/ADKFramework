@@ -1,28 +1,36 @@
 package com.example.entity;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "employees")
+@Table(name = "employees")
 public class Employee {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @NotBlank(message = "Name is mandatory")
+    @NotEmpty(message = "Name cannot be empty")
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     private String name;
 
-    @NotBlank(message = "Role is mandatory")
-    private String role;
+    @NotEmpty(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
+    private String email;
 
-    @NotBlank(message = "Department is mandatory")
+    @NotEmpty(message = "Phone number cannot be empty")
+    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
+    private String phoneNumber;
+
     private String department;
 }
 ```

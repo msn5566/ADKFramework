@@ -1,0 +1,38 @@
+Software Requirements Specification (SRS)
+
+Title: Employee Management Microservice
+
+1. Introduction
+This microservice will handle CRUD operations for employee data. It will be part of a larger HR system and communicate via REST APIs. The service should be developed using Spring Boot.
+
+2. Functional Requirements
+- The service must allow creating a new employee.
+- The service must allow reading employee details by ID.
+- The service must allow updating employee information.
+- The service must allow deleting an employee.
+- The service must expose REST endpoints with appropriate request/response formats.
+- The service must validate input data.
+
+3. Non-Functional Requirements
+- Must be written in Java 17 using Spring Boot 3.x.
+- Should follow layered architecture (Controller, Service, Repository).
+- Must use Maven for build.
+- Data should be stored in a PostgreSQL database.
+- Should provide API documentation using Swagger/OpenAPI.
+- Unit and integration tests must be written using JUnit and Mockito.
+- Must provide Dockerfile for containerization.
+- Should include GitHub Actions CI workflow for build, test, and Docker image creation.
+
+4. Constraints
+- All endpoints must follow RESTful conventions.
+- Use `application/json` for all API responses and requests.
+
+5. Future Scope
+- Add support for bulk import/export of employees.
+- Add integration with external payroll systems.
+
+GitHub-URL: https://github.com/msn5566/ADKFramework 
+GitHub-Branch: development
+Repository-Name: ADKFramework
+
+End of Document.
