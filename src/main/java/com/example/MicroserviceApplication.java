@@ -9,8 +9,8 @@ public class MicroserviceApplication {
     public static void main(String[] args) {
         SpringApplication.run(MicroserviceApplication.class, args);
     }
+
 }
 ```
-
 
 ```java

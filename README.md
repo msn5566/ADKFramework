@@ -8,65 +8,41 @@
 
 This microservice was automatically generated based on the following high-level requirements:
 
-> Feature: Create Employee
-> Input: Employee details (name, ID, department, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned employee ID.
-> Constraints: Input data must be validated.
-> Logic: Create a new employee record in the database.
+> Feature: Create Employee/Student
+> Input: Employee/Student data (name, ID, other details) via REST API
+> Output: Confirmation of successful creation, including the assigned ID.
+> Constraints: Input data must be validated. RESTful endpoint should be used. Request body should be application/json.
+> Logic: Generate a unique ID. Store the Employee/Student data in the Mongodb database.
 > 
-> Feature: Create Student
-> Input: Student details (name, ID, major, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned student ID.
-> Constraints: Input data must be validated.
-> Logic: Create a new student record in the database.
+> Feature: Read Employee/Student Details by ID
+> Input: Employee/Student ID via REST API
+> Output: Employee/Student details in JSON format.
+> Constraints: RESTful endpoint should be used. Response body should be application/json.
+> Logic: Retrieve the Employee/Student data from the database using the provided ID.
 > 
-> Feature: Read Employee Details
-> Input: Employee ID via REST API.
-> Output: Employee details in JSON format.
-> Constraints: Employee ID must exist in the database.
-> Logic: Retrieve employee record from the database by ID.
+> Feature: Update Employee/Student Information
+> Input: Employee/Student ID and updated data via REST API
+> Output: Confirmation of successful update.
+> Constraints: Input data must be validated. RESTful endpoint should be used. Request body should be application/json.
+> Logic: Update the Employee/Student data in the database with the provided ID and updated information.
 > 
-> Feature: Read Student Details
-> Input: Student ID via REST API.
-> Output: Student details in JSON format.
-> Constraints: Student ID must exist in the database.
-> Logic: Retrieve student record from the database by ID.
-> 
-> Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database. Input data must be validated.
-> Logic: Update the employee record in the database with the new information.
-> 
-> Feature: Update Student Information
-> Input: Student ID and updated student details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database. Input data must be validated.
-> Logic: Update the student record in the database with the new information.
-> 
-> Feature: Delete Employee
-> Input: Employee ID via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database.
-> Logic: Delete the employee record from the database.
-> 
-> Feature: Delete Student
-> Input: Student ID via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database.
-> Logic: Delete the student record from the database.
+> Feature: Delete Employee/Student
+> Input: Employee/Student ID via REST API
+> Output: Confirmation of successful deletion.
+> Constraints: RESTful endpoint should be used. Response body should be application/json.
+> Logic: Delete the Employee/Student data from the database using the provided ID.
 > 
 > Feature: Expose REST Endpoints
-> Input: REST API requests.
-> Output: Appropriate responses in JSON format.
-> Constraints: All endpoints must follow RESTful conventions.
-> Logic: Implement REST endpoints for CRUD operations on employees and students.
+> Input: HTTP requests to specific endpoints
+> Output: JSON responses containing employee/student data or confirmation messages.
+> Constraints: All endpoints must follow RESTful conventions. Use `application/json` for all API responses and requests. Swagger/OpenAPI must be implemented for API Documentation.
+> Logic: Implement controllers to handle requests and responses, mapping to corresponding service layer methods.
 > 
 > Feature: Validate Input Data
-> Input: Employee and Student data.
-> Output: Error message if data is invalid.
-> Constraints: All input data must be validated.
-> Logic: Implement validation logic to ensure data integrity.
+> Input: Employee/Student data provided via REST API
+> Output: Error messages for invalid data, or successful processing if data is valid.
+> Constraints: Implement validation logic for all required fields and data types.
+> Logic: Implement validation rules in the service layer to check for data integrity and consistency.
 
 ### 🛠️ Core Dependencies
 
@@ -78,8 +54,7 @@ The following core dependencies were automatically included to support these req
 | `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
 | `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
-| `org.mockito` | `mockito-core` | `test` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `compile` |
 | `org.projectlombok` | `lombok` | `optional` |
 
 
