@@ -1,15 +1,17 @@
 package com.example.service;
 
 import com.example.entity.Employee;
-import com.example.exception.ResourceNotFoundException;
 import com.example.repository.EmployeeRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Validated
 public class EmployeeService {
 
     @Autowired
@@ -19,28 +21,27 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Employee getEmployeeById(String id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+    public Optional<Employee> getEmployeeById(String id) {
+        return employeeRepository.findById(id);
     }
 
-    public Employee updateEmployee(String id, @Valid Employee employeeDetails) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
-
-        employee.setName(employeeDetails.getName());
-        employee.setDepartment(employeeDetails.getDepartment());
-        employee.setEmail(employeeDetails.getEmail());
-        employee.setPhone(employeeDetails.getPhone());
-
-        return employeeRepository.save(employee);
+    public Employee updateEmployee(String id, @Valid Employee employee) {
+        Optional<Employee> existingEmployee = employeeRepository.findById(id);
+        if (existingEmployee.isPresent()) {
+            employee.setId(id); // Ensure ID is preserved
+            return employeeRepository.save(employee);
+        } else {
+            return null; // Or throw an exception
+        }
     }
 
-    public void deleteEmployee(String id) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
-
-        employeeRepository.delete(employee);
+    public boolean deleteEmployee(String id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<Employee> getAllEmployees() {

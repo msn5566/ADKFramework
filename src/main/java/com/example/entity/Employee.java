@@ -1,8 +1,6 @@
 package com.example.entity;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,17 +16,14 @@ public class Employee {
     @Id
     private String id;
 
-    @NotEmpty(message = "Name cannot be empty")
-    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
-    @NotEmpty(message = "Department cannot be empty")
+    @NotBlank(message = "Role is mandatory")
+    private String role;
+
+    @NotBlank(message = "Department is mandatory")
     private String department;
-
-    @Email(message = "Email should be valid")
-    private String email;
-
-    private String phone;
 }
 ```
 
