@@ -1,8 +1,8 @@
 package com.example.service;
 
 import com.example.entity.Employee;
-import com.example.exception.ResourceNotFoundException;
 import com.example.repository.EmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,30 +21,30 @@ public class EmployeeService {
 
     public Employee getEmployeeById(Long id) {
         return employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
-    }
-
-    public Employee updateEmployee(Long id, @Valid Employee employeeDetails) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
-
-        employee.setName(employeeDetails.getName());
-        employee.setEmail(employeeDetails.getEmail());
-        employee.setPhoneNumber(employeeDetails.getPhoneNumber());
-        employee.setDepartment(employeeDetails.getDepartment());
-
-        return employeeRepository.save(employee);
-    }
-
-    public void deleteEmployee(Long id) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
-
-        employeeRepository.delete(employee);
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
     }
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
+    }
+
+    public Employee updateEmployee(Long id, @Valid Employee employee) {
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+
+        existingEmployee.setName(employee.getName());
+        existingEmployee.setJobTitle(employee.getJobTitle());
+        existingEmployee.setEmail(employee.getEmail());
+        existingEmployee.setPhoneNumber(employee.getPhoneNumber());
+
+        return employeeRepository.save(existingEmployee);
+    }
+
+    public void deleteEmployee(Long id) {
+        if (!employeeRepository.existsById(id)) {
+            throw new EntityNotFoundException("Employee not found with id: " + id);
+        }
+        employeeRepository.deleteById(id);
     }
 }
 ```

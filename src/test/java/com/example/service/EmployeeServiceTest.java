@@ -1,9 +1,8 @@
 package com.example.service;
 
 import com.example.entity.Employee;
-import com.example.exception.ResourceNotFoundException;
 import com.example.repository.EmployeeRepository;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,88 +26,110 @@ public class EmployeeServiceTest {
     @InjectMocks
     private EmployeeService employeeService;
 
-    private Employee employee;
-
-    @BeforeEach
-    void setUp() {
-        employee = new Employee(1L, "John Doe", "john.doe@example.com", "1234567890", "IT");
-    }
-
     @Test
     void createEmployee_ValidInput_ReturnsSavedEmployee() {
-        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+        Employee employee = new Employee(null, "John Doe", "Developer", "john.doe@example.com", "1234567890");
+        Employee savedEmployee = new Employee(1L, "John Doe", "Developer", "john.doe@example.com", "1234567890");
 
-        Employee savedEmployee = employeeService.createEmployee(employee);
+        when(employeeRepository.save(employee)).thenReturn(savedEmployee);
 
-        assertNotNull(savedEmployee);
-        assertEquals("John Doe", savedEmployee.getName());
+        Employee result = employeeService.createEmployee(employee);
+
+        assertEquals(savedEmployee, result);
+        verify(employeeRepository, times(1)).save(employee);
     }
 
     @Test
     void getEmployeeById_ExistingId_ReturnsEmployee() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+        Long employeeId = 1L;
+        Employee employee = new Employee(employeeId, "John Doe", "Developer", "john.doe@example.com", "1234567890");
 
-        Employee retrievedEmployee = employeeService.getEmployeeById(1L);
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
 
-        assertNotNull(retrievedEmployee);
-        assertEquals("John Doe", retrievedEmployee.getName());
+        Employee result = employeeService.getEmployeeById(employeeId);
+
+        assertEquals(employee, result);
+        verify(employeeRepository, times(1)).findById(employeeId);
     }
 
     @Test
-    void getEmployeeById_NonExistingId_ThrowsResourceNotFoundException() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
+    void getEmployeeById_NonExistingId_ThrowsEntityNotFoundException() {
+        Long employeeId = 1L;
 
-        assertThrows(ResourceNotFoundException.class, () -> employeeService.getEmployeeById(1L));
-    }
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
 
-    @Test
-    void updateEmployee_ExistingIdAndValidInput_ReturnsUpdatedEmployee() {
-        Employee existingEmployee = new Employee(1L, "Old Name", "old.email@example.com", "0000000000", "Old Dept");
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(existingEmployee));
-        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
-
-        Employee updatedEmployee = employeeService.updateEmployee(1L, employee);
-
-        assertNotNull(updatedEmployee);
-        assertEquals("John Doe", updatedEmployee.getName());
-        assertEquals("john.doe@example.com", updatedEmployee.getEmail());
-    }
-
-    @Test
-    void updateEmployee_NonExistingId_ThrowsResourceNotFoundException() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> employeeService.updateEmployee(1L, employee));
-    }
-
-    @Test
-    void deleteEmployee_ExistingId_DeletesEmployee() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
-        doNothing().when(employeeRepository).delete(employee);
-
-        employeeService.deleteEmployee(1L);
-
-        verify(employeeRepository, times(1)).delete(employee);
-    }
-
-    @Test
-    void deleteEmployee_NonExistingId_ThrowsResourceNotFoundException() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> employeeService.deleteEmployee(1L));
+        assertThrows(EntityNotFoundException.class, () -> employeeService.getEmployeeById(employeeId));
+        verify(employeeRepository, times(1)).findById(employeeId);
     }
 
     @Test
     void getAllEmployees_ReturnsListOfEmployees() {
-        List<Employee> employees = Arrays.asList(employee, new Employee(2L, "Jane Smith", "jane.smith@example.com", "0987654321", "HR"));
+        List<Employee> employees = Arrays.asList(
+                new Employee(1L, "John Doe", "Developer", "john.doe@example.com", "1234567890"),
+                new Employee(2L, "Jane Smith", "Manager", "jane.smith@example.com", "0987654321")
+        );
+
         when(employeeRepository.findAll()).thenReturn(employees);
 
-        List<Employee> allEmployees = employeeService.getAllEmployees();
+        List<Employee> result = employeeService.getAllEmployees();
 
-        assertNotNull(allEmployees);
-        assertEquals(2, allEmployees.size());
-        assertEquals("John Doe", allEmployees.get(0).getName());
-        assertEquals("Jane Smith", allEmployees.get(1).getName());
+        assertEquals(employees, result);
+        verify(employeeRepository, times(1)).findAll();
+    }
+
+    @Test
+    void updateEmployee_ExistingId_ReturnsUpdatedEmployee() {
+        Long employeeId = 1L;
+        Employee existingEmployee = new Employee(employeeId, "John Doe", "Developer", "john.doe@example.com", "1234567890");
+        Employee updatedEmployee = new Employee(employeeId, "Updated Name", "Updated Job", "updated@example.com", "1122334455");
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(existingEmployee));
+        when(employeeRepository.save(existingEmployee)).thenReturn(updatedEmployee);
+
+        Employee result = employeeService.updateEmployee(employeeId, updatedEmployee);
+
+        assertEquals(updatedEmployee.getName(), result.getName());
+        assertEquals(updatedEmployee.getJobTitle(), result.getJobTitle());
+        assertEquals(updatedEmployee.getEmail(), result.getEmail());
+        assertEquals(updatedEmployee.getPhoneNumber(), result.getPhoneNumber());
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository, times(1)).save(existingEmployee);
+    }
+
+    @Test
+    void updateEmployee_NonExistingId_ThrowsEntityNotFoundException() {
+        Long employeeId = 1L;
+        Employee updatedEmployee = new Employee(employeeId, "Updated Name", "Updated Job", "updated@example.com", "1122334455");
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> employeeService.updateEmployee(employeeId, updatedEmployee));
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteEmployee_ExistingId_DeletesEmployee() {
+        Long employeeId = 1L;
+
+        when(employeeRepository.existsById(employeeId)).thenReturn(true);
+        doNothing().when(employeeRepository).deleteById(employeeId);
+
+        employeeService.deleteEmployee(employeeId);
+
+        verify(employeeRepository, times(1)).existsById(employeeId);
+        verify(employeeRepository, times(1)).deleteById(employeeId);
+    }
+
+    @Test
+    void deleteEmployee_NonExistingId_ThrowsEntityNotFoundException() {
+        Long employeeId = 1L;
+
+        when(employeeRepository.existsById(employeeId)).thenReturn(false);
+
+        assertThrows(EntityNotFoundException.class, () -> employeeService.deleteEmployee(employeeId));
+        verify(employeeRepository, times(1)).existsById(employeeId);
+        verify(employeeRepository, never()).deleteById(any());
     }
 }
 ```

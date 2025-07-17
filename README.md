@@ -9,40 +9,40 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee data (name, contact details, etc.) in JSON format via REST API.
-> Output: Confirmation message with employee ID.
-> Constraints: Input data must be validated.
-> Logic: The service will receive employee data, validate it, create a new employee record in the database, and return a confirmation message.
+> Input: Employee data (name, job title, contact information, etc.) via REST API.
+> Output: Confirmation message with the newly created employee's ID.
+> Constraints: Input data must be validated.  Responses must be in `application/json`. Must follow RESTful conventions.
+> Logic: Persist the employee data to the PostgreSQL database.
 > 
 > Feature: Read Employee Details
 > Input: Employee ID via REST API.
-> Output: Employee details in JSON format.
-> Constraints: Employee ID must be valid.
-> Logic: The service will receive the employee ID, retrieve the corresponding employee record from the database, and return the details in JSON format.
+> Output: Employee details in `application/json` format.
+> Constraints:  Responses must be in `application/json`. Must follow RESTful conventions.
+> Logic: Retrieve employee data from the PostgreSQL database based on the provided ID.
 > 
 > Feature: Update Employee Information
-> Input: Employee ID and updated employee data in JSON format via REST API.
-> Output: Confirmation message that the employee details have been updated.
-> Constraints: Employee ID must be valid. Input data must be validated.
-> Logic: The service will receive the employee ID and updated data, validate the data, update the corresponding employee record in the database, and return a confirmation message.
+> Input: Employee ID and updated employee data via REST API.
+> Output: Confirmation message indicating successful update.
+> Constraints: Input data must be validated. Responses must be in `application/json`. Must follow RESTful conventions.
+> Logic: Update the employee data in the PostgreSQL database for the given ID with the provided information.
 > 
 > Feature: Delete Employee
 > Input: Employee ID via REST API.
-> Output: Confirmation message that the employee has been deleted.
-> Constraints: Employee ID must be valid.
-> Logic: The service will receive the employee ID, delete the corresponding employee record from the database, and return a confirmation message.
+> Output: Confirmation message indicating successful deletion.
+> Constraints:  Responses must be in `application/json`. Must follow RESTful conventions.
+> Logic: Delete the employee data from the PostgreSQL database based on the provided ID.
 > 
 > Feature: Expose REST Endpoints
-> Input: HTTP requests to defined endpoints.
-> Output: JSON responses according to the request.
-> Constraints: All endpoints must follow RESTful conventions and use `application/json`.
-> Logic: The service will define REST endpoints for creating, reading, updating, and deleting employees, handling HTTP requests, processing data, and returning appropriate JSON responses.
+> Input: HTTP requests to specific URLs with required data.
+> Output: Responses containing employee data or confirmation messages.
+> Constraints: All endpoints must follow RESTful conventions and use `application/json` for requests and responses.
+> Logic: Map HTTP requests to appropriate service methods and return formatted responses.
 > 
 > Feature: Validate Input Data
-> Input: Employee data received through REST APIs.
-> Output: Error messages if validation fails.
-> Constraints: Implement validation logic for all required fields.
-> Logic: The service will implement data validation logic to ensure data integrity.
+> Input: Employee data for creation or update operations.
+> Output: Error message if validation fails, successful operation if validation passes.
+> Constraints: Validation rules must be defined and enforced.
+> Logic: Apply validation rules to the input data before persisting or updating employee information.
 
 ### 🛠️ Core Dependencies
 
@@ -55,8 +55,8 @@ The following core dependencies were automatically included to support these req
 | `org.postgresql` | `postgresql` | `runtime` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
 | `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
 | `org.projectlombok` | `lombok` | `optional` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `compile` |
 
 
 <!-- AI-SUMMARY-END -->
