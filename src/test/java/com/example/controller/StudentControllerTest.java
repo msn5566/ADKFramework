@@ -2,113 +2,160 @@ package com.example.controller;
 
 import com.example.entity.Student;
 import com.example.service.StudentService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(StudentController.class)
-public class StudentControllerTest {
+class StudentControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private StudentController studentController;
 
-    @MockBean
+    @Mock
     private StudentService studentService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private Student student;
 
     @BeforeEach
     void setUp() {
-        student = new Student("1", "Alice Smith", "Computer Science");
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createStudent_ValidInput_ReturnsCreated() throws Exception {
-        when(studentService.createStudent(any(Student.class))).thenReturn(student);
+    void createStudent_ValidInput_ReturnsCreatedStudent() {
+        Student student = new Student();
+        student.setName("Alice");
+        student.setMajor("Computer Science");
 
-        mockMvc.perform(post("/students")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(student)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+        Student createdStudent = new Student();
+        createdStudent.setId("1");
+        createdStudent.setName("Alice");
+        createdStudent.setMajor("Computer Science");
+
+        when(studentService.createStudent(student)).thenReturn(createdStudent);
+
+        ResponseEntity<Student> response = studentController.createStudent(student);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(createdStudent, response.getBody());
+        verify(studentService, times(1)).createStudent(student);
     }
 
     @Test
-    void getStudentById_ExistingId_ReturnsOk() throws Exception {
-        when(studentService.getStudentById("1")).thenReturn(Optional.of(student));
+    void getStudent_ExistingId_ReturnsStudent() {
+        String studentId = "1";
+        Student student = new Student();
+        student.setId(studentId);
+        student.setName("Alice");
+        student.setMajor("Computer Science");
 
-        mockMvc.perform(get("/students/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+        when(studentService.getStudent(studentId)).thenReturn(Optional.of(student));
+
+        ResponseEntity<Student> response = studentController.getStudent(studentId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(student, response.getBody());
+        verify(studentService, times(1)).getStudent(studentId);
     }
 
     @Test
-    void getStudentById_NonExistingId_ReturnsOkWithEmptyOptional() throws Exception {
-        when(studentService.getStudentById("2")).thenReturn(Optional.empty());
+    void getStudent_NonExistingId_ReturnsNotFound() {
+        String studentId = "1";
+        when(studentService.getStudent(studentId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/students/2")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        ResponseEntity<Student> response = studentController.getStudent(studentId);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(studentService, times(1)).getStudent(studentId);
     }
 
     @Test
-    void getAllStudents_ReturnsOk() throws Exception {
-        when(studentService.getAllStudents()).thenReturn(List.of(student));
+    void updateStudent_ExistingId_ReturnsUpdatedStudent() {
+        String studentId = "1";
+        Student existingStudent = new Student();
+        existingStudent.setId(studentId);
+        existingStudent.setName("Alice");
+        existingStudent.setMajor("Computer Science");
 
-        mockMvc.perform(get("/students")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].name").value("Alice Smith"))
-                .andExpect(jsonPath("$[0].major").value("Computer Science"));
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Bob");
+        updatedStudentDetails.setMajor("Physics");
+
+        Student updatedStudent = new Student();
+        updatedStudent.setId(studentId);
+        updatedStudent.setName("Bob");
+        updatedStudent.setMajor("Physics");
+
+        when(studentService.getStudent(studentId)).thenReturn(Optional.of(existingStudent));
+        when(studentService.updateStudent(studentId, updatedStudentDetails)).thenReturn(updatedStudent);
+
+        ResponseEntity<Student> response = studentController.updateStudent(studentId, updatedStudentDetails);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(updatedStudent, response.getBody());
+        verify(studentService, times(1)).getStudent(studentId);
+        verify(studentService, times(1)).updateStudent(studentId, updatedStudentDetails);
     }
 
     @Test
-    void updateStudent_ExistingId_ReturnsOk() throws Exception {
-        when(studentService.updateStudent("1", student)).thenReturn(student);
+    void updateStudent_NonExistingId_ReturnsNotFound() {
+        String studentId = "1";
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Bob");
+        updatedStudentDetails.setMajor("Physics");
 
-        mockMvc.perform(put("/students/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(student)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Alice Smith"))
-                .andExpect(jsonPath("$.major").value("Computer Science"));
+        when(studentService.getStudent(studentId)).thenReturn(Optional.empty());
+
+        ResponseEntity<Student> response = studentController.updateStudent(studentId, updatedStudentDetails);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(studentService, times(1)).getStudent(studentId);
+        verify(studentService, never()).updateStudent(studentId, updatedStudentDetails);
     }
 
     @Test
-    void deleteStudent_ExistingId_ReturnsNoContent() throws Exception {
-        doNothing().when(studentService).deleteStudent("1");
+    void deleteStudent_ExistingId_ReturnsNoContent() {
+        String studentId = "1";
 
-        mockMvc.perform(delete("/students/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+        ResponseEntity<Void> response = studentController.deleteStudent(studentId);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(studentService, times(1)).deleteStudent(studentId);
+    }
+
+    @Test
+    void getAllStudents_ReturnsListOfStudents() {
+        List<Student> students = new ArrayList<>();
+        Student student1 = new Student();
+        student1.setId("1");
+        student1.setName("Alice");
+        student1.setMajor("Computer Science");
+        students.add(student1);
+
+        Student student2 = new Student();
+        student2.setId("2");
+        student2.setName("Bob");
+        student2.setMajor("Physics");
+        students.add(student2);
+
+        when(studentService.getAllStudents()).thenReturn(students);
+
+        ResponseEntity<List<Student>> response = studentController.getAllStudents();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(students, response.getBody());
+        verify(studentService, times(1)).getAllStudents();
     }
 }
 ```
