@@ -1,0 +1,741 @@
+Commit-Summary: Implement CRUD operations for employee data using Spring Boot.
+
+Feature: Create Employee
+Input: Employee details (JSON format) including name, role, and department.
+Output: Confirmation message with the new employee ID.
+Constraints: Input data must be validated before creating the employee.
+Logic: REST endpoint should accept a POST request with employee details and persist the data in the MongoDB database.
+
+Feature: Read Employee by ID
+Input: Employee ID
+Output: Employee details (JSON format) including name, role, and department, or an error message if the employee is not found.
+Constraints: The employee ID must be a valid ID.
+Logic: REST endpoint should accept a GET request with the employee ID and retrieve the employee data from the MongoDB database.
+
+Feature: Update Employee Information
+Input: Employee ID and updated employee details (JSON format).
+Output: Confirmation message after successful update, or an error message if the employee is not found.
+Constraints: The employee ID must be a valid ID. Input data must be validated before updating the employee.
+Logic: REST endpoint should accept a PUT request with the employee ID and updated employee details, then update the corresponding record in the MongoDB database.
+
+Feature: Delete Employee
+Input: Employee ID
+Output: Confirmation message after successful deletion, or an error message if the employee is not found.
+Constraints: The employee ID must be a valid ID.
+Logic: REST endpoint should accept a DELETE request with the employee ID and remove the employee data from the MongoDB database.
+
+Feature: Expose REST Endpoints
+Input: HTTP requests (GET, POST, PUT, DELETE) to defined endpoints.
+Output: JSON responses with employee data or confirmation messages.
+Constraints: All endpoints must follow RESTful conventions and use `application/json` for requests and responses.
+Logic: Implement REST controllers to handle HTTP requests and interact with the service layer.
+
+Feature: Validate Input Data
+Input: Employee details (JSON format) during create and update operations.
+Output: Error messages if input data is invalid, preventing the creation or update of the employee.
+Constraints: Data validation rules must be defined and enforced.
+Logic: Implement data validation logic in the service layer to check for required fields, data types, and format.
+
+
+org.springframework.boot:spring-boot-starter-web
+org.springframework.boot:spring-boot-starter-data-mongodb
+org.springframework.boot:spring-boot-starter-validation
+org.springframework.boot:spring-boot-starter-test:test
+org.projectlombok:lombok:optional
+org.springdoc:springdoc-openapi-starter-webmvc-ui
+
+
+```java
+// File: src/main/java/com/example/entity/Employee.java
+package com.example.entity;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @NotBlank(message = "Role is mandatory")
+    private String role;
+
+    @NotBlank(message = "Department is mandatory")
+    private String department;
+}
+```
+
+```java
+// File: src/main/java/com/example/repository/EmployeeRepository.java
+package com.example.repository;
+
+import com.example.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+}
+```
+
+```java
+// File: src/main/java/com/example/service/EmployeeService.java
+package com.example.service;
+
+import com.example.entity.Employee;
+import com.example.repository.EmployeeRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Validated
+public class EmployeeService {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    public Employee createEmployee(@Valid Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    public Optional<Employee> getEmployeeById(String id) {
+        return employeeRepository.findById(id);
+    }
+
+    public Employee updateEmployee(String id, @Valid Employee employee) {
+        Optional<Employee> existingEmployee = employeeRepository.findById(id);
+        if (existingEmployee.isPresent()) {
+            employee.setId(id); // Ensure ID is preserved
+            return employeeRepository.save(employee);
+        } else {
+            return null; // Or throw an exception
+        }
+    }
+
+    public boolean deleteEmployee(String id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+}
+```
+
+       ```java
+// File: src/main/java/com/example/controller/EmployeeController.java
+package com.example.controller;
+
+import com.example.entity.Employee;
+import com.example.service.EmployeeService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/employees")
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @PostMapping
+    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
+        Employee createdEmployee = employeeService.createEmployee(employee);
+        return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+        Optional<Employee> employee = employeeService.getEmployeeById(id);
+        return employee.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @Valid @RequestBody Employee employee) {
+        Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+        if (updatedEmployee != null) {
+            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {
+        boolean deleted = employeeService.deleteEmployee(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        List<Employee> employees = employeeService.getAllEmployees();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+}
+```
+
+```java
+// File: src/main/java/com/example/EmployeeManagementApplication.java
+package com.example;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class EmployeeManagementApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EmployeeManagementApplication.class, args);
+    }
+
+}
+```
+
+```xml
+// File: pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.example</groupId>
+    <artifactId>employee-management</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>employee-management</name>
+    <description>Employee Management Microservice</description>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+```dockerfile
+# File: Dockerfile
+FROM openjdk:17-jdk-slim
+VOLUME /tmp
+COPY target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+```yaml
+# File: .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [ development ]
+  pull_request:
+    branches: [ development ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Run Tests with Maven
+        run: mvn test
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build Docker image
+        run: docker build -t employee-management .
+```
+```java
+// File: src/test/java/com/example/EmployeeControllerTest.java
+
+package com.example;
+
+import com.example.controller.EmployeeController;
+import com.example.entity.Employee;
+import com.example.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@WebMvcTest(EmployeeController.class)
+public class EmployeeControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private EmployeeService employeeService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    public void testGetEmployeeById() throws Exception {
+        // Arrange
+        String employeeId = "123";
+        Employee employee = new Employee(employeeId, "John Doe", "Developer", "IT");
+        when(employeeService.getEmployeeById(employeeId)).thenReturn(Optional.of(employee));
+
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employeeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("Developer"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.department").value("IT"));
+    }
+
+    @Test
+    public void testCreateEmployee() throws Exception {
+        // Arrange
+        Employee employee = new Employee(null, "Jane Smith", "Manager", "HR");
+        Employee savedEmployee = new Employee("456", "Jane Smith", "Manager", "HR");
+        when(employeeService.createEmployee(any(Employee.class))).thenReturn(savedEmployee);
+
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("456"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Jane Smith"));
+    }
+
+    @Test
+    public void testUpdateEmployee() throws Exception {
+        // Arrange
+        String employeeId = "123";
+        Employee employee = new Employee(null, "Updated Name", "Updated Role", "Updated Department");
+        Employee updatedEmployee = new Employee(employeeId, "Updated Name", "Updated Role", "Updated Department");
+
+        when(employeeService.updateEmployee(any(String.class), any(Employee.class))).thenReturn(updatedEmployee);
+
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/{id}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employeeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Updated Name"));
+
+    }
+}
+```
+
+
+```java
+// File: src/test/java/com/example/EmployeeServiceTest.java
+package com.example;
+
+import com.example.entity.Employee;
+import com.example.repository.EmployeeRepository;
+import com.example.service.EmployeeService;
+import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class EmployeeServiceTest {
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
+    @InjectMocks
+    private EmployeeService employeeService;
+
+    private Employee employee1;
+    private Employee employee2;
+
+    @BeforeEach
+    void setUp() {
+        employee1 = new Employee("1", "John Doe", "Developer", "IT");
+        employee2 = new Employee("2", "Jane Smith", "Manager", "HR");
+    }
+
+    @Test
+    void createEmployee_ValidEmployee_ReturnsSavedEmployee() {
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee1);
+
+        Employee savedEmployee = employeeService.createEmployee(employee1);
+
+        assertNotNull(savedEmployee);
+        assertEquals(employee1.getId(), savedEmployee.getId());
+        verify(employeeRepository, times(1)).save(employee1);
+    }
+
+    @Test
+    void createEmployee_InvalidEmployee_ThrowsException() {
+        Employee invalidEmployee = new Employee(); // Missing required fields
+
+        assertThrows(ConstraintViolationException.class, () -> employeeService.createEmployee(invalidEmployee));
+
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void getEmployeeById_ExistingId_ReturnsEmployee() {
+        String employeeId = "1";
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee1));
+
+        Optional<Employee> employee = employeeService.getEmployeeById(employeeId);
+
+        assertTrue(employee.isPresent());
+        assertEquals(employee1, employee.get());
+        verify(employeeRepository, times(1)).findById(employeeId);
+    }
+
+    @Test
+    void getEmployeeById_NonExistingId_ReturnsEmptyOptional() {
+        String employeeId = "3";
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        Optional<Employee> employee = employeeService.getEmployeeById(employeeId);
+
+        assertFalse(employee.isPresent());
+        verify(employeeRepository, times(1)).findById(employeeId);
+    }
+
+    @Test
+    void updateEmployee_ExistingIdAndValidEmployee_ReturnsUpdatedEmployee() {
+        String employeeId = "1";
+        Employee updatedEmployee = new Employee(null, "Updated Name", "Updated Role", "Updated Department");
+        Employee employeeWithId = new Employee(employeeId, "Updated Name", "Updated Role", "Updated Department");
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee1));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employeeWithId);
+
+        Employee result = employeeService.updateEmployee(employeeId, updatedEmployee);
+
+        assertNotNull(result);
+        assertEquals(employeeId, result.getId());
+        assertEquals("Updated Name", result.getName());
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository, times(1)).save(any(Employee.class));
+    }
+
+    @Test
+    void updateEmployee_NonExistingId_ReturnsNull() {
+        String employeeId = "3";
+        Employee updatedEmployee = new Employee(null, "Updated Name", "Updated Role", "Updated Department");
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        Employee result = employeeService.updateEmployee(employeeId, updatedEmployee);
+
+        assertNull(result);
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void updateEmployee_InvalidEmployee_ThrowsException() {
+        String employeeId = "1";
+        Employee invalidEmployee = new Employee(null, null, null, null);
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee1));
+
+        assertThrows(ConstraintViolationException.class, () -> employeeService.updateEmployee(employeeId, invalidEmployee));
+
+        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void deleteEmployee_ExistingId_ReturnsTrue() {
+        String employeeId = "1";
+        when(employeeRepository.existsById(employeeId)).thenReturn(true);
+
+        boolean result = employeeService.deleteEmployee(employeeId);
+
+        assertTrue(result);
+        verify(employeeRepository, times(1)).existsById(employeeId);
+        verify(employeeRepository, times(1)).deleteById(employeeId);
+    }
+
+    @Test
+    void deleteEmployee_NonExistingId_ReturnsFalse() {
+        String employeeId = "3";
+        when(employeeRepository.existsById(employeeId)).thenReturn(false);
+
+        boolean result = employeeService.deleteEmployee(employeeId);
+
+        assertFalse(result);
+        verify(employeeRepository, times(1)).existsById(employeeId);
+        verify(employeeRepository, never()).deleteById(employeeId);
+    }
+
+    @Test
+    void getAllEmployees_ReturnsListOfEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        when(employeeRepository.findAll()).thenReturn(employees);
+
+        List<Employee> allEmployees = employeeService.getAllEmployees();
+
+        assertEquals(2, allEmployees.size());
+        verify(employeeRepository, times(1)).findAll();
+    }
+}
+```
+
+```java
+// File: src/test/java/com/example/EmployeeControllerIntegrationTest.java
+package com.example;
+
+import com.example.entity.Employee;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class EmployeeControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    public void testCreateEmployeeIntegration() throws Exception {
+        Employee employee = new Employee(null, "Integration Test", "Tester", "QA");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Integration Test"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("Tester"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.department").value("QA"));
+    }
+
+     @Test
+    public void testGetEmployeeByIdIntegration() throws Exception {
+        // First, create an employee
+        Employee employeeToCreate = new Employee(null, "Get Test", "Tester", "QA");
+
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employeeToCreate)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        Employee createdEmployee = objectMapper.readValue(responseJson, Employee.class);
+        String employeeId = createdEmployee.getId();
+
+        // Then, retrieve the employee by ID
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employeeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Get Test"));
+    }
+
+    @Test
+    public void testUpdateEmployeeIntegration() throws Exception {
+        // First, create an employee
+        Employee employeeToCreate = new Employee(null, "Update Test", "Tester", "QA");
+
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employeeToCreate)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        Employee createdEmployee = objectMapper.readValue(responseJson, Employee.class);
+        String employeeId = createdEmployee.getId();
+
+        // Then, update the employee
+        Employee employeeUpdate = new Employee(null, "Updated Name", "Updated Role", "Updated Department");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employeeUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employeeId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Updated Name"));
+    }
+
+
+    @Test
+    public void testDeleteEmployeeIntegration() throws Exception {
+        // First, create an employee
+        Employee employeeToCreate = new Employee(null, "Delete Test", "Tester", "QA");
+
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employeeToCreate)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        Employee createdEmployee = objectMapper.readValue(responseJson, Employee.class);
+        String employeeId = createdEmployee.getId();
+
+        // Then, delete the employee
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        // Verify that the employee is deleted (optional)
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetAllEmployeesIntegration() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testCreateEmployeeValidation() throws Exception {
+        Employee employee = new Employee(null, null, null, null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(status().isBadRequest()); // Expecting a 400 due to validation errors
+    }
+}
+```
+

@@ -1,0 +1,992 @@
+"C:\Program Files\Java\jdk-21\bin\java.exe" "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.1.3\lib\idea_rt.jar=63745" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath "D:\GitHub\latest git server\ADKFramework\target\classes;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.5.3\spring-boot-starter-web-3.5.3.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-starter\3.5.3\spring-boot-starter-3.5.3.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot\3.5.3\spring-boot-3.5.3.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.5.3\spring-boot-autoconfigure-3.5.3.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.5.3\spring-boot-starter-logging-3.5.3.jar;C:\Users\USER\.m2\repository\ch\qos\logback\logback-classic\1.5.18\logback-classic-1.5.18.jar;C:\Users\USER\.m2\repository\ch\qos\logback\logback-core\1.5.18\logback-core-1.5.18.jar;C:\Users\USER\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.24.3\log4j-to-slf4j-2.24.3.jar;C:\Users\USER\.m2\repository\org\apache\logging\log4j\log4j-api\2.24.3\log4j-api-2.24.3.jar;C:\Users\USER\.m2\repository\org\slf4j\jul-to-slf4j\2.0.17\jul-to-slf4j-2.0.17.jar;C:\Users\USER\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\USER\.m2\repository\org\yaml\snakeyaml\2.4\snakeyaml-2.4.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.5.3\spring-boot-starter-json-3.5.3.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.19.1\jackson-module-parameter-names-2.19.1.jar;C:\Users\USER\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.5.3\spring-boot-starter-tomcat-3.5.3.jar;C:\Users\USER\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.42\tomcat-embed-core-10.1.42.jar;C:\Users\USER\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.42\tomcat-embed-el-10.1.42.jar;C:\Users\USER\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.42\tomcat-embed-websocket-10.1.42.jar;C:\Users\USER\.m2\repository\org\springframework\spring-web\6.2.8\spring-web-6.2.8.jar;C:\Users\USER\.m2\repository\org\springframework\spring-beans\6.2.8\spring-beans-6.2.8.jar;C:\Users\USER\.m2\repository\io\micrometer\micrometer-observation\1.15.1\micrometer-observation-1.15.1.jar;C:\Users\USER\.m2\repository\io\micrometer\micrometer-commons\1.15.1\micrometer-commons-1.15.1.jar;C:\Users\USER\.m2\repository\org\springframework\spring-webmvc\6.2.8\spring-webmvc-6.2.8.jar;C:\Users\USER\.m2\repository\org\springframework\spring-aop\6.2.8\spring-aop-6.2.8.jar;C:\Users\USER\.m2\repository\org\springframework\spring-context\6.2.8\spring-context-6.2.8.jar;C:\Users\USER\.m2\repository\org\springframework\spring-expression\6.2.8\spring-expression-6.2.8.jar;C:\Users\USER\.m2\repository\com\google\adk\google-adk\0.1.0\google-adk-0.1.0.jar;C:\Users\USER\.m2\repository\com\anthropic\anthropic-java\1.4.0\anthropic-java-1.4.0.jar;C:\Users\USER\.m2\repository\com\anthropic\anthropic-java-client-okhttp\1.4.0\anthropic-java-client-okhttp-1.4.0.jar;C:\Users\USER\.m2\repository\com\squareup\okhttp3\logging-interceptor\4.12.0\logging-interceptor-4.12.0.jar;C:\Users\USER\.m2\repository\com\anthropic\anthropic-java-vertex\1.4.0\anthropic-java-vertex-1.4.0.jar;C:\Users\USER\.m2\repository\com\anthropic\anthropic-java-core\1.4.0\anthropic-java-core-1.4.0.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\module\jackson-module-kotlin\2.19.1\jackson-module-kotlin-2.19.1.jar;C:\Users\USER\.m2\repository\org\jetbrains\kotlin\kotlin-reflect\1.9.25\kotlin-reflect-1.9.25.jar;C:\Users\USER\.m2\repository\org\apache\httpcomponents\core5\httpcore5\5.3.4\httpcore5-5.3.4.jar;C:\Users\USER\.m2\repository\org\apache\httpcomponents\client5\httpclient5\5.5\httpclient5-5.5.jar;C:\Users\USER\.m2\repository\org\apache\httpcomponents\core5\httpcore5-h2\5.3.4\httpcore5-h2-5.3.4.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-speech\4.51.0\google-cloud-speech-4.51.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-cloud-speech-v1p1beta1\2.51.0\proto-google-cloud-speech-v1p1beta1-2.51.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-cloud-speech-v2\4.51.0\proto-google-cloud-speech-v2-4.51.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-iam-v1\1.45.1\proto-google-iam-v1-1.45.1.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-cloud-speech-v1\4.51.0\proto-google-cloud-speech-v1-4.51.0.jar;C:\Users\USER\.m2\repository\com\google\auto\value\auto-value-annotations\1.11.0\auto-value-annotations-1.11.0.jar;C:\Users\USER\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\USER\.m2\repository\javax\annotation\javax.annotation-api\1.3.2\javax.annotation-api-1.3.2.jar;C:\Users\USER\.m2\repository\com\google\j2objc\j2objc-annotations\3.0.0\j2objc-annotations-3.0.0.jar;C:\Users\USER\.m2\repository\com\google\guava\guava\33.4.0-jre\guava-33.4.0-jre.jar;C:\Users\USER\.m2\repository\com\google\guava\failureaccess\1.0.2\failureaccess-1.0.2.jar;C:\Users\USER\.m2\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;C:\Users\USER\.m2\repository\org\checkerframework\checker-qual\3.48.3\checker-qual-3.48.3.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-api\1.69.0\grpc-api-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-stub\1.69.0\grpc-stub-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-protobuf\1.69.0\grpc-protobuf-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-protobuf-lite\1.69.0\grpc-protobuf-lite-1.69.0.jar;C:\Users\USER\.m2\repository\com\google\protobuf\protobuf-java\3.25.5\protobuf-java-3.25.5.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-common-protos\2.50.1\proto-google-common-protos-2.50.1.jar;C:\Users\USER\.m2\repository\com\google\api\gax\2.59.1\gax-2.59.1.jar;C:\Users\USER\.m2\repository\com\google\auth\google-auth-library-credentials\1.30.1\google-auth-library-credentials-1.30.1.jar;C:\Users\USER\.m2\repository\io\opencensus\opencensus-api\0.31.1\opencensus-api-0.31.1.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-context\1.69.0\grpc-context-1.69.0.jar;C:\Users\USER\.m2\repository\com\google\api\gax-grpc\2.59.1\gax-grpc-2.59.1.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-inprocess\1.69.0\grpc-inprocess-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-core\1.69.0\grpc-core-1.69.0.jar;C:\Users\USER\.m2\repository\com\google\android\annotations\4.1.1.4\annotations-4.1.1.4.jar;C:\Users\USER\.m2\repository\org\codehaus\mojo\animal-sniffer-annotations\1.24\animal-sniffer-annotations-1.24.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-alts\1.69.0\grpc-alts-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-grpclb\1.69.0\grpc-grpclb-1.69.0.jar;C:\Users\USER\.m2\repository\org\conscrypt\conscrypt-openjdk-uber\2.5.2\conscrypt-openjdk-uber-2.5.2.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-auth\1.69.0\grpc-auth-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-netty-shaded\1.69.0\grpc-netty-shaded-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-util\1.69.0\grpc-util-1.69.0.jar;C:\Users\USER\.m2\repository\io\perfmark\perfmark-api\0.27.0\perfmark-api-0.27.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-googleapis\1.69.0\grpc-googleapis-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-xds\1.69.0\grpc-xds-1.69.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-services\1.69.0\grpc-services-1.69.0.jar;C:\Users\USER\.m2\repository\com\google\re2j\re2j\1.7\re2j-1.7.jar;C:\Users\USER\.m2\repository\com\google\api\gax-httpjson\2.59.1\gax-httpjson-2.59.1.jar;C:\Users\USER\.m2\repository\com\google\code\gson\gson\2.13.1\gson-2.13.1.jar;C:\Users\USER\.m2\repository\com\google\http-client\google-http-client\1.45.3\google-http-client-1.45.3.jar;C:\Users\USER\.m2\repository\commons-codec\commons-codec\1.18.0\commons-codec-1.18.0.jar;C:\Users\USER\.m2\repository\org\apache\httpcomponents\httpcore\4.4.16\httpcore-4.4.16.jar;C:\Users\USER\.m2\repository\io\opencensus\opencensus-contrib-http-util\0.31.1\opencensus-contrib-http-util-0.31.1.jar;C:\Users\USER\.m2\repository\com\google\http-client\google-http-client-gson\1.45.3\google-http-client-gson-1.45.3.jar;C:\Users\USER\.m2\repository\com\google\protobuf\protobuf-java-util\3.25.5\protobuf-java-util-3.25.5.jar;C:\Users\USER\.m2\repository\org\threeten\threetenbp\1.7.0\threetenbp-1.7.0.jar;C:\Users\USER\.m2\repository\io\modelcontextprotocol\sdk\mcp\0.10.0\mcp-0.10.0.jar;C:\Users\USER\.m2\repository\org\slf4j\slf4j-api\2.0.17\slf4j-api-2.0.17.jar;C:\Users\USER\.m2\repository\io\projectreactor\reactor-core\3.7.7\reactor-core-3.7.7.jar;C:\Users\USER\.m2\repository\com\google\auth\google-auth-library-oauth2-http\1.30.1\google-auth-library-oauth2-http-1.30.1.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-storage\2.47.0\google-cloud-storage-2.47.0.jar;C:\Users\USER\.m2\repository\com\google\http-client\google-http-client-jackson2\1.45.3\google-http-client-jackson2-1.45.3.jar;C:\Users\USER\.m2\repository\com\google\api-client\google-api-client\2.7.1\google-api-client-2.7.1.jar;C:\Users\USER\.m2\repository\com\google\oauth-client\google-oauth-client\1.37.0\google-oauth-client-1.37.0.jar;C:\Users\USER\.m2\repository\com\google\http-client\google-http-client-apache-v2\1.45.3\google-http-client-apache-v2-1.45.3.jar;C:\Users\USER\.m2\repository\com\google\apis\google-api-services-storage\v1-rev20241206-2.0.0\google-api-services-storage-v1-rev20241206-2.0.0.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-core\2.49.1\google-cloud-core-2.49.1.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-core-http\2.49.1\google-cloud-core-http-2.49.1.jar;C:\Users\USER\.m2\repository\com\google\http-client\google-http-client-appengine\1.45.3\google-http-client-appengine-1.45.3.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-core-grpc\2.49.1\google-cloud-core-grpc-2.49.1.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-context\1.49.0\opentelemetry-context-1.49.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-cloud-storage-v2\2.47.0\proto-google-cloud-storage-v2-2.47.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\grpc-google-cloud-storage-v2\2.47.0\grpc-google-cloud-storage-v2-2.47.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\gapic-google-cloud-storage-v2\2.47.0\gapic-google-cloud-storage-v2-2.47.0.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-opentelemetry\1.69.0\grpc-opentelemetry-1.69.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk-metrics\1.49.0\opentelemetry-sdk-metrics-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-api-incubator\1.45.0-alpha\opentelemetry-api-incubator-1.45.0-alpha.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk-common\1.49.0\opentelemetry-sdk-common-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk-extension-autoconfigure-spi\1.49.0\opentelemetry-sdk-extension-autoconfigure-spi-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\semconv\opentelemetry-semconv\1.27.0-alpha\opentelemetry-semconv-1.27.0-alpha.jar;C:\Users\USER\.m2\repository\com\google\cloud\opentelemetry\exporter-metrics\0.33.0\exporter-metrics-0.33.0.jar;C:\Users\USER\.m2\repository\com\google\cloud\google-cloud-monitoring\3.52.0\google-cloud-monitoring-3.52.0.jar;C:\Users\USER\.m2\repository\com\google\api\grpc\proto-google-cloud-monitoring-v3\3.52.0\proto-google-cloud-monitoring-v3-3.52.0.jar;C:\Users\USER\.m2\repository\com\google\cloud\opentelemetry\shared-resourcemapping\0.33.0\shared-resourcemapping-0.33.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\contrib\opentelemetry-gcp-resources\1.37.0-alpha\opentelemetry-gcp-resources-1.37.0-alpha.jar;C:\Users\USER\.m2\repository\com\google\cloud\opentelemetry\detector-resources-support\0.33.0\detector-resources-support-0.33.0.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.19.1\jackson-core-2.19.1.jar;C:\Users\USER\.m2\repository\io\grpc\grpc-rls\1.69.0\grpc-rls-1.69.0.jar;C:\Users\USER\.m2\repository\com\squareup\okhttp3\okhttp\4.12.0\okhttp-4.12.0.jar;C:\Users\USER\.m2\repository\com\squareup\okio\okio\3.6.0\okio-3.6.0.jar;C:\Users\USER\.m2\repository\com\squareup\okio\okio-jvm\3.6.0\okio-jvm-3.6.0.jar;C:\Users\USER\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;C:\Users\USER\.m2\repository\com\google\errorprone\error_prone_annotations\2.38.0\error_prone_annotations-2.38.0.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.19.1\jackson-databind-2.19.1.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.19.1\jackson-annotations-2.19.1.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.19.1\jackson-datatype-jdk8-2.19.1.jar;C:\Users\USER\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.19.1\jackson-datatype-jsr310-2.19.1.jar;C:\Users\USER\.m2\repository\com\google\protobuf\protobuf-javalite\4.31.0-RC1\protobuf-javalite-4.31.0-RC1.jar;C:\Users\USER\.m2\repository\org\java-websocket\Java-WebSocket\1.6.0\Java-WebSocket-1.6.0.jar;C:\Users\USER\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\USER\.m2\repository\io\reactivex\rxjava3\rxjava\3.1.10\rxjava-3.1.10.jar;C:\Users\USER\.m2\repository\org\reactivestreams\reactive-streams\1.0.4\reactive-streams-1.0.4.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-api\1.49.0\opentelemetry-api-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk\1.49.0\opentelemetry-sdk-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-exporter-otlp\1.49.0\opentelemetry-exporter-otlp-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-exporter-otlp-common\1.49.0\opentelemetry-exporter-otlp-common-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-exporter-common\1.49.0\opentelemetry-exporter-common-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-exporter-sender-okhttp\1.49.0\opentelemetry-exporter-sender-okhttp-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk-logs\1.49.0\opentelemetry-sdk-logs-1.49.0.jar;C:\Users\USER\.m2\repository\io\opentelemetry\opentelemetry-sdk-trace\1.49.0\opentelemetry-sdk-trace-1.49.0.jar;C:\Users\USER\.m2\repository\com\google\genai\google-genai\1.8.0\google-genai-1.8.0.jar;C:\Users\USER\.m2\repository\org\apache\httpcomponents\httpclient\4.5.14\httpclient-4.5.14.jar;C:\Users\USER\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\USER\.m2\repository\com\google\auto\value\auto-value\1.11.0\auto-value-1.11.0.jar;C:\Users\USER\.m2\repository\com\google\api\api-common\2.47.0\api-common-2.47.0.jar;C:\Users\USER\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;C:\Users\USER\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;C:\Users\USER\.m2\repository\org\jetbrains\annotations\13.0\annotations-13.0.jar;C:\Users\USER\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;C:\Users\USER\.m2\repository\org\springframework\spring-core\6.2.8\spring-core-6.2.8.jar;C:\Users\USER\.m2\repository\org\springframework\spring-jcl\6.2.8\spring-jcl-6.2.8.jar" com.msn.autonomous.AdkSdlcWorkflow_7
+
+Enter the full path to your SRS document (e.g., /home/user/project/specs/srs.txt):
+D:\GitHub\latest git server\SRSDocument.txt
+Reading SRS document from: D:\GitHub\latest git server\SRSDocument.txt
+  - Found Repo URL: https://github.com/msn5566/ADKFramework
+  - Found Base Branch: development
+  - Found Repo Name: ADKFramework
+Repository directory exists. Ensuring it's on the correct base branch and up-to-date.
+Your branch is up to date with 'origin/development'.
+Switched to branch 'development'
+From https://github.com/msn5566/ADKFramework
+ * branch            development -> FETCH_HEAD
+Already up to date.
+Found previous SRS state file for comparison.
+🤖 Running Change Analysis Agent...
+Creating and checking out new feature branch: feature_20250718105647
+Switched to a new branch 'feature_20250718105647'
+Cleaning workspace on new feature branch...
+  - Removed: src
+  - Removed: pom.xml
+  - Removed: .github
+✅ Wrote change analysis to feature branch: ADKFramework\AI_CHANGELOG.md
+
+--- Running Main AI Workflow ---
+[RequirementsAgent]
+Commit-Summary: Feat: Implement Employee and Student Management Microservice CRUD operations.
+
+Feature: Create Employee
+Input: Employee details (name, address, department, etc.) via REST API.
+Output: Confirmation of employee creation with employee ID, HTTP status 201.
+Constraints: Input data must be validated.
+Logic: Receive employee details, validate, persist to MongoDB, and return confirmation.
+
+Feature: Read Employee
+Input: Employee ID via REST API.
+Output: Employee details in JSON format, HTTP status 200. If employee not found, return HTTP status 404.
+Constraints: Employee ID must be valid.
+Logic: Retrieve employee from MongoDB by ID, and return the employee details.
+
+Feature: Update Employee
+Input: Employee ID and updated employee details via REST API.
+Output: Confirmation of employee update, HTTP status 200. If employee not found, return HTTP status 404.
+Constraints: Input data must be validated.
+Logic: Receive employee ID and updated details, validate, update employee in MongoDB, and return confirmation.
+
+Feature: Delete Employee
+Input: Employee ID via REST API.
+Output: Confirmation of employee deletion, HTTP status 204. If employee not found, return HTTP status 404.
+Constraints: Employee ID must be valid.
+Logic: Receive employee ID, delete employee from MongoDB, and return confirmation.
+
+Feature: Create Student
+Input: Student details (name, address, major, etc.) via REST API.
+Output: Confirmation of student creation with student ID, HTTP status 201.
+Constraints: Input data must be validated.
+Logic: Receive student details, validate, persist to MongoDB, and return confirmation.
+
+Feature: Read Student
+Input: Student ID via REST API.
+Output: Student details in JSON format, HTTP status 200. If student not found, return HTTP status 404.
+Constraints: Student ID must be valid.
+Logic: Retrieve student from MongoDB by ID, and return the student details.
+
+Feature: Update Student
+Input: Student ID and updated student details via REST API.
+Output: Confirmation of student update, HTTP status 200. If student not found, return HTTP status 404.
+Constraints: Input data must be validated.
+Logic: Receive student ID and updated details, validate, update student in MongoDB, and return confirmation.
+
+Feature: Delete Student
+Input: Student ID via REST API.
+Output: Confirmation of student deletion, HTTP status 204. If student not found, return HTTP status 404.
+Constraints: Student ID must be valid.
+Logic: Receive student ID, delete student from MongoDB, and return confirmation.
+
+
+[DependencyAgent]
+org.springframework.boot:spring-boot-starter-web
+org.springframework.boot:spring-boot-starter-data-mongodb
+org.springframework.boot:spring-boot-starter-validation
+org.springdoc:springdoc-openapi-starter-webmvc-ui
+org.springframework.boot:spring-boot-starter-test:test
+org.mockito:mockito-core:test
+org.projectlombok:lombok:optional
+---END-DEPS---
+Commit-Summary: Feat: Implement Employee and Student Management Microservice CRUD operations.
+
+Feature: Create Employee
+Input: Employee details (name, address, department, etc.) via REST API.
+Output: Confirmation of employee creation with employee ID, HTTP status 201.
+Constraints: Input data must be validated.
+Logic: Receive employee details, validate, persist to MongoDB, and return confirmation.
+
+Feature: Read Employee
+Input: Employee ID via REST API.
+Output: Employee details in JSON format, HTTP status 200. If employee not found, return HTTP status 404.
+Constraints: Employee ID must be valid.
+Logic: Retrieve employee from MongoDB by ID, and return the employee details.
+
+Feature: Update Employee
+Input: Employee ID and updated employee details via REST API.
+Output: Confirmation of employee update, HTTP status 200. If employee not found, return HTTP status 404.
+Constraints: Input data must be validated.
+Logic: Receive employee ID and updated details, validate, update employee in MongoDB, and return confirmation.
+
+Feature: Delete Employee
+Input: Employee ID via REST API.
+Output: Confirmation of employee deletion, HTTP status 204. If employee not found, return HTTP status 404.
+Constraints: Employee ID must be valid.
+Logic: Receive employee ID, delete employee from MongoDB, and return confirmation.
+
+Feature: Create Student
+Input: Student details (name, address, major, etc.) via REST API.
+Output: Confirmation of student creation with student ID, HTTP status 201.
+Constraints: Input data must be validated.
+Logic: Receive student details, validate, persist to MongoDB, and return confirmation.
+
+Feature: Read Student
+Input: Student ID via REST API.
+Output: Student details in JSON format, HTTP status 200. If employee not found, return HTTP status 404.
+Constraints: Student ID must be valid.
+Logic: Retrieve student from MongoDB by ID, and return the student details.
+
+Feature: Update Student
+Input: Student ID and updated student details via REST API.
+Output: Confirmation of student update, HTTP status 200. If student not found, return HTTP status 404.
+Constraints: Input data must be validated.
+Logic: Receive student ID and updated details, validate, update student in MongoDB, and return confirmation.
+
+Feature: Delete Student
+Input: Student ID via REST API.
+Output: Confirmation of student deletion, HTTP status 204. If student not found, return HTTP status 404.
+Constraints: Student ID must be valid.
+Logic: Receive student ID, delete student from MongoDB, and return confirmation.
+
+
+[CodeGenAgent]
+```java
+// File: src/main/java/com/example/entity/Employee.java
+package com.example.entity;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    private String address;
+    private String department;
+}
+```
+
+```java
+// File: src/main/java/com/example/repository/EmployeeRepository.java
+package com.example.repository;
+
+import com.example.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+}
+```
+
+```java
+// File: src/main/java/com/example/service/EmployeeService.java
+package com.example.service;
+
+import com.example.entity.Employee;
+import com.example.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    public Employee createEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    public Employee getEmployee(String id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+    }
+
+    public Employee updateEmployee(String id, Employee employee) {
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+
+        employee.setId(id); // Ensure ID is not overwritten
+        return employeeRepository.save(employee);
+    }
+
+    public void deleteEmployee(String id) {
+        employeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+        employeeRepository.deleteById(id);
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+}
+```
+
+```java
+// File: src/main/java/com/example/controller/EmployeeController.java
+package com.example.controller;
+
+import com.example.entity.Employee;
+import com.example.service.EmployeeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+
+    @PostMapping
+    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
+        Employee createdEmployee = employeeService.createEmployee(employee);
+        return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable String id) {
+        Employee employee = employeeService.getEmployee(id);
+        return ResponseEntity.ok(employee);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @Valid @RequestBody Employee employee) {
+        Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {
+        employeeService.deleteEmployee(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(employeeService.getAllEmployees());
+    }
+}
+```
+
+```java
+// File: src/main/java/com/example/entity/Student.java
+package com.example.entity;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@Document(collection = "students")
+public class Student {
+
+    @Id
+    private String id;
+
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    private String address;
+    private String major;
+}
+```
+
+```java
+// File: src/main/java/com/example/repository/StudentRepository.java
+package com.example.repository;
+
+import com.example.entity.Student;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface StudentRepository extends MongoRepository<Student, String> {
+}
+```
+
+```java
+// File: src/main/java/com/example/service/StudentService.java
+package com.example.service;
+
+import com.example.entity.Student;
+import com.example.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class StudentService {
+
+    private final StudentRepository studentRepository;
+
+    public Student createStudent(Student student) {
+        return studentRepository.save(student);
+    }
+
+    public Student getStudent(String id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+    }
+
+    public Student updateStudent(String id, Student student) {
+        Student existingStudent = studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+
+        student.setId(id); // Ensure ID is not overwritten
+        return studentRepository.save(student);
+    }
+
+    public void deleteStudent(String id) {
+        studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        studentRepository.deleteById(id);
+    }
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
+}
+```
+
+```java
+// File: src/main/java/com/example/controller/StudentController.java
+package com.example.controller;
+
+import com.example.entity.Student;
+import com.example.service.StudentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/students")
+@RequiredArgsConstructor
+public class StudentController {
+
+    private final StudentService studentService;
+
+    @PostMapping
+    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
+        Student createdStudent = studentService.createStudent(student);
+        return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> getStudent(@PathVariable String id) {
+        Student student = studentService.getStudent(id);
+        return ResponseEntity.ok(student);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable String id, @Valid @RequestBody Student student) {
+        Student updatedStudent = studentService.updateStudent(id, student);
+        return ResponseEntity.ok(updatedStudent);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable String id) {
+        studentService.deleteStudent(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(studentService.getAllStudents());
+    }
+}
+```
+
+
+[TestGenAgent]
+```java
+// File: src/test/java/com/example/service/EmployeeServiceTest.java
+package com.example.service;
+
+import com.example.entity.Employee;
+import com.example.repository.EmployeeRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class EmployeeServiceTest {
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
+    @InjectMocks
+    private EmployeeService employeeService;
+
+    private Employee employee;
+
+    @BeforeEach
+    void setUp() {
+        employee = new Employee();
+        employee.setId("1");
+        employee.setName("John Doe");
+        employee.setAddress("123 Main St");
+        employee.setDepartment("IT");
+    }
+
+    @Test
+    void createEmployee_shouldSaveEmployee() {
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+
+        Employee savedEmployee = employeeService.createEmployee(new Employee());
+
+        assertNotNull(savedEmployee);
+        assertEquals(employee, savedEmployee);
+        verify(employeeRepository, times(1)).save(any(Employee.class));
+    }
+
+    @Test
+    void getEmployee_shouldReturnEmployee_whenEmployeeExists() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
+
+        Employee retrievedEmployee = employeeService.getEmployee("1");
+
+        assertNotNull(retrievedEmployee);
+        assertEquals(employee, retrievedEmployee);
+        verify(employeeRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void getEmployee_shouldThrowException_whenEmployeeDoesNotExist() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> employeeService.getEmployee("1"));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Employee not found", exception.getReason());
+        verify(employeeRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void updateEmployee_shouldUpdateEmployee_whenEmployeeExists() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+
+        Employee updatedEmployeeDetails = new Employee();
+        updatedEmployeeDetails.setName("Updated Name");
+        updatedEmployeeDetails.setAddress("Updated Address");
+        updatedEmployeeDetails.setDepartment("Updated Department");
+
+        Employee updatedEmployee = employeeService.updateEmployee("1", updatedEmployeeDetails);
+
+        assertNotNull(updatedEmployee);
+        assertEquals("Updated Name", updatedEmployee.getName());
+        assertEquals("Updated Address", updatedEmployee.getAddress());
+        assertEquals("Updated Department", updatedEmployee.getDepartment());
+        verify(employeeRepository, times(1)).findById("1");
+        verify(employeeRepository, times(1)).save(any(Employee.class));
+    }
+
+    @Test
+    void updateEmployee_shouldThrowException_whenEmployeeDoesNotExist() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.empty());
+
+        Employee updatedEmployeeDetails = new Employee();
+        updatedEmployeeDetails.setName("Updated Name");
+        updatedEmployeeDetails.setAddress("Updated Address");
+        updatedEmployeeDetails.setDepartment("Updated Department");
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> employeeService.updateEmployee("1", updatedEmployeeDetails));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Employee not found", exception.getReason());
+        verify(employeeRepository, times(1)).findById("1");
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @Test
+    void deleteEmployee_shouldDeleteEmployee_whenEmployeeExists() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
+        doNothing().when(employeeRepository).deleteById("1");
+
+        employeeService.deleteEmployee("1");
+
+        verify(employeeRepository, times(1)).findById("1");
+        verify(employeeRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void deleteEmployee_shouldThrowException_whenEmployeeDoesNotExist() {
+        when(employeeRepository.findById("1")).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> employeeService.deleteEmployee("1"));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Employee not found", exception.getReason());
+        verify(employeeRepository, times(1)).findById("1");
+        verify(employeeRepository, never()).deleteById("1");
+    }
+
+    @Test
+    void getAllEmployees_shouldReturnListOfEmployees() {
+        when(employeeRepository.findAll()).thenReturn(List.of(employee));
+
+        List<Employee> employees = employeeService.getAllEmployees();
+
+        assertNotNull(employees);
+        assertEquals(1, employees.size());
+        assertEquals(employee, employees.get(0));
+        verify(employeeRepository, times(1)).findAll();
+    }
+}
+```
+
+```java
+// File: src/test/java/com/example/controller/EmployeeControllerTest.java
+package com.example.controller;
+
+import com.example.entity.Employee;
+import com.example.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+
+@WebMvcTest(EmployeeController.class)
+class EmployeeControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private EmployeeService employeeService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private Employee employee;
+
+    @BeforeEach
+    void setUp() {
+        employee = new Employee();
+        employee.setId("1");
+        employee.setName("John Doe");
+        employee.setAddress("123 Main St");
+        employee.setDepartment("IT");
+    }
+
+    @Test
+    void createEmployee_shouldCreateNewEmployee() throws Exception {
+        when(employeeService.createEmployee(any(Employee.class))).thenReturn(employee);
+
+        mockMvc.perform(post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("John Doe")))
+                .andExpect(jsonPath("$.address", is("123 Main St")))
+                .andExpect(jsonPath("$.department", is("IT")));
+    }
+
+    @Test
+    void getEmployee_shouldReturnEmployee() throws Exception {
+        when(employeeService.getEmployee("1")).thenReturn(employee);
+
+        mockMvc.perform(get("/employees/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("John Doe")))
+                .andExpect(jsonPath("$.address", is("123 Main St")))
+                .andExpect(jsonPath("$.department", is("IT")));
+    }
+
+    @Test
+    void updateEmployee_shouldUpdateEmployee() throws Exception {
+        when(employeeService.updateEmployee("1", any(Employee.class))).thenReturn(employee);
+
+        mockMvc.perform(put("/employees/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employee)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("John Doe")))
+                .andExpect(jsonPath("$.address", is("123 Main St")))
+                .andExpect(jsonPath("$.department", is("IT")));
+    }
+
+    @Test
+    void deleteEmployee_shouldDeleteEmployee() throws Exception {
+        mockMvc.perform(delete("/employees/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getAllEmployees_shouldReturnAllEmployees() throws Exception {
+        when(employeeService.getAllEmployees()).thenReturn(List.of(employee));
+
+        mockMvc.perform(get("/employees")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is("1")))
+                .andExpect(jsonPath("$[0].name", is("John Doe")))
+                .andExpect(jsonPath("$[0].address", is("123 Main St")))
+                .andExpect(jsonPath("$[0].department", is("IT")));
+    }
+}
+```
+
+```java
+// File: src/test/java/com/example/service/StudentServiceTest.java
+package com.example.service;
+
+import com.example.entity.Student;
+import com.example.repository.StudentRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class StudentServiceTest {
+
+    @Mock
+    private StudentRepository studentRepository;
+
+    @InjectMocks
+    private StudentService studentService;
+
+    private Student student;
+
+    @BeforeEach
+    void setUp() {
+        student = new Student();
+        student.setId("1");
+        student.setName("Jane Smith");
+        student.setAddress("456 Oak Ave");
+        student.setMajor("Computer Science");
+    }
+
+    @Test
+    void createStudent_shouldSaveStudent() {
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+
+        Student savedStudent = studentService.createStudent(new Student());
+
+        assertNotNull(savedStudent);
+        assertEquals(student, savedStudent);
+        verify(studentRepository, times(1)).save(any(Student.class));
+    }
+
+    @Test
+    void getStudent_shouldReturnStudent_whenStudentExists() {
+        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+
+        Student retrievedStudent = studentService.getStudent("1");
+
+        assertNotNull(retrievedStudent);
+        assertEquals(student, retrievedStudent);
+        verify(studentRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void getStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.getStudent("1"));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
+    }
+
+    @Test
+    void updateStudent_shouldUpdateStudent_whenStudentExists() {
+        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Updated Name");
+        updatedStudentDetails.setAddress("Updated Address");
+        updatedStudentDetails.setMajor("Updated Major");
+
+        Student updatedStudent = studentService.updateStudent("1", updatedStudentDetails);
+
+        assertNotNull(updatedStudent);
+        assertEquals("Updated Name", updatedStudent.getName());
+        assertEquals("Updated Address", updatedStudent.getAddress());
+        assertEquals("Updated Major", updatedStudent.getMajor());
+        verify(studentRepository, times(1)).findById("1");
+        verify(studentRepository, times(1)).save(any(Student.class));
+    }
+
+    @Test
+    void updateStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
+
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Updated Name");
+        updatedStudentDetails.setAddress("Updated Address");
+        updatedStudentDetails.setMajor("Updated Major");
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.updateStudent("1", updatedStudentDetails));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
+        verify(studentRepository, never()).save(any(Student.class));
+    }
+
+    @Test
+    void deleteStudent_shouldDeleteStudent_whenStudentExists() {
+        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+        doNothing().when(studentRepository).deleteById("1");
+
+        studentService.deleteStudent("1");
+
+        verify(studentRepository, times(1)).findById("1");
+        verify(studentRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void deleteStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.deleteStudent("1"));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
+        verify(studentRepository, never()).deleteById("1");
+    }
+
+    @Test
+    void getAllStudents_shouldReturnListOfStudents() {
+        when(studentRepository.findAll()).thenReturn(List.of(student));
+
+        List<Student> students = studentService.getAllStudents();
+
+        assertNotNull(students);
+        assertEquals(1, students.size());
+        assertEquals(student, students.get(0));
+        verify(studentRepository, times(1)).findAll();
+    }
+}
+```
+
+```java
+// File: src/test/java/com/example/controller/StudentControllerTest.java
+package com.example.controller;
+
+import com.example.entity.Student;
+import com.example.service.StudentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(StudentController.class)
+class StudentControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private StudentService studentService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private Student student;
+
+    @BeforeEach
+    void setUp() {
+        student = new Student();
+        student.setId("1");
+        student.setName("Jane Smith");
+        student.setAddress("456 Oak Ave");
+        student.setMajor("Computer Science");
+    }
+
+    @Test
+    void createStudent_shouldCreateNewStudent() throws Exception {
+        when(studentService.createStudent(any(Student.class))).thenReturn(student);
+
+        mockMvc.perform(post("/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(student)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Jane Smith")))
+                .andExpect(jsonPath("$.address", is("456 Oak Ave")))
+                .andExpect(jsonPath("$.major", is("Computer Science")));
+    }
+
+    @Test
+    void getStudent_shouldReturnStudent() throws Exception {
+        when(studentService.getStudent("1")).thenReturn(student);
+
+        mockMvc.perform(get("/students/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Jane Smith")))
+                .andExpect(jsonPath("$.address", is("456 Oak Ave")))
+                .andExpect(jsonPath("$.major", is("Computer Science")));
+    }
+
+    @Test
+    void updateStudent_shouldUpdateStudent() throws Exception {
+        when(studentService.updateStudent("1", any(Student.class))).thenReturn(student);
+
+        mockMvc.perform(put("/students/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(student)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is("1")))
+                .andExpect(jsonPath("$.name", is("Jane Smith")))
+                .andExpect(jsonPath("$.address", is("456 Oak Ave")))
+                .andExpect(jsonPath("$.major", is("Computer Science")));
+    }
+
+    @Test
+    void deleteStudent_shouldDeleteStudent() throws Exception {
+        mockMvc.perform(delete("/students/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getAllStudents_shouldReturnAllStudents() throws Exception {
+        when(studentService.getAllStudents()).thenReturn(List.of(student));
+
+        mockMvc.perform(get("/students")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is("1")))
+                .andExpect(jsonPath("$[0].name", is("Jane Smith")))
+                .andExpect(jsonPath("$[0].address", is("456 Oak Ave")))
+                .andExpect(jsonPath("$[0].major", is("Computer Science")));
+    }
+}
+```
+
+✅ Created: ADKFramework\src\main\java\com\example\entity\Employee.java
+✅ Created: ADKFramework\src\main\java\com\example\repository\EmployeeRepository.java
+✅ Created: ADKFramework\src\main\java\com\example\service\EmployeeService.java
+✅ Created: ADKFramework\src\main\java\com\example\controller\EmployeeController.java
+✅ Created: ADKFramework\src\main\java\com\example\entity\Student.java
+✅ Created: ADKFramework\src\main\java\com\example\repository\StudentRepository.java
+✅ Created: ADKFramework\src\main\java\com\example\service\StudentService.java
+✅ Created: ADKFramework\src\main\java\com\example\controller\StudentController.java
+✅ Created: ADKFramework\src\test\java\com\example\service\EmployeeServiceTest.java
+✅ Created: ADKFramework\src\test\java\com\example\controller\EmployeeControllerTest.java
+✅ Created: ADKFramework\src\test\java\com\example\service\StudentServiceTest.java
+✅ Created: ADKFramework\src\test\java\com\example\controller\StudentControllerTest.java
+✅ Created: pom.xml
+✅ Updated existing README.md with new summary.
+✅ Created: application.yml
+⚙️  GitHub Actions CI config added at: ADKFramework\.github\workflows\ci.yml
+✅ Saved current SRS to state file.
+📦 Project zipped to ADKFramework.zip
+Adding files to Git...
+warning: in the working copy of '.github/workflows/ci.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'AI_CHANGELOG.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'pom.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/controller/EmployeeController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/controller/StudentController.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/entity/Employee.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/entity/Student.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/repository/EmployeeRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/repository/StudentRepository.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/service/EmployeeService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/java/com/example/service/StudentService.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/main/resources/application.yml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/test/java/com/example/controller/EmployeeControllerTest.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/test/java/com/example/controller/StudentControllerTest.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/test/java/com/example/service/EmployeeServiceTest.java', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/test/java/com/example/service/StudentServiceTest.java', LF will be replaced by CRLF the next time Git touches it
+Committing changes...
+[feature_20250718105647 5cf667a] Feat: Implement Employee and Student Management Microservice CRUD operations.
+ 14 files changed, 340 insertions(+), 340 deletions(-)
+ delete mode 100644 src/main/java/com/example/MicroserviceApplication.java
+Pushing changes to origin/feature_20250718105647
+remote: 
+remote: Create a pull request for 'feature_20250718105647' on GitHub by visiting:        
+remote:      https://github.com/msn5566/ADKFramework/pull/new/feature_20250718105647        
+remote: 
+To https://github.com/msn5566/ADKFramework
+ * [new branch]      feature_20250718105647 -> feature_20250718105647
+🚀 Project pushed to GitHub successfully.
+🤖 Attempting to create a Pull Request...
+✅ Successfully created Pull Request: https://github.com/msn5566/ADKFramework/pull/2
+
+Process finished with exit code 0
