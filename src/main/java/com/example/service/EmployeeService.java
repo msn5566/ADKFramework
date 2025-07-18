@@ -1,12 +1,13 @@
 package com.example.service;
 
 import com.example.entity.Employee;
+import com.example.exception.ResourceNotFoundException;
 import com.example.repository.EmployeeRepository;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,17 +19,14 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Optional<Employee> getEmployeeById(String id) {
-        return employeeRepository.findById(id);
-    }
-
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public Employee getEmployeeById(String id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
     }
 
     public Employee updateEmployee(String id, @Valid Employee employeeDetails) {
         Employee employee = employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 
         employee.setName(employeeDetails.getName());
         employee.setDepartment(employeeDetails.getDepartment());
@@ -37,7 +35,14 @@ public class EmployeeService {
     }
 
     public void deleteEmployee(String id) {
-        employeeRepository.deleteById(id);
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+
+        employeeRepository.delete(employee);
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
     }
 }
 ```

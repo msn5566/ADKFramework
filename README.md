@@ -8,65 +8,41 @@
 
 This microservice was automatically generated based on the following high-level requirements:
 
-> Feature: Create Employee
-> Input: Employee details (name, ID, department, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned employee ID.
+> Feature: Create Employee/Student
+> Input: Employee/Student data (name, ID, etc.) via REST API (application/json).
+> Output: Confirmation of successful creation with unique identifier.
 > Constraints: Input data must be validated.
-> Logic: Create a new employee record in the database.
+> Logic: Persist employee/student data to MongoDB.
 > 
-> Feature: Create Student
-> Input: Student details (name, ID, major, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned student ID.
+> Feature: Read Employee/Student Details
+> Input: Employee/Student ID via REST API.
+> Output: Employee/Student details in JSON format.
+> Constraints: Must return a 404 error if the ID does not exist.
+> Logic: Retrieve employee/student data from MongoDB by ID.
+> 
+> Feature: Update Employee/Student Information
+> Input: Employee/Student ID and updated data via REST API (application/json).
+> Output: Confirmation of successful update.
 > Constraints: Input data must be validated.
-> Logic: Create a new student record in the database.
+> Logic: Update employee/student data in MongoDB based on ID.
 > 
-> Feature: Read Employee Details
-> Input: Employee ID via REST API.
-> Output: Employee details in JSON format.
-> Constraints: Employee ID must exist in the database.
-> Logic: Retrieve employee record from the database by ID.
-> 
-> Feature: Read Student Details
-> Input: Student ID via REST API.
-> Output: Student details in JSON format.
-> Constraints: Student ID must exist in the database.
-> Logic: Retrieve student record from the database by ID.
-> 
-> Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database. Input data must be validated.
-> Logic: Update the employee record in the database with the new information.
-> 
-> Feature: Update Student Information
-> Input: Student ID and updated student details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database. Input data must be validated.
-> Logic: Update the student record in the database with the new information.
-> 
-> Feature: Delete Employee
-> Input: Employee ID via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database.
-> Logic: Delete the employee record from the database.
-> 
-> Feature: Delete Student
-> Input: Student ID via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database.
-> Logic: Delete the student record from the database.
+> Feature: Delete Employee/Student
+> Input: Employee/Student ID via REST API.
+> Output: Confirmation of successful deletion.
+> Constraints: N/A
+> Logic: Delete employee/student data from MongoDB based on ID.
 > 
 > Feature: Expose REST Endpoints
-> Input: REST API requests.
-> Output: Appropriate responses in JSON format.
-> Constraints: All endpoints must follow RESTful conventions.
-> Logic: Implement REST endpoints for CRUD operations on employees and students.
+> Input: REST requests to specific URLs.
+> Output: Responses in `application/json` format with appropriate HTTP status codes.
+> Constraints: Endpoints must follow RESTful conventions.
+> Logic: Implement controller methods to handle REST requests and responses.
 > 
 > Feature: Validate Input Data
-> Input: Employee and Student data.
-> Output: Error message if data is invalid.
-> Constraints: All input data must be validated.
-> Logic: Implement validation logic to ensure data integrity.
+> Input: Data received from REST API requests.
+> Output: Error message if validation fails.
+> Constraints: Validation rules must be defined.
+> Logic: Implement validation logic in the service layer.
 
 ### 🛠️ Core Dependencies
 
@@ -78,8 +54,7 @@ The following core dependencies were automatically included to support these req
 | `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
 | `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
-| `org.mockito` | `mockito-core` | `test` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `compile` |
 | `org.projectlombok` | `lombok` | `optional` |
 
 
