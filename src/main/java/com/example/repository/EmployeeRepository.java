@@ -1,9 +1,9 @@
 package com.example.repository;
 
 import com.example.entity.Employee;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface EmployeeRepository extends MongoRepository<Employee, String> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 }
 ```
 

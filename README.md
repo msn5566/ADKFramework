@@ -9,64 +9,40 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee details (name, ID, department, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned employee ID.
+> Input: Employee data (name, email, department, etc.) via REST API.
+> Output: Confirmation of successful employee creation.
 > Constraints: Input data must be validated.
 > Logic: Create a new employee record in the database.
 > 
-> Feature: Create Student
-> Input: Student details (name, ID, major, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned student ID.
-> Constraints: Input data must be validated.
-> Logic: Create a new student record in the database.
-> 
-> Feature: Read Employee Details
+> Feature: Read Employee
 > Input: Employee ID via REST API.
 > Output: Employee details in JSON format.
-> Constraints: Employee ID must exist in the database.
-> Logic: Retrieve employee record from the database by ID.
+> Constraints: Employee ID must be valid.
+> Logic: Retrieve employee data from the database based on the provided ID.
 > 
-> Feature: Read Student Details
-> Input: Student ID via REST API.
-> Output: Student details in JSON format.
-> Constraints: Student ID must exist in the database.
-> Logic: Retrieve student record from the database by ID.
-> 
-> Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database. Input data must be validated.
-> Logic: Update the employee record in the database with the new information.
-> 
-> Feature: Update Student Information
-> Input: Student ID and updated student details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database. Input data must be validated.
-> Logic: Update the student record in the database with the new information.
+> Feature: Update Employee
+> Input: Employee ID and updated employee data via REST API.
+> Output: Confirmation of successful employee update.
+> Constraints: Input data must be validated. Employee ID must be valid.
+> Logic: Update the employee record in the database with the provided data.
 > 
 > Feature: Delete Employee
 > Input: Employee ID via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database.
-> Logic: Delete the employee record from the database.
-> 
-> Feature: Delete Student
-> Input: Student ID via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database.
-> Logic: Delete the student record from the database.
+> Output: Confirmation of successful employee deletion.
+> Constraints: Employee ID must be valid.
+> Logic: Delete the employee record from the database based on the provided ID.
 > 
 > Feature: Expose REST Endpoints
-> Input: REST API requests.
-> Output: Appropriate responses in JSON format.
-> Constraints: All endpoints must follow RESTful conventions.
-> Logic: Implement REST endpoints for CRUD operations on employees and students.
+> Input: HTTP requests to specific endpoints.
+> Output: JSON responses with appropriate status codes.
+> Constraints: All endpoints must follow RESTful conventions. Use `application/json` for all API responses and requests.
+> Logic: Define and implement REST endpoints for CRUD operations.
 > 
 > Feature: Validate Input Data
-> Input: Employee and Student data.
-> Output: Error message if data is invalid.
-> Constraints: All input data must be validated.
-> Logic: Implement validation logic to ensure data integrity.
+> Input: Employee data.
+> Output: Error messages for invalid data.
+> Constraints: N/A
+> Logic: Implement validation rules for all input data.
 
 ### 🛠️ Core Dependencies
 
@@ -75,9 +51,10 @@ The following core dependencies were automatically included to support these req
 | Group ID | Artifact ID | Scope |
 |---|---|---|
 | `org.springframework.boot` | `spring-boot-starter-web` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
+| `org.springframework.boot` | `spring-boot-starter-data-jpa` | `compile` |
+| `org.postgresql` | `postgresql` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
-| `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
+| `org.springdoc` | `springdoc-openapi-starter-webmvc` | `2.0.3` |
 | `org.springframework.boot` | `spring-boot-starter-test` | `test` |
 | `org.mockito` | `mockito-core` | `test` |
 | `org.projectlombok` | `lombok` | `optional` |
