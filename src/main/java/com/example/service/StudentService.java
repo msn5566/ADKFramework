@@ -2,11 +2,12 @@ package com.example.service;
 
 import com.example.entity.Student;
 import com.example.repository.StudentRepository;
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,30 +15,31 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public Student createStudent(@Valid Student student) {
+    public Student createStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    public Optional<Student> getStudentById(String id) {
-        return studentRepository.findById(id);
+    public Student getStudent(String id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
+    public Student updateStudent(String id, Student student) {
+        Student existingStudent = studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
 
-    public Student updateStudent(String id, @Valid Student studentDetails) {
-        Student student = studentRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
-
-        student.setName(studentDetails.getName());
-        student.setMajor(studentDetails.getMajor());
-
+        student.setId(id); // Ensure ID is not overwritten
         return studentRepository.save(student);
     }
 
     public void deleteStudent(String id) {
+        studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         studentRepository.deleteById(id);
+    }
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
     }
 }
 ```
