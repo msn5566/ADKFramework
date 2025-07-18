@@ -9,64 +9,52 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee details (name, ID, department, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned employee ID.
+> Input: Employee details (name, address, department, etc.) via REST API.
+> Output: Confirmation of employee creation with employee ID, HTTP status 201.
 > Constraints: Input data must be validated.
-> Logic: Create a new employee record in the database.
+> Logic: Receive employee details, validate, persist to MongoDB, and return confirmation.
 > 
-> Feature: Create Student
-> Input: Student details (name, ID, major, etc.) in JSON format via REST API.
-> Output: Confirmation message and assigned student ID.
-> Constraints: Input data must be validated.
-> Logic: Create a new student record in the database.
-> 
-> Feature: Read Employee Details
+> Feature: Read Employee
 > Input: Employee ID via REST API.
-> Output: Employee details in JSON format.
-> Constraints: Employee ID must exist in the database.
-> Logic: Retrieve employee record from the database by ID.
+> Output: Employee details in JSON format, HTTP status 200. If employee not found, return HTTP status 404.
+> Constraints: Employee ID must be valid.
+> Logic: Retrieve employee from MongoDB by ID, and return the employee details.
 > 
-> Feature: Read Student Details
-> Input: Student ID via REST API.
-> Output: Student details in JSON format.
-> Constraints: Student ID must exist in the database.
-> Logic: Retrieve student record from the database by ID.
-> 
-> Feature: Update Employee Information
-> Input: Employee ID and updated employee details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database. Input data must be validated.
-> Logic: Update the employee record in the database with the new information.
-> 
-> Feature: Update Student Information
-> Input: Student ID and updated student details in JSON format via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database. Input data must be validated.
-> Logic: Update the student record in the database with the new information.
+> Feature: Update Employee
+> Input: Employee ID and updated employee details via REST API.
+> Output: Confirmation of employee update, HTTP status 200. If employee not found, return HTTP status 404.
+> Constraints: Input data must be validated.
+> Logic: Receive employee ID and updated details, validate, update employee in MongoDB, and return confirmation.
 > 
 > Feature: Delete Employee
 > Input: Employee ID via REST API.
-> Output: Confirmation message.
-> Constraints: Employee ID must exist in the database.
-> Logic: Delete the employee record from the database.
+> Output: Confirmation of employee deletion, HTTP status 204. If employee not found, return HTTP status 404.
+> Constraints: Employee ID must be valid.
+> Logic: Receive employee ID, delete employee from MongoDB, and return confirmation.
+> 
+> Feature: Create Student
+> Input: Student details (name, address, major, etc.) via REST API.
+> Output: Confirmation of student creation with student ID, HTTP status 201.
+> Constraints: Input data must be validated.
+> Logic: Receive student details, validate, persist to MongoDB, and return confirmation.
+> 
+> Feature: Read Student
+> Input: Student ID via REST API.
+> Output: Student details in JSON format, HTTP status 200. If student not found, return HTTP status 404.
+> Constraints: Student ID must be valid.
+> Logic: Retrieve student from MongoDB by ID, and return the student details.
+> 
+> Feature: Update Student
+> Input: Student ID and updated student details via REST API.
+> Output: Confirmation of student update, HTTP status 200. If student not found, return HTTP status 404.
+> Constraints: Input data must be validated.
+> Logic: Receive student ID and updated details, validate, update student in MongoDB, and return confirmation.
 > 
 > Feature: Delete Student
 > Input: Student ID via REST API.
-> Output: Confirmation message.
-> Constraints: Student ID must exist in the database.
-> Logic: Delete the student record from the database.
-> 
-> Feature: Expose REST Endpoints
-> Input: REST API requests.
-> Output: Appropriate responses in JSON format.
-> Constraints: All endpoints must follow RESTful conventions.
-> Logic: Implement REST endpoints for CRUD operations on employees and students.
-> 
-> Feature: Validate Input Data
-> Input: Employee and Student data.
-> Output: Error message if data is invalid.
-> Constraints: All input data must be validated.
-> Logic: Implement validation logic to ensure data integrity.
+> Output: Confirmation of student deletion, HTTP status 204. If student not found, return HTTP status 404.
+> Constraints: Student ID must be valid.
+> Logic: Receive student ID, delete student from MongoDB, and return confirmation.
 
 ### 🛠️ Core Dependencies
 

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StudentServiceTest {
+class StudentServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
@@ -29,88 +31,118 @@ public class StudentServiceTest {
 
     @BeforeEach
     void setUp() {
-        student = new Student("1", "Alice Smith", "Computer Science");
+        student = new Student();
+        student.setId("1");
+        student.setName("Jane Smith");
+        student.setAddress("456 Oak Ave");
+        student.setMajor("Computer Science");
     }
 
     @Test
-    void createStudent_ValidInput_ReturnsSavedStudent() {
+    void createStudent_shouldSaveStudent() {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
-        Student savedStudent = studentService.createStudent(student);
+        Student savedStudent = studentService.createStudent(new Student());
 
-        assertEquals("1", savedStudent.getId());
-        assertEquals("Alice Smith", savedStudent.getName());
-        assertEquals("Computer Science", savedStudent.getMajor());
-
-        verify(studentRepository, times(1)).save(student);
+        assertNotNull(savedStudent);
+        assertEquals(student, savedStudent);
+        verify(studentRepository, times(1)).save(any(Student.class));
     }
 
     @Test
-    void getStudentById_ExistingId_ReturnsStudent() {
+    void getStudent_shouldReturnStudent_whenStudentExists() {
         when(studentRepository.findById("1")).thenReturn(Optional.of(student));
 
-        Optional<Student> retrievedStudent = studentService.getStudentById("1");
+        Student retrievedStudent = studentService.getStudent("1");
 
-        assertTrue(retrievedStudent.isPresent());
-        assertEquals("Alice Smith", retrievedStudent.get().getName());
-
+        assertNotNull(retrievedStudent);
+        assertEquals(student, retrievedStudent);
         verify(studentRepository, times(1)).findById("1");
     }
 
     @Test
-    void getStudentById_NonExistingId_ReturnsEmptyOptional() {
-        when(studentRepository.findById("2")).thenReturn(Optional.empty());
+    void getStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
 
-        Optional<Student> retrievedStudent = studentService.getStudentById("2");
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.getStudent("1"));
 
-        assertTrue(retrievedStudent.isEmpty());
-
-        verify(studentRepository, times(1)).findById("2");
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
     }
 
     @Test
-    void getAllStudents_ReturnsListOfStudents() {
-        when(studentRepository.findAll()).thenReturn(List.of(student));
-
-        List<Student> students = studentService.getAllStudents();
-
-        assertEquals(1, students.size());
-        assertEquals("Alice Smith", students.get(0).getName());
-
-        verify(studentRepository, times(1)).findAll();
-    }
-
-    @Test
-    void updateStudent_ExistingId_ReturnsUpdatedStudent() {
-        Student studentDetails = new Student(null, "Updated Name", "Updated Major");
+    void updateStudent_shouldUpdateStudent_whenStudentExists() {
         when(studentRepository.findById("1")).thenReturn(Optional.of(student));
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
-        Student updatedStudent = studentService.updateStudent("1", studentDetails);
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Updated Name");
+        updatedStudentDetails.setAddress("Updated Address");
+        updatedStudentDetails.setMajor("Updated Major");
 
+        Student updatedStudent = studentService.updateStudent("1", updatedStudentDetails);
+
+        assertNotNull(updatedStudent);
         assertEquals("Updated Name", updatedStudent.getName());
+        assertEquals("Updated Address", updatedStudent.getAddress());
         assertEquals("Updated Major", updatedStudent.getMajor());
         verify(studentRepository, times(1)).findById("1");
-        verify(studentRepository, times(1)).save(student);
+        verify(studentRepository, times(1)).save(any(Student.class));
     }
 
     @Test
-    void updateStudent_NonExistingId_ThrowsException() {
-        Student studentDetails = new Student(null, "Updated Name", "Updated Major");
-        when(studentRepository.findById("2")).thenReturn(Optional.empty());
+    void updateStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> studentService.updateStudent("2", studentDetails));
-        verify(studentRepository, times(1)).findById("2");
+        Student updatedStudentDetails = new Student();
+        updatedStudentDetails.setName("Updated Name");
+        updatedStudentDetails.setAddress("Updated Address");
+        updatedStudentDetails.setMajor("Updated Major");
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.updateStudent("1", updatedStudentDetails));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
         verify(studentRepository, never()).save(any(Student.class));
     }
 
     @Test
-    void deleteStudent_ExistingId_DeletesStudent() {
+    void deleteStudent_shouldDeleteStudent_whenStudentExists() {
+        when(studentRepository.findById("1")).thenReturn(Optional.of(student));
         doNothing().when(studentRepository).deleteById("1");
 
         studentService.deleteStudent("1");
 
+        verify(studentRepository, times(1)).findById("1");
         verify(studentRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void deleteStudent_shouldThrowException_whenStudentDoesNotExist() {
+        when(studentRepository.findById("1")).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> studentService.deleteStudent("1"));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Student not found", exception.getReason());
+        verify(studentRepository, times(1)).findById("1");
+        verify(studentRepository, never()).deleteById("1");
+    }
+
+    @Test
+    void getAllStudents_shouldReturnListOfStudents() {
+        when(studentRepository.findAll()).thenReturn(List.of(student));
+
+        List<Student> students = studentService.getAllStudents();
+
+        assertNotNull(students);
+        assertEquals(1, students.size());
+        assertEquals(student, students.get(0));
+        verify(studentRepository, times(1)).findAll();
     }
 }
 ```
+
+```java
