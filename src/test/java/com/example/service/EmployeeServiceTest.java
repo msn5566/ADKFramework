@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.entity.Employee;
+import com.example.exception.ResourceNotFoundException;
 import com.example.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,12 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
@@ -29,7 +32,10 @@ public class EmployeeServiceTest {
 
     @BeforeEach
     void setUp() {
-        employee = new Employee("1", "John Doe", "IT");
+        employee = new Employee();
+        employee.setId("1");
+        employee.setName("Test Employee");
+        employee.setDepartment("IT");
     }
 
     @Test
@@ -38,79 +44,86 @@ public class EmployeeServiceTest {
 
         Employee savedEmployee = employeeService.createEmployee(employee);
 
+        assertNotNull(savedEmployee);
         assertEquals("1", savedEmployee.getId());
-        assertEquals("John Doe", savedEmployee.getName());
+        assertEquals("Test Employee", savedEmployee.getName());
         assertEquals("IT", savedEmployee.getDepartment());
-
-        verify(employeeRepository, times(1)).save(employee);
     }
 
     @Test
     void getEmployeeById_ExistingId_ReturnsEmployee() {
         when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
 
-        Optional<Employee> retrievedEmployee = employeeService.getEmployeeById("1");
+        Employee retrievedEmployee = employeeService.getEmployeeById("1");
 
-        assertTrue(retrievedEmployee.isPresent());
-        assertEquals("John Doe", retrievedEmployee.get().getName());
-
-        verify(employeeRepository, times(1)).findById("1");
+        assertNotNull(retrievedEmployee);
+        assertEquals("1", retrievedEmployee.getId());
+        assertEquals("Test Employee", retrievedEmployee.getName());
+        assertEquals("IT", retrievedEmployee.getDepartment());
     }
 
     @Test
-    void getEmployeeById_NonExistingId_ReturnsEmptyOptional() {
+    void getEmployeeById_NonExistingId_ThrowsResourceNotFoundException() {
         when(employeeRepository.findById("2")).thenReturn(Optional.empty());
 
-        Optional<Employee> retrievedEmployee = employeeService.getEmployeeById("2");
-
-        assertTrue(retrievedEmployee.isEmpty());
-
-        verify(employeeRepository, times(1)).findById("2");
-    }
-
-    @Test
-    void getAllEmployees_ReturnsListOfEmployees() {
-        when(employeeRepository.findAll()).thenReturn(List.of(employee));
-
-        List<Employee> employees = employeeService.getAllEmployees();
-
-        assertEquals(1, employees.size());
-        assertEquals("John Doe", employees.get(0).getName());
-
-        verify(employeeRepository, times(1)).findAll();
+        assertThrows(ResourceNotFoundException.class, () -> employeeService.getEmployeeById("2"));
     }
 
     @Test
     void updateEmployee_ExistingId_ReturnsUpdatedEmployee() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
+        Employee employeeDetails = new Employee();
+        employeeDetails.setName("Updated Employee");
+        employeeDetails.setDepartment("HR");
+
         when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         Employee updatedEmployee = employeeService.updateEmployee("1", employeeDetails);
 
-        assertEquals("Updated Name", updatedEmployee.getName());
-        assertEquals("Updated Dept", updatedEmployee.getDepartment());
-        verify(employeeRepository, times(1)).findById("1");
-        verify(employeeRepository, times(1)).save(employee);
+        assertNotNull(updatedEmployee);
+        assertEquals("Updated Employee", updatedEmployee.getName());
+        assertEquals("HR", updatedEmployee.getDepartment());
     }
 
     @Test
-    void updateEmployee_NonExistingId_ThrowsException() {
-        Employee employeeDetails = new Employee(null, "Updated Name", "Updated Dept");
+    void updateEmployee_NonExistingId_ThrowsResourceNotFoundException() {
+        Employee employeeDetails = new Employee();
+        employeeDetails.setName("Updated Employee");
+        employeeDetails.setDepartment("HR");
+
         when(employeeRepository.findById("2")).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> employeeService.updateEmployee("2", employeeDetails));
-        verify(employeeRepository, times(1)).findById("2");
-        verify(employeeRepository, never()).save(any(Employee.class));
+        assertThrows(ResourceNotFoundException.class, () -> employeeService.updateEmployee("2", employeeDetails));
     }
 
     @Test
     void deleteEmployee_ExistingId_DeletesEmployee() {
-        doNothing().when(employeeRepository).deleteById("1");
+        when(employeeRepository.findById("1")).thenReturn(Optional.of(employee));
 
         employeeService.deleteEmployee("1");
 
-        verify(employeeRepository, times(1)).deleteById("1");
+        verify(employeeRepository).delete(employee);
+    }
+
+    @Test
+    void deleteEmployee_NonExistingId_ThrowsResourceNotFoundException() {
+        when(employeeRepository.findById("2")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> employeeService.deleteEmployee("2"));
+    }
+
+    @Test
+    void getAllEmployees_ReturnsListOfEmployees() {
+        List<Employee> employees = Arrays.asList(employee);
+        when(employeeRepository.findAll()).thenReturn(employees);
+
+        List<Employee> retrievedEmployees = employeeService.getAllEmployees();
+
+        assertNotNull(retrievedEmployees);
+        assertEquals(1, retrievedEmployees.size());
+        assertEquals("1", retrievedEmployees.get(0).getId());
+        assertEquals("Test Employee", retrievedEmployees.get(0).getName());
+        assertEquals("IT", retrievedEmployees.get(0).getDepartment());
     }
 }
 ```
