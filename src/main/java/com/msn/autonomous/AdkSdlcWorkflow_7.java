@@ -122,6 +122,35 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
                 .build();
     }
 
+    private static String runChangeAnalysisAgent(String oldSrs, String newSrs) {
+        System.out.println("🤖 Running Change Analysis Agent...");
+        LlmAgent changeAgent = LlmAgent.builder()
+                .name("ChangeAnalysisAgent")
+                .description("Compares old and new SRS to generate a changelog.")
+                .instruction("""
+You will be given an old and a new version of a Software Requirements Specification (SRS), separated by markers.
+Analyze the differences and generate a concise, human-readable changelog in Markdown format.
+Focus on added, removed, and modified features. If the old SRS is empty, state that this is the initial version of the project.
+If there are no functional changes between the two versions, respond with ONLY the text "No changes detected.".
+""")
+                .model("gemini-2.0-flash")
+                .outputKey("change_analysis")
+                .build();
+
+        String combinedInput = "--- OLD SRS ---\n" + oldSrs + "\n\n--- NEW SRS ---\n" + newSrs;
+
+        // Use the simpler, synchronous-style run method that handles session creation internally.
+        // This is more robust for single-shot agent invocations and avoids potential session state issues.
+        final InMemoryRunner runner = new InMemoryRunner(changeAgent);
+        final Content userMsg = Content.fromParts(Part.fromText(combinedInput));
+
+        Event finalEvent = retryWithBackoff(() -> {
+            Session session = runner.sessionService().createSession(runner.appName(), "user-change-analyzer").blockingGet();
+            return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
+        });
+        return finalEvent != null ? finalEvent.stringifyContent() : "";
+    }
+
     public static void writeClassesToFileSystem(String combinedOutput, String baseDir) {
         Pattern pattern = Pattern.compile("// File: ([^\\n]+)\\n(.*?)(?=\\n// File: |\\z)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(combinedOutput);
@@ -192,34 +221,7 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
         return output;
     }
 
-    private static String runChangeAnalysisAgent(String oldSrs, String newSrs) {
-        System.out.println("🤖 Running Change Analysis Agent...");
-        LlmAgent changeAgent = LlmAgent.builder()
-            .name("ChangeAnalysisAgent")
-            .description("Compares old and new SRS to generate a changelog.")
-            .instruction("""
-You will be given an old and a new version of a Software Requirements Specification (SRS), separated by markers.
-Analyze the differences and generate a concise, human-readable changelog in Markdown format.
-Focus on added, removed, and modified features. If the old SRS is empty, state that this is the initial version of the project.
-If there are no functional changes between the two versions, respond with ONLY the text "No changes detected.".
-""")
-            .model("gemini-2.0-flash")
-            .outputKey("change_analysis")
-            .build();
 
-        String combinedInput = "--- OLD SRS ---\n" + oldSrs + "\n\n--- NEW SRS ---\n" + newSrs;
-
-        // Use the simpler, synchronous-style run method that handles session creation internally.
-        // This is more robust for single-shot agent invocations and avoids potential session state issues.
-        final InMemoryRunner runner = new InMemoryRunner(changeAgent);
-        final Content userMsg = Content.fromParts(Part.fromText(combinedInput));
-
-        Event finalEvent = retryWithBackoff(() -> {
-            Session session = runner.sessionService().createSession(runner.appName(), "user-change-analyzer").blockingGet();
-            return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
-        });
-        return finalEvent != null ? finalEvent.stringifyContent() : "";
-    }
 
     private static void openInBrowser(String url) {
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
@@ -308,7 +310,7 @@ If there are no functional changes between the two versions, respond with ONLY t
     }
 
     private static String createPullRequest(String baseDir, String baseBranch, String featureBranch, String title) {
-        System.out.println("🤖 Attempting to create a Pull Request...");
+        System.out.println("🤖 Attempti   ng to create a Pull Request...");
         try {
             File workingDir = new File(baseDir);
             String body = "Automated PR created by AI agent. Please review the changes.";
