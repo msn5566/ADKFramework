@@ -1,18 +1,18 @@
 ```markdown
-## Changelog: Employee Management Microservice SRS
+## Changelog
 
 ### 1. Introduction
-- Modified: Added "and student data" to the description.
+- Modified: Removed mention of "student data" from the description.
 
 ### 2. Functional Requirements
-- Modified: Added "and Student also" to the create employee requirement.
-- Modified: Added "and student" to the read employee details requirement.
-- Modified: Added "and student" to the update employee information requirement.
-- Modified: Added "and student" to the delete employee requirement.
+- Removed: Requirements related to student data CRUD operations.
 
 ### 3. Non-Functional Requirements
-- Modified: Changed database from PostgreSQL to Mongodb.
+- Modified: Changed database from Mongodb to postgress.
 
 ### 5. Future Scope
-- Modified: Added "and student" to the bulk import/export feature.
+- Modified: Removed mention of "student" for bulk import/export.
+
+### Other Changes
+- Modified: `GitHub-Branch` property changed to `checkout_branch`
 ```

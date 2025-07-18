@@ -3,13 +3,13 @@ Software Requirements Specification (SRS)
 Title: Employee Management Microservice
 
 1. Introduction
-This microservice will handle CRUD operations for employee and student data. It will be part of a larger HR system and communicate via REST APIs. The service should be developed using Spring Boot.
+This microservice will handle CRUD operations for employee data. It will be part of a larger HR system and communicate via REST APIs. The service should be developed using Spring Boot.
 
 2. Functional Requirements
-- The service must allow creating a new employee and Student also.
-- The service must allow reading employee and student details by ID.
-- The service must allow updating employee and student information.
-- The service must allow deleting an employee and student.
+- The service must allow creating a new employee also.
+- The service must allow reading employee details by ID.
+- The service must allow updating employee information.
+- The service must allow deleting an employee.
 - The service must expose REST endpoints with appropriate request/response formats.
 - The service must validate input data.
 
@@ -17,7 +17,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 - Must be written in Java 17 using Spring Boot 3.x.
 - Should follow layered architecture (Controller, Service, Repository).
 - Must use Maven for build.
-- Data should be stored in a Mongodb database.
+- Data should be stored in a postgress database.
 - Should provide API documentation using Swagger/OpenAPI.
 - Unit and integration tests must be written using JUnit and Mockito.
 - Must provide Dockerfile for containerization.
@@ -28,7 +28,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 - Use `application/json` for all API responses and requests.
 
 5. Future Scope
-- Add support for bulk import/export of employees and student.
+- Add support for bulk import/export of employees.
 - Add integration with external payroll systems.
 
 
@@ -36,7 +36,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 
 
 GitHub-URL: https://github.com/msn5566/ADKFramework 
-GitHub-Branch: development
+checkout_branch: development
 Repository-Name: ADKFramework
 
 End of Document.
