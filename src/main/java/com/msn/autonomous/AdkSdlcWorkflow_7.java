@@ -31,12 +31,83 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdkSdlcWorkflow_7 {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdkSdlcWorkflow_7.class);
+
+    // --- Constants for Agent Configuration ---
+    private static final String REQUIREMENTS_AGENT_NAME = "RequirementsAgent";
+    private static final String DEPENDENCY_AGENT_NAME = "DependencyAgent";
+    private static final String CODEGEN_AGENT_NAME = "CodeGenAgent";
+    private static final String TESTGEN_AGENT_NAME = "TestGenAgent";
+    private static final String CHANGE_ANALYSIS_AGENT_NAME = "ChangeAnalysisAgent";
+
+    private static final String KEY_REQUIREMENTS = "requirements";
+    private static final String KEY_DEPENDENCIES = "dependencies";
+    private static final String KEY_CODE = "code";
+    private static final String KEY_TEST = "test";
+    private static final String KEY_CHANGE_ANALYSIS = "change_analysis";
+
+    // --- Constants for File Parsing and Naming ---
+    private static final String DEPS_SEPARATOR = "---END-DEPS---";
+    private static final String COMMIT_SUMMARY_PREFIX = "Commit-Summary: ";
+    private static final String NO_CHANGES_DETECTED = "No changes detected.";
+    private static final String FILE_PATH_MARKER_PREFIX = "// File: ";
+    private static final String SRS_KEY_GITHUB_URL = "GitHub-URL";
+    private static final String SRS_KEY_CHECKOUT_BRANCH = "checkout_branch";
+    private static final String SRS_KEY_REPO_NAME = "Repository-Name";
+
+    // --- Constants for File System and Git ---
+    private static final String AI_STATE_DIR = ".ai-state";
+    private static final String SRS_FILE_NAME = "srs.txt";
+    private static final String CHANGELOG_FILE_NAME = "AI_CHANGELOG.md";
+
+
+    /**
+     * A simple data class to hold the results from the main AI workflow execution.
+     * This avoids passing multiple mutable objects through the workflow logic.
+     */
+    private static class WorkflowResult {
+        String commitMessage = "feat: Initial project scaffold by AI agent";
+        String requirementsSummary = "";
+        String codeAndTestOutput = "";
+        final List<String> dependencyList = new ArrayList<>();
+    }
+
+    /**
+     * A simple data class for storing Git repository configuration.
+     */
+    private static class GitConfig {
+        final String repoUrl;
+        final String baseBranch;
+        final String repoName;
+
+        GitConfig(String repoUrl, String baseBranch, String repoName) {
+            this.repoUrl = repoUrl;
+            this.baseBranch = baseBranch;
+            this.repoName = repoName;
+        }
+    }
+
+    /**
+     * A simple data class to hold the SRS content and its parsed Git configuration.
+     */
+    private static class SrsData {
+        final GitConfig gitConfig;
+        final String srsContent;
+
+        SrsData(GitConfig gitConfig, String srsContent) {
+            this.gitConfig = gitConfig;
+            this.srsContent = srsContent;
+        }
+    }
+
     public static SequentialAgent buildWorkflow() {
         LlmAgent req = LlmAgent.builder()
-                .name("RequirementsAgent")
+                .name(REQUIREMENTS_AGENT_NAME)
                 .description("Extracts structured functional requirements from a feature prompt.")
                 .instruction("""
 First, create a one-line summary of the following SRS, formatted as a conventional Git commit message. Prefix it with "Commit-Summary: ".
@@ -50,11 +121,11 @@ Constraints:
 Logic:
 """)
                 .model("gemini-2.0-flash")
-                .outputKey("requirements")
+                .outputKey(KEY_REQUIREMENTS)
                 .build();
 
         LlmAgent deps = LlmAgent.builder()
-                .name("DependencyAgent")
+                .name(DEPENDENCY_AGENT_NAME)
                 .description("Determines required dependency features from the requirements.")
                 .instruction("""
 Based on the following requirements, identify the necessary Maven dependencies.
@@ -75,11 +146,11 @@ Requirements:
 {requirements}
 """)
                 .model("gemini-2.0-flash")
-                .outputKey("dependencies")
+                .outputKey(KEY_DEPENDENCIES)
                 .build();
 
         LlmAgent code = LlmAgent.builder()
-                .name("CodeGenAgent")
+                .name(CODEGEN_AGENT_NAME)
                 .description("Generates a complete Spring Boot microservice skeleton based on structured requirements.")
                 .instruction("""
 You will be provided with text that contains a list of dependencies followed by structured requirements, separated by "---END-DEPS---".
@@ -99,11 +170,11 @@ Wrap each file with proper syntax and include a comment at the top indicating th
 // File: src/main/java/com/example/service/UserService.java
 """)
                 .model("gemini-2.0-flash")
-                .outputKey("code")
+                .outputKey(KEY_CODE)
                 .build();
 
         LlmAgent test = LlmAgent.builder()
-                .name("TestGenAgent")
+                .name(TESTGEN_AGENT_NAME)
                 .description("Generates JUnit 5 test cases for a Spring Boot microservice.")
                 .instruction("""
 Write appropriate JUnit 5 test cases for the Spring Boot controller and service layer based on this code:
@@ -113,7 +184,7 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
 // File: src/test/java/com/example/controller/UserControllerTest.java
 """)
                 .model("gemini-2.0-flash")
-                .outputKey("test")
+                .outputKey(KEY_TEST)
                 .build();
 
         return SequentialAgent.builder()
@@ -123,9 +194,9 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
     }
 
     private static String runChangeAnalysisAgent(String oldSrs, String newSrs) {
-        System.out.println("🤖 Running Change Analysis Agent...");
+        logger.info("🤖 Running Change Analysis Agent...");
         LlmAgent changeAgent = LlmAgent.builder()
-                .name("ChangeAnalysisAgent")
+                .name(CHANGE_ANALYSIS_AGENT_NAME)
                 .description("Compares old and new SRS to generate a changelog.")
                 .instruction("""
 You will be given an old and a new version of a Software Requirements Specification (SRS), separated by markers.
@@ -134,7 +205,7 @@ Focus on added, removed, and modified features. If the old SRS is empty, state t
 If there are no functional changes between the two versions, respond with ONLY the text "No changes detected.".
 """)
                 .model("gemini-2.0-flash")
-                .outputKey("change_analysis")
+                .outputKey(KEY_CHANGE_ANALYSIS)
                 .build();
 
         String combinedInput = "--- OLD SRS ---\n" + oldSrs + "\n\n--- NEW SRS ---\n" + newSrs;
@@ -152,7 +223,7 @@ If there are no functional changes between the two versions, respond with ONLY t
     }
 
     public static void writeClassesToFileSystem(String combinedOutput, String baseDir) {
-        Pattern pattern = Pattern.compile("// File: ([^\\n]+)\\n(.*?)(?=\\n// File: |\\z)", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile(FILE_PATH_MARKER_PREFIX + "([^\\n]+)\\n(.*?)(?=\\n" + FILE_PATH_MARKER_PREFIX + "|\\z)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(combinedOutput);
 
         while (matcher.find()) {
@@ -176,11 +247,10 @@ If there are no functional changes between the two versions, respond with ONLY t
             file.getParentFile().mkdirs();
 
             try (FileWriter writer = new FileWriter(file)) {
-                content.replace("```java","").replace("```","");
                 writer.write(content);
-                System.out.println("✅ Created: " + file.getPath());
+                logger.info("✅ Created: {}", file.getPath());
             } catch (IOException e) {
-                System.err.println("❌ Failed to write: " + file.getPath() + " - " + e.getMessage());
+                logger.error("❌ Failed to write: {} - {}", file.getPath(), e.getMessage());
             }
         }
     }
@@ -214,7 +284,7 @@ If there are no functional changes between the two versions, respond with ONLY t
         int exitCode = process.waitFor();
         if (exitCode != 0) {
             // Print the error stream from the process for better debugging
-            System.err.println("Command error output:\n" + error);
+            logger.error("Command error output:\n{}", error);
             throw new IOException("Command failed with exit code " + exitCode + ": " + String.join(" ", command));
         }
         // Return standard output on success
@@ -228,7 +298,7 @@ If there are no functional changes between the two versions, respond with ONLY t
             try {
                 Desktop.getDesktop().browse(new URI(url));
             } catch (Exception e) {
-                System.err.println("❌ Failed to open browser: " + e.getMessage());
+                logger.error("❌ Failed to open browser: {}", e.getMessage());
             }
         }
     }
@@ -245,11 +315,11 @@ If there are no functional changes between the two versions, respond with ONLY t
     private static void ensureRepositoryIsReady(String outputDir, String repoUrl, String baseBranch) throws IOException, InterruptedException {
         File dir = new File(outputDir);
         if (dir.exists()) {
-            System.out.println("Repository directory exists. Ensuring it's on the correct base branch and up-to-date.");
+            logger.info("Repository directory exists. Ensuring it's on the correct base branch and up-to-date.");
             runCommand(dir, "git", "checkout", baseBranch);
             runCommand(dir, "git", "pull", "origin", baseBranch);
         } else {
-            System.out.println("Cloning repository from " + repoUrl);
+            logger.info("Cloning repository from {}", repoUrl);
             // More efficient clone: only get the single-branch history needed for analysis.
             runCommand(new File("."), "git", "clone", "--branch", baseBranch, "--single-branch", repoUrl, outputDir);
         }
@@ -261,10 +331,10 @@ If there are no functional changes between the two versions, respond with ONLY t
         String timestamp = LocalDateTime.now().format(dtf);
         String featureBranch = "feature_" + timestamp;
 
-        System.out.println("Creating and checking out new feature branch: " + featureBranch);
+        logger.info("Creating and checking out new feature branch: {}", featureBranch);
         runCommand(dir, "git", "checkout", "-b", featureBranch);
 
-        System.out.println("Cleaning workspace on new feature branch...");
+        logger.info("Cleaning workspace on new feature branch...");
         // List of files/directories to remove before generating new code.
         // This ensures no stale files are left from previous runs.
         String[] itemsToClean = {"src", "pom.xml", ".github"};
@@ -281,9 +351,9 @@ If there are no functional changes between the two versions, respond with ONLY t
                     } else {
                         Files.delete(itemPath);
                     }
-                    System.out.println("  - Removed: " + itemName);
+                    logger.info("  - Removed: {}", itemName);
                 } catch (IOException e) {
-                    System.err.printf("⚠️  Could not remove '%s'. Please check file permissions. Error: %s%n", itemPath, e.getMessage());
+                    logger.warn("⚠️  Could not remove '{}'. Please check file permissions. Error: {}", itemPath, e.getMessage());
                 }
             }
         }
@@ -293,43 +363,43 @@ If there are no functional changes between the two versions, respond with ONLY t
     private static void commitAndPush(String baseDir, String commitMessage, String branch) {
         try {
             File workingDir = new File(baseDir);
-            System.out.println("Adding files to Git...");
+            logger.info("Adding files to Git...");
             runCommand(workingDir, "git", "add", ".");
 
-            System.out.println("Committing changes...");
+            logger.info("Committing changes...");
             runCommand(workingDir, "git", "commit", "-m", commitMessage);
 
-            System.out.println("Pushing changes to origin/" + branch);
+            logger.info("Pushing changes to origin/{}", branch);
             runCommand(workingDir, "git", "push", "origin", branch);
-            System.out.println("🚀 Project pushed to GitHub successfully.");
+            logger.info("🚀 Project pushed to GitHub successfully.");
 
         } catch (Exception e) {
-            System.err.println("❌ Git commit or push failed: " + e.getMessage());
-            System.err.println("  - Please check repository permissions and ensure the branch exists.");
+            logger.error("❌ Git commit or push failed: {}", e.getMessage());
+            logger.error("  - Please check repository permissions and ensure the branch exists.");
         }
     }
 
     private static String createPullRequest(String baseDir, String baseBranch, String featureBranch, String title) {
-        System.out.println("🤖 Attempti   ng to create a Pull Request...");
+        logger.info("🤖 Attempting to create a Pull Request...");
         try {
             File workingDir = new File(baseDir);
             String body = "Automated PR created by AI agent. Please review the changes.";
             String prUrl = runCommandWithOutput(workingDir, "gh", "pr", "create", "--base", baseBranch, "--head", featureBranch, "--title", title, "--body", body);
-            System.out.println("✅ Successfully created Pull Request: " + prUrl.trim());
+            logger.info("✅ Successfully created Pull Request: {}", prUrl.trim());
             return prUrl.trim();
         } catch (IOException e) {
             if (e.getMessage().toLowerCase().contains("command not found") || e.getMessage().toLowerCase().contains("cannot run program")) {
-                System.err.println("❌ Critical Error: The 'gh' (GitHub CLI) command is not installed or not in the system's PATH.");
-                System.err.println("  - Please install it from https://cli.github.com/ to enable automatic Pull Request creation.");
+                logger.error("❌ Critical Error: The 'gh' (GitHub CLI) command is not installed or not in the system's PATH.");
+                logger.error("  - Please install it from https://cli.github.com/ to enable automatic Pull Request creation.");
             } else {
-                System.err.println("❌ Failed to create Pull Request: " + e.getMessage());
-                System.err.println("  - Ensure you are authenticated with 'gh auth login'.");
-                System.err.println("  - Ensure the repository remote is configured correctly and you have permissions.");
+                logger.error("❌ Failed to create Pull Request: {}", e.getMessage());
+                logger.error("  - Ensure you are authenticated with 'gh auth login'.");
+                logger.error("  - Ensure the repository remote is configured correctly and you have permissions.");
             }
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("❌ PR creation was interrupted.");
+            logger.error("❌ PR creation was interrupted.");
             return null;
         }
     }
@@ -350,12 +420,12 @@ If there are no functional changes between the two versions, respond with ONLY t
                     Files.copy(path, zos);
                     zos.closeEntry();
                 } catch (IOException e) {
-                    System.err.println("❌ Error zipping file: " + path + " - " + e.getMessage());
+                    logger.error("❌ Error zipping file: {} - {}", path, e.getMessage());
                 }
             });
-            System.out.println("📦 Project zipped to " + zipFileName);
+            logger.info("📦 Project zipped to {}", zipFileName);
         } catch (IOException e) {
-            System.err.println("❌ Failed to zip project: " + e.getMessage());
+            logger.error("❌ Failed to zip project: {}", e.getMessage());
         }
     }
 
@@ -420,9 +490,9 @@ jobs:
         try {
             Files.createDirectories(workflowDir);
             Files.writeString(ciFile, ciYml);
-            System.out.println("⚙️  GitHub Actions CI config added at: " + ciFile);
+            logger.info("⚙️  GitHub Actions CI config added at: {}", ciFile);
         } catch (IOException e) {
-            System.err.println("❌ Failed to write CI config: " + e.getMessage());
+            logger.error("❌ Failed to write CI config: {}", e.getMessage());
         }
     }
 
@@ -476,6 +546,15 @@ jobs:
                         <artifactId>spring-boot-starter-test</artifactId>
                         <scope>test</scope>
                     </dependency>
+                    <!-- Logging dependencies for SLF4J with Logback -->
+                    <dependency>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </dependency>
                 </dependencies>
                 <build>
                     <plugins>
@@ -497,9 +576,9 @@ jobs:
             """, dependenciesXml.toString());
         try {
             Files.writeString(Paths.get(baseDir, "pom.xml"), pom);
-            System.out.println("✅ Created: pom.xml");
+            logger.info("✅ Created: pom.xml");
         } catch (IOException e) {
-            System.err.println("❌ Failed to write pom.xml: " + e.getMessage());
+            logger.error("❌ Failed to write pom.xml: {}", e.getMessage());
         }
     }
 
@@ -550,6 +629,15 @@ jobs:
             This project was generated using a multi-agent AI system from an SRS document.
 
 %s
+            ## ⚙️ Configuration
+
+            Before running the application, you must set the following environment variables for the database connection:
+
+            ```bash
+            export DB_USERNAME=your_database_username
+            export DB_PASSWORD=your_database_password
+            ```
+
             ## 📦 Build
 
             ```bash
@@ -592,20 +680,20 @@ jobs:
                     builder.append("\n\n").append(newSummaryBlock).append("\n");
                     builder.append(existingContent, endIndex, existingContent.length());
                     fullFileContent = builder.toString();
-                    System.out.println("✅ Updated existing README.md with new summary.");
+                    logger.info("✅ Updated existing README.md with new summary.");
                 } else {
                     // No tags found, prepend the new summary block to the existing file
                     fullFileContent = startTag + "\n\n" + newSummaryBlock + "\n" + endTag + "\n\n" + existingContent;
-                    System.out.println("✅ Prepended AI summary to existing README.md.");
+                    logger.info("✅ Prepended AI summary to existing README.md.");
                 }
             } else {
-                System.out.println("✅ Created new README.md.");
+                logger.info("✅ Created new README.md.");
             }
 
             Files.writeString(readmePath, fullFileContent);
 
         } catch (IOException e) {
-            System.err.println("❌ Failed to write README.md: " + e.getMessage());
+            logger.error("❌ Failed to write README.md: {}", e.getMessage());
         }
     }
 
@@ -618,8 +706,8 @@ jobs:
                 name: generated-microservice
               datasource:
                 url: jdbc:postgresql://localhost:5432/mydatabase
-                username: user
-                password: password
+                username: ${DB_USERNAME:user}
+                password: ${DB_PASSWORD:password}
                 driver-class-name: org.postgresql.Driver
               jpa:
                 hibernate:
@@ -630,93 +718,51 @@ jobs:
         try {
             Files.createDirectories(resourcesDir);
             Files.writeString(resourcesDir.resolve("application.yml"), content);
-            System.out.println("✅ Created: application.yml");
+            logger.info("✅ Created: application.yml");
         } catch (IOException e) {
-            System.err.println("❌ Failed to write application.yml: " + e.getMessage());
+            logger.error("❌ Failed to write application.yml: {}", e.getMessage());
         }
     }
 
-    public static void main(String[] args) {
+    private static SrsData readSrsData() throws IOException {
         String srsPath;
         try (Scanner s = new Scanner(System.in, StandardCharsets.UTF_8)) {
-            System.out.println("\nEnter the full path to your SRS document (e.g., /home/user/project/specs/srs.txt):");
+            logger.info("\nEnter the full path to your SRS document (e.g., /home/user/project/specs/srs.txt):");
             srsPath = s.nextLine().trim();
         }
 
-        String userInput, repoUrl, baseBranch, repoName;
-        try {
-            System.out.println("Reading SRS document from: " + srsPath);
-            userInput = Files.readString(Paths.get(srsPath), StandardCharsets.UTF_8);
+        logger.info("Reading SRS document from: {}", srsPath);
+        String userInput = Files.readString(Paths.get(srsPath), StandardCharsets.UTF_8);
 
-            // Parse Git information directly from the SRS document
-            repoUrl = parseSrsForValue(userInput, "GitHub-URL");
-            baseBranch = parseSrsForValue(userInput, "checkout_branch");
-            repoName = parseSrsForValue(userInput, "Repository-Name");
+        String repoUrl = parseSrsForValue(userInput, SRS_KEY_GITHUB_URL);
+        String baseBranch = parseSrsForValue(userInput, SRS_KEY_CHECKOUT_BRANCH);
+        String repoName = parseSrsForValue(userInput, SRS_KEY_REPO_NAME);
 
-            if (repoUrl == null || baseBranch == null || repoName == null) {
-                System.err.println("❌ SRS document must contain 'GitHub-URL', 'checkout_branch', and 'Repository-Name' keys.");
-                return;
-            }
-            System.out.println("  - Found Repo URL: " + repoUrl);
-            System.out.println("  - Found Base Branch: " + baseBranch);
-            System.out.println("  - Found Repo Name: " + repoName);
-
-        } catch (IOException e) {
-            System.err.println("❌ Failed to read SRS file: " + e.getMessage());
-            return;
+        if (repoUrl == null || baseBranch == null || repoName == null) {
+            throw new IOException("SRS document must contain 'GitHub-URL', 'checkout_branch', and 'Repository-Name' keys.");
         }
 
-        try {
-            ensureRepositoryIsReady(repoName, repoUrl, baseBranch);
-        } catch (Exception e) {
-            System.err.println("❌ Failed to prepare the repository for analysis. Aborting. Error: " + e.getMessage());
-            return;
-        }
+        logger.info("  - Found Repo URL: {}", repoUrl);
+        logger.info("  - Found Base Branch: {}", baseBranch);
+        logger.info("  - Found Repo Name: {}", repoName);
 
-        // Perform change analysis by comparing the new SRS with the last known version.
-        String changeAnalysis = performChangeAnalysis(repoName, userInput);
+        GitConfig gitConfig = new GitConfig(repoUrl, baseBranch, repoName);
+        return new SrsData(gitConfig, userInput);
+    }
 
-        // If the analysis agent found no changes, skip the rest of the workflow.
-        if (changeAnalysis.trim().equals("No changes detected.")) {
-            System.out.println("\n✅ No functional changes detected in SRS. The local repository has been updated to the latest from the base branch, but no feature branch will be created.");
-            // The changelog is not written because no feature branch is created.
-            return;
-        }
-
-        // Since changes were detected, proceed with creating a feature branch and cleaning it.
-        String featureBranch;
-        try {
-            featureBranch = createFeatureBranchAndClean(repoName);
-        } catch (Exception e) {
-            System.err.println("❌ Failed to create feature branch. Aborting. Error: " + e.getMessage());
-            return;
-        }
-
-        // Always write the changelog file so the result of the analysis is recorded.
-        try {
-            Path changelogPath = Paths.get(repoName, "AI_CHANGELOG.md");
-            Files.writeString(changelogPath, changeAnalysis);
-            System.out.println("✅ Wrote change analysis to feature branch: " + changelogPath);
-        } catch (IOException e) {
-            System.err.println("❌ Failed to write analysis file: " + e.getMessage());
-        }
-
+    private static WorkflowResult runMainWorkflow(String userInput) {
         final SequentialAgent workflow = buildWorkflow();
-        final StringBuilder codeAndTestOutput = new StringBuilder();
-        final List<String> dependencyList = new ArrayList<>();
-        final StringBuilder requirementsSummary = new StringBuilder();
-        final StringBuilder commitMessage = new StringBuilder("feat: Initial project scaffold by AI agent");
+        final WorkflowResult workflowResult = new WorkflowResult();
 
         try {
             retryWithBackoff(() -> {
                 // Reset state variables inside the retry loop to ensure a clean slate for each attempt
-                codeAndTestOutput.setLength(0);
-                dependencyList.clear();
-                requirementsSummary.setLength(0);
-                commitMessage.setLength(0);
-                commitMessage.append("feat: Initial project scaffold by AI agent");
+                workflowResult.commitMessage = "feat: Initial project scaffold by AI agent";
+                workflowResult.requirementsSummary = "";
+                workflowResult.codeAndTestOutput = "";
+                workflowResult.dependencyList.clear();
 
-                System.out.println("\n--- Running Main AI Workflow ---");
+                logger.info("\n--- Running Main AI Workflow ---");
                 InMemoryRunner runner = new InMemoryRunner(workflow);
                 Session session = runner.sessionService().createSession(runner.appName(), "user").blockingGet();
                 Content userMsg = Content.fromParts(Part.fromText(userInput));
@@ -724,50 +770,45 @@ jobs:
                 runner.runAsync(session.userId(), session.id(), userMsg).blockingForEach(ev -> {
                     String response = ev.stringifyContent();
                     if (!response.isBlank()) {
-                        System.out.println("[" + ev.author() + "]\n" + response + "\n");
+                        logger.info("[{}]\n{}\n", ev.author(), response);
 
-                        if ("DependencyAgent".equals(ev.author())) {
-                            // The DependencyAgent now outputs deps and requirements, separated by a marker.
-                            // We only need the dependency list part.
-                            String[] parts = response.trim().split("\\s*---END-DEPS---\\s*");
+                        if (DEPENDENCY_AGENT_NAME.equals(ev.author())) {
+                            String[] parts = response.trim().split("\\s*" + DEPS_SEPARATOR + "\\s*");
                             if (parts.length > 0) {
-                                dependencyList.addAll(java.util.Arrays.asList(parts[0].trim().split("\\s*\\r?\\n\\s*")));
+                                workflowResult.dependencyList.addAll(java.util.Arrays.asList(parts[0].trim().split("\\s*\\r?\\n\\s*")));
                             }
-                        } else if ("RequirementsAgent".equals(ev.author())) {
-                            // The RequirementsAgent now produces the commit summary AND the requirements.
-                            // We need to parse them apart.
+                        } else if (REQUIREMENTS_AGENT_NAME.equals(ev.author())) {
                             String reqResponse = response.trim();
                             String[] lines = reqResponse.split("\\r?\\n", 2);
-                            if (lines.length > 0 && lines[0].startsWith("Commit-Summary: ")) {
-                                commitMessage.setLength(0); // Clear default
-                                commitMessage.append(lines[0].substring("Commit-Summary: ".length()).trim());
+                            if (lines.length > 0 && lines[0].startsWith(COMMIT_SUMMARY_PREFIX)) {
+                                workflowResult.commitMessage = lines[0].substring(COMMIT_SUMMARY_PREFIX.length()).trim();
                                 if (lines.length > 1) {
-                                    requirementsSummary.append(lines[1].trim());
+                                    workflowResult.requirementsSummary = lines[1].trim();
                                 }
                             } else {
-                                // Fallback if the agent didn't follow the new prompt format
-                                requirementsSummary.append(reqResponse);
+                                workflowResult.requirementsSummary = reqResponse;
                             }
                         }
 
-                        // Capture output only from code generation agents for file writing
-                        if ("CodeGenAgent".equals(ev.author()) || "TestGenAgent".equals(ev.author())) {
-                            codeAndTestOutput.append(response).append("\n\n");
+                        if (CODEGEN_AGENT_NAME.equals(ev.author()) || TESTGEN_AGENT_NAME.equals(ev.author())) {
+                            workflowResult.codeAndTestOutput += response + "\n\n";
                         }
                     }
                 });
-                return null; // Return null for Void action
+                return null;
             });
         } catch (Exception e) {
-            System.err.println("❌ The main AI workflow failed after multiple retries. Aborting.");
-            e.printStackTrace();
-            return; // Exit
+            logger.error("❌ The main AI workflow failed after multiple retries. Aborting.", e);
+            return null;
         }
+        return workflowResult;
+    }
 
-        writeClassesToFileSystem(codeAndTestOutput.toString(), repoName);
-        // Use the dynamic output from the DependencyAgent, with a sensible default if it's empty.
-        if (dependencyList.isEmpty()) {
-            System.out.println("⚠️ DependencyAgent did not return any dependencies. Falling back to default pom.xml.");
+    private static void generateProjectFiles(String repoName, WorkflowResult result, String srsContent) {
+        writeClassesToFileSystem(result.codeAndTestOutput, repoName);
+
+        if (result.dependencyList.isEmpty()) {
+            logger.warn("⚠️ DependencyAgent did not return any dependencies. Falling back to default pom.xml.");
             List<String> defaultDeps = List.of(
                 "org.springframework.boot:spring-boot-starter-web",
                 "org.springframework.boot:spring-boot-starter-data-jpa",
@@ -776,48 +817,107 @@ jobs:
             );
             addPomXml(repoName, defaultDeps);
         } else {
-            addPomXml(repoName, dependencyList);
+            addPomXml(repoName, result.dependencyList);
         }
-        updateReadme(repoName, requirementsSummary.toString(), dependencyList);
+
+        updateReadme(repoName, result.requirementsSummary, result.dependencyList);
         addApplicationYml(repoName);
         addGithubActionsCiConfig(repoName);
 
-        // Write the analysis and new state files
         try {
-            Path aiStateDir = Paths.get(repoName, ".ai-state");
+            Path aiStateDir = Paths.get(repoName, AI_STATE_DIR);
             Files.createDirectories(aiStateDir);
-            Files.writeString(aiStateDir.resolve("srs.txt"), userInput);
-            System.out.println("✅ Saved current SRS to state file.");
+            Files.writeString(aiStateDir.resolve(SRS_FILE_NAME), srsContent);
+            logger.info("✅ Saved current SRS to state file.");
         } catch (IOException e) {
-            System.err.println("❌ Failed to write analysis or state files: " + e.getMessage());
+            logger.error("❌ Failed to write analysis or state files: {}", e.getMessage());
         }
+    }
 
-        zipProject(repoName, repoName + ".zip");
-
-        commitAndPush(repoName, commitMessage.toString(), featureBranch);
-
-        String prUrl = createPullRequest(repoName, baseBranch, featureBranch, commitMessage.toString());
+    private static void finalizeAndSubmit(GitConfig gitConfig, String featureBranch, String commitMessage) {
+        zipProject(gitConfig.repoName, gitConfig.repoName + ".zip");
+        commitAndPush(gitConfig.repoName, commitMessage, featureBranch);
+        String prUrl = createPullRequest(gitConfig.repoName, gitConfig.baseBranch, featureBranch, commitMessage);
         if (prUrl != null) {
             openInBrowser(prUrl);
         }
     }
 
+    public static void main(String[] args) {
+        SrsData srsData;
+        try {
+            srsData = readSrsData();
+        } catch (IOException e) {
+            logger.error("❌ Failed to read SRS configuration: {}", e.getMessage());
+            return;
+        }
+
+        GitConfig gitConfig = srsData.gitConfig;
+        String userInput = srsData.srsContent;
+
+        try {
+            ensureRepositoryIsReady(gitConfig.repoName, gitConfig.repoUrl, gitConfig.baseBranch);
+        } catch (Exception e) {
+            logger.error("❌ Failed to prepare the repository for analysis. Aborting. Error: {}", e.getMessage());
+            return;
+        }
+
+        // Perform change analysis by comparing the new SRS with the last known version.
+        String changeAnalysis = performChangeAnalysis(gitConfig.repoName, userInput);
+
+        // If the analysis agent found no changes, skip the rest of the workflow.
+        if (changeAnalysis.trim().equals(NO_CHANGES_DETECTED)) {
+            logger.info("\n✅ No functional changes detected in SRS. The local repository has been updated to the latest from the base branch, but no feature branch will be created.");
+            // The changelog is not written because no feature branch is created.
+            return;
+        }
+
+        // Since changes were detected, proceed with creating a feature branch and cleaning it.
+        String featureBranch;
+        try {
+            featureBranch = createFeatureBranchAndClean(gitConfig.repoName);
+        } catch (Exception e) {
+            logger.error("❌ Failed to create feature branch. Aborting. Error: {}", e.getMessage());
+            return;
+        }
+
+        // Always write the changelog file so the result of the analysis is recorded.
+        try {
+            Path changelogPath = Paths.get(gitConfig.repoName, CHANGELOG_FILE_NAME);
+            Files.writeString(changelogPath, changeAnalysis);
+            logger.info("✅ Wrote change analysis to feature branch: {}", changelogPath);
+        } catch (IOException e) {
+            logger.error("❌ Failed to write analysis file: {}", e.getMessage());
+        }
+
+        final WorkflowResult workflowResult = runMainWorkflow(userInput);
+
+        if (workflowResult == null) {
+            logger.error("❌ Workflow execution failed. Could not generate project files. Aborting.");
+            return;
+        }
+
+        generateProjectFiles(gitConfig.repoName, workflowResult, userInput);
+
+        finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
+    }
+
     private static String performChangeAnalysis(String repoDir, String newSrs) {
         try {
-            Path oldSrsPath = Paths.get(repoDir, ".ai-state", "srs.txt");
+            Path oldSrsPath = Paths.get(repoDir, AI_STATE_DIR, SRS_FILE_NAME);
             String oldSrsContent = "";
             if (Files.exists(oldSrsPath)) {
-                System.out.println("Found previous SRS state file for comparison.");
+                logger.info("Found previous SRS state file for comparison.");
                 oldSrsContent = Files.readString(oldSrsPath);
             } else {
-                System.out.println("No previous SRS state file found. This will be an initial analysis.");
+                logger.info("No previous SRS state file found. This will be an initial analysis.");
             }
             return runChangeAnalysisAgent(oldSrsContent, newSrs);
         } catch (RuntimeException e) {
-            System.err.println("⚠️ Could not perform change analysis after multiple retries: " + e.getMessage());
+            logger.warn("⚠️ Could not perform change analysis after multiple retries: {}", e.getMessage());
             return "Change analysis failed to run: " + e.getMessage();
         } catch (Exception e) {
-            System.err.println("⚠️ Could not perform change analysis: " + e.getMessage());
+            logger.warn("⚠️ Could not perform change analysis: {}", e.getMessage());
             return "Change analysis failed to run: " + e.getMessage();
         }
     }
@@ -846,7 +946,7 @@ jobs:
                 // Recursively check the cause chain for a retriable ServerException.
                 if (isCausedByServerException(e)) {
                     if (i < maxRetries - 1) {
-                        System.out.printf("⚠️  Model request failed (attempt %d/%d) with a server error. Retrying in %d ms...%n", i + 1, maxRetries, delayMillis);
+                        logger.warn("⚠️  Model request failed (attempt {}/{}) with a server error. Retrying in {} ms...", i + 1, maxRetries, delayMillis);
                         try {
                             Thread.sleep(delayMillis);
                         } catch (InterruptedException interruptedException) {
