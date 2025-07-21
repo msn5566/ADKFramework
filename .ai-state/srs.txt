@@ -1,6 +1,6 @@
 Software Requirements Specification (SRS)
 
-Title: Employee Management Microservice
+Title: Employee and student Management Microservice
 
 1. Introduction
 This microservice will handle CRUD operations for employee and student data. It will be part of a larger HR system and communicate via REST APIs. The service should be developed using Spring Boot.
@@ -36,7 +36,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 
 
 GitHub-URL: https://github.com/msn5566/ADKFramework 
-GitHub-Branch: development
+checkout_branch: development
 Repository-Name: ADKFramework
 
 End of Document.
