@@ -24,6 +24,23 @@ It takes a **Software Requirements Specification (SRS)** and produces a **produc
 
 ---
 
+## Why Google ADK & Gemini?
+
+The choice of the Google Agents Development Kit (ADK) and the Gemini model was strategic for building this autonomous workflow.
+
+### Benefits of Google ADK:
+-   **Structured Agent Design**: ADK provides a robust framework for building multi-agent systems. It allows for the clear separation of concerns, with each agent having a distinct role and prompt.
+-   **Simplified Orchestration**: The `SequentialAgent` makes it trivial to chain agents together, ensuring a predictable, linear workflow from requirements to code.
+-   **State Management**: The framework handles the passing of context (like requirements and generated code) between agents, simplifying the data flow.
+-   **Focus on Logic**: By abstracting away the boilerplate of calling the LLM, ADK allows developers to focus on the core logic: designing the agents and refining their prompts.
+
+### Benefits of the Gemini Model:
+-   **Strong Reasoning & Code Generation**: Gemini has powerful capabilities for understanding complex instructions and generating high-quality, syntactically correct code and configuration files.
+-   **Large Context Window**: It can process large, multi-part prompts that include detailed instructions, examples, and the full context of previously generated code, which is essential for tasks like test generation.
+-   **Speed and Efficiency**: The model is optimized for a balance of performance and quality, making it suitable for the rapid, iterative nature of this automated workflow.
+
+---
+
 ## The Complete End-to-End Workflow
 
 ```mermaid
