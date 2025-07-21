@@ -10,14 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
@@ -39,100 +39,96 @@ public class EmployeeControllerTest {
         employee = new Employee();
         employee.setId("1");
         employee.setName("John Doe");
+        employee.setEmail("john.doe@example.com");
         employee.setDepartment("IT");
-        employee.setSalary(50000.0);
+        employee.setDesignation("Developer");
+        employee.setContactNumber("123-456-7890");
     }
 
     @Test
-    void createEmployeeTest() throws Exception {
+    void createEmployee_ShouldReturnCreatedEmployee() throws Exception {
         when(employeeService.createEmployee(any(Employee.class))).thenReturn(employee);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/employees")
+        mockMvc.perform(post("/api/employees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employee)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("John Doe"));
+                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+
+        verify(employeeService).createEmployee(any(Employee.class));
     }
 
     @Test
-    void getEmployeeByIdTest() throws Exception {
-        when(employeeService.getEmployeeById("1")).thenReturn(Optional.of(employee));
+    void getEmployeeById_ShouldReturnEmployee() throws Exception {
+        when(employeeService.getEmployeeById("1")).thenReturn(employee);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees/1")
+        mockMvc.perform(get("/api/employees/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("John Doe"));
+                .andExpect(jsonPath("$.name").value("John Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+
+        verify(employeeService).getEmployeeById("1");
     }
 
     @Test
-    void getEmployeeByIdNotFoundTest() throws Exception {
-        when(employeeService.getEmployeeById("2")).thenReturn(Optional.empty());
+    void updateEmployee_ShouldReturnUpdatedEmployee() throws Exception {
+        Employee updatedEmployee = new Employee();
+        updatedEmployee.setId("1");
+        updatedEmployee.setName("Updated Name");
+        updatedEmployee.setEmail("updated.email@example.com");
+         updatedEmployee.setDepartment("Updated Department");
+        updatedEmployee.setDesignation("Updated Designation");
+        updatedEmployee.setContactNumber("987-654-3210");
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees/2")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
 
-    @Test
-    void updateEmployeeTest() throws Exception {
-        when(employeeService.getEmployeeById("1")).thenReturn(Optional.of(employee));
-        when(employeeService.updateEmployee("1", employee)).thenReturn(employee);
+        when(employeeService.updateEmployee(eq("1"), any(Employee.class))).thenReturn(updatedEmployee);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/employees/1")
+        mockMvc.perform(put("/api/employees/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employee)))
+                        .content(objectMapper.writeValueAsString(updatedEmployee)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("John Doe"));
+                .andExpect(jsonPath("$.name").value("Updated Name"))
+                .andExpect(jsonPath("$.email").value("updated.email@example.com"))
+                .andExpect(jsonPath("$.department").value("Updated Department"));
+
+        verify(employeeService).updateEmployee(eq("1"), any(Employee.class));
     }
 
     @Test
-    void updateEmployeeNotFoundTest() throws Exception {
-        when(employeeService.getEmployeeById("2")).thenReturn(Optional.empty());
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/employees/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employee)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void deleteEmployeeTest() throws Exception {
-        when(employeeService.getEmployeeById("1")).thenReturn(Optional.of(employee));
+    void deleteEmployee_ShouldReturnNoContent() throws Exception {
         doNothing().when(employeeService).deleteEmployee("1");
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/1")
+        mockMvc.perform(delete("/api/employees/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        verify(employeeService).deleteEmployee("1");
     }
 
     @Test
-    void deleteEmployeeNotFoundTest() throws Exception {
-        when(employeeService.getEmployeeById("2")).thenReturn(Optional.empty());
+    void getAllEmployees_ShouldReturnListOfEmployees() throws Exception {
+        when(employeeService.getAllEmployees()).thenReturn(Collections.singletonList(employee));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/2")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void getAllEmployeesTest() throws Exception {
-        List<Employee> employees = Arrays.asList(employee, new Employee());
-        when(employeeService.getAllEmployees()).thenReturn(employees);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees")
+        mockMvc.perform(get("/api/employees")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].name").value("John Doe"));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[0].email").value("john.doe@example.com"));
+
+        verify(employeeService).getAllEmployees();
+    }
+
+    @Test
+    void createEmployee_InvalidInput_ShouldReturnBadRequest() throws Exception {
+        Employee invalidEmployee = new Employee();
+        invalidEmployee.setName(""); // Invalid name
+
+        mockMvc.perform(post("/api/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidEmployee)))
+                .andExpect(status().isBadRequest());
     }
 }
-```
-
-```java

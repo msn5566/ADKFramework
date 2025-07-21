@@ -2,8 +2,11 @@
 ## Changelog
 
 ### Title
-- Modified: "Employee Management Microservice" changed to "Employee and student Management Microservice"
+- Modified: "Employee and student Management Microservice" to "Employee Management Microservice"
 
-### Repository Information
-- Modified: `GitHub-Branch` changed to `checkout_branch`
+### 2. Functional Requirements
+- Removed: All functionalities related to `Student`.
+
+### 5. Future Scope
+- Removed: All functionalities related to `Student`.
 ```

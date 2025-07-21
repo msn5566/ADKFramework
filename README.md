@@ -9,64 +9,34 @@
 This microservice was automatically generated based on the following high-level requirements:
 
 > Feature: Create Employee
-> Input: Employee details (name, ID, department, salary, etc.) via REST API.
-> Output: Confirmation message with the created employee ID or error message.
-> Constraints: Input data must be validated before creating the employee.
-> Logic: Validates input data, generates a unique employee ID, stores the employee data in the MongoDB database.
-> 
-> Feature: Create Student
-> Input: Student details (name, ID, major, GPA, etc.) via REST API.
-> Output: Confirmation message with the created student ID or error message.
-> Constraints: Input data must be validated before creating the student.
-> Logic: Validates input data, generates a unique student ID, stores the student data in the MongoDB database.
+> Input: Employee data (name, contact details, etc.) in JSON format via REST API.
+> Output: Confirmation of employee creation with a unique ID, returned as JSON.
+> Constraints: Input data must be validated.
+> Logic:  The service should receive employee data, validate it, and store it in the Mongodb database.
 > 
 > Feature: Read Employee Details
 > Input: Employee ID via REST API.
-> Output: Employee details in JSON format or an error message if the employee is not found.
-> Constraints: None.
-> Logic: Retrieves employee data from the MongoDB database based on the provided employee ID.
-> 
-> Feature: Read Student Details
-> Input: Student ID via REST API.
-> Output: Student details in JSON format or an error message if the student is not found.
-> Constraints: None.
-> Logic: Retrieves student data from the MongoDB database based on the provided student ID.
+> Output: Employee details in JSON format.
+> Constraints: Employee ID must exist in the database.
+> Logic: The service should retrieve employee details from the Mongodb database based on the provided ID.
 > 
 > Feature: Update Employee Information
-> Input: Employee ID and updated employee details via REST API.
-> Output: Confirmation message or error message if the employee is not found or the update fails.
-> Constraints: Input data must be validated before updating the employee.
-> Logic: Validates input data, updates the employee data in the MongoDB database based on the provided employee ID.
-> 
-> Feature: Update Student Information
-> Input: Student ID and updated student details via REST API.
-> Output: Confirmation message or error message if the student is not found or the update fails.
-> Constraints: Input data must be validated before updating the student.
-> Logic: Validates input data, updates the student data in the MongoDB database based on the provided student ID.
+> Input: Employee ID and updated employee data in JSON format via REST API.
+> Output: Confirmation of employee update, returned as JSON.
+> Constraints: Employee ID must exist. Input data must be validated.
+> Logic: The service should update the employee record in the Mongodb database with the provided data.
 > 
 > Feature: Delete Employee
 > Input: Employee ID via REST API.
-> Output: Confirmation message or error message if the employee is not found or the deletion fails.
-> Constraints: None.
-> Logic: Deletes employee data from the MongoDB database based on the provided employee ID.
+> Output: Confirmation of employee deletion, returned as JSON.
+> Constraints: Employee ID must exist.
+> Logic: The service should delete the employee record from the Mongodb database based on the provided ID.
 > 
-> Feature: Delete Student
-> Input: Student ID via REST API.
-> Output: Confirmation message or error message if the student is not found or the deletion fails.
-> Constraints: None.
-> Logic: Deletes student data from the MongoDB database based on the provided student ID.
-> 
-> Feature: REST API
-> Input: HTTP requests to various endpoints.
-> Output: JSON responses representing employee/student data or error messages.
-> Constraints: All endpoints must follow RESTful conventions and use `application/json` for requests and responses.
-> Logic: Exposes REST endpoints for all CRUD operations on employee and student data.
-> 
-> Feature: Validate Input Data
-> Input: Data provided for creating or updating employee/student information.
-> Output: Validation success or error message indicating invalid fields.
-> Constraints: Must validate all required fields and data types.
-> Logic: Implements validation logic to ensure data integrity.
+> Feature: API Exposure
+> Input: REST API requests for CRUD operations.
+> Output: Responses in `application/json` format.
+> Constraints: Must follow RESTful conventions.
+> Logic: Expose REST endpoints for creating, reading, updating, and deleting employees.
 
 ### 🛠️ Core Dependencies
 
@@ -77,9 +47,8 @@ The following core dependencies were automatically included to support these req
 | `org.springframework.boot` | `spring-boot-starter-web` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-data-mongodb` | `compile` |
 | `org.springframework.boot` | `spring-boot-starter-validation` | `compile` |
-| `org.springdoc` | `springdoc-openapi-starter-webmvc-ui` | `compile` |
-| `org.springframework.boot` | `spring-boot-starter-test` | `test` |
-| `org.mockito` | `mockito-core` | `test` |
+| `org.springframework.boot` | `spring-boot-starter-test` | `compile` |
+| `io.springfox` | `springfox-boot-starter` | `optional` |
 | `org.projectlombok` | `lombok` | `optional` |
 
 
