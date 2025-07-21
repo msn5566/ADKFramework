@@ -14,7 +14,7 @@ The system is designed as a linear pipeline composed of five core components:
 
 ```mermaid
 graph TD
-    A["1. SRS Parser & Configurator"] --> B["2. AI Agent Workflow Engine"];
+     --> A["1. SRS Parser & Configurator"] --> B["2. AI Agent Workflow Engine"];
     B --> C["3. Project Assembler"];
     C --> D["4. Quality Gate & Verification"];
     D --> E["5. Git & SCM Integration"];
