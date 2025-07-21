@@ -14,10 +14,10 @@ The system is designed as a linear pipeline composed of five core components:
 
 ```mermaid
 graph TD
-    A[1. SRS Parser & Configurator] --> B[2. AI Agent Workflow Engine];
-    B --> C[3. Project Assembler];
-    C --> D[4. Quality Gate & Verification];
-    D --> E[5. Git & SCM Integration];
+    A["1. SRS Parser & Configurator"] --> B["2. AI Agent Workflow Engine"];
+    B --> C["3. Project Assembler"];
+    C --> D["4. Quality Gate & Verification"];
+    D --> E["5. Git & SCM Integration"];
 ```
 
 1.  **SRS Parser & Configurator**: This initial component is responsible for all user-facing interactions and setup. It reads the `srs.txt` file, parses both functional requirements and non-functional requirements (such as Git repository URL, Java version, and Spring Boot version), and prepares the environment for the workflow.
@@ -55,12 +55,12 @@ graph TD
         FailedCommit[Git Commit with Analysis]
     end
 
-    SRS --> |SRS Content, Git & Project Config| Parser
-    Parser --> |Structured Requirements, Config| AIEngine
-    AIEngine --> |Raw Code, Tests, Dependencies| Assembler
-    Assembler --> |Complete Maven Project| QualityGate
-    QualityGate --> |Success| Git
-    QualityGate --> |Failure Log| Git
+    SRS --> |"SRS Content, Git & Project Config"| Parser
+    Parser --> |"Structured Requirements, Config"| AIEngine
+    AIEngine --> |"Raw Code, Tests, Dependencies"| Assembler
+    Assembler --> |"Complete Maven Project"| QualityGate
+    QualityGate --> |"Success"| Git
+    QualityGate --> |"Failure Log"| Git
     Git -- On Success --> PR
     Git -- On Failure --> FailedCommit
 ```
@@ -101,7 +101,7 @@ classDiagram
         +String commitMessage
         +String requirementsSummary
         +String codeAndTestOutput
-        +List<String> dependencyList
+        +List~String~ dependencyList
     }
 
     class GitConfig {
