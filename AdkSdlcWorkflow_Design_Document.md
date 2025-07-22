@@ -14,7 +14,7 @@ The system is designed as a linear pipeline composed of five core components:
 
 ```mermaid
 graph TD
-    A["SRS Parser & Configurator"] --> B["AI Agent Workflow Engine"];
+    A["AI-Powered Configuration Agent"] --> B["AI Agent Workflow Engine"];
     B --> C["Project Assembler"];
     C --> D["Quality Gate & Verification"];
     D --> E["Git & SCM Integration"];
@@ -22,7 +22,7 @@ graph TD
 
 ```
 
-1.  **SRS Parser & Configurator**: This initial component is responsible for all user-facing interactions and setup. It reads the `srs.txt` file, parses both functional requirements and non-functional requirements (such as Git repository URL, Java version, and Spring Boot version), and prepares the environment for the workflow.
+1.  **AI-Powered Configuration Agent**: This initial component is now driven by a specialized AI agent (`ConfigAgent`). It intelligently and flexibly parses the `srs.txt` file, understanding variations in key names (e.g., `Java-Version` vs. `java 21`) to extract all project configurations. It validates that all mandatory keys are present, failing gracefully if they are not.
 
 2.  **AI Agent Workflow Engine**: This is the core of the system, powered by the Google ADK framework. It orchestrates a `SequentialAgent` composed of several specialized sub-agents (`RequirementsAgent`, `DependencyAgent`, `CodeGenAgent`, `TestGenAgent`) that work in concert to transform the SRS into a collection of software artifacts (code, dependencies, commit messages).
 
@@ -45,7 +45,7 @@ graph TD
     end
 
     subgraph System Components
-        Parser[SRS Parser]
+        ConfigAgent[AI-Powered ConfigAgent]
         AIEngine[AI Agent Engine]
         Assembler[Project Assembler]
         QualityGate[Quality Gate]
@@ -57,8 +57,8 @@ graph TD
         FailedCommit[Git Commit with Analysis]
     end
 
-    SRS --> |"SRS Content, Git & Project Config"| Parser
-    Parser --> |"Structured Requirements, Config"| AIEngine
+    SRS --> |"Raw SRS Content"| ConfigAgent
+    ConfigAgent --> |"Validated Requirements & Config"| AIEngine
     AIEngine --> |"Raw Code, Tests, Dependencies"| Assembler
     Assembler --> |"Complete Maven Project"| QualityGate
     QualityGate --> |"Success"| Git
@@ -88,6 +88,7 @@ classDiagram
     class AdkSdlcWorkflow_7 {
         <<static>>
         +main(String[] args)
+        -runConfigAgent(String) ExtractedConfig
         -buildWorkflow(ProjectConfig, Map) SequentialAgent
         -runMainWorkflow(String, ProjectConfig, Map) WorkflowResult
         -writeClassesToFileSystem(String, String) void
@@ -97,6 +98,11 @@ classDiagram
         -commitAndPush(String, String, String) void
         -finalizeAndSubmit(String, String, String) void
         -readSrsData() SrsData
+    }
+
+    class ExtractedConfig {
+        +GitConfig gitConfig
+        +ProjectConfig projectConfig
     }
 
     class WorkflowResult {
@@ -123,6 +129,7 @@ classDiagram
         +String srsContent
     }
 
+    AdkSdlcWorkflow_7 ..> ExtractedConfig : uses
     AdkSdlcWorkflow_7 ..> WorkflowResult : uses
     AdkSdlcWorkflow_7 ..> GitConfig : uses
     AdkSdlcWorkflow_7 ..> ProjectConfig : uses
@@ -132,7 +139,8 @@ classDiagram
 ### 2.2. Method Breakdown
 
 -   `main(String[] args)`: The main entry point. Orchestrates the entire high-level workflow: reads SRS, prepares the Git repository, runs the AI workflow, triggers the quality gate, and executes either the success or failure path.
--   `readSrsData()`: Prompts the user for the SRS file path and parses all configuration keys (`GitHub-URL`, `Java-Version`, etc.) into the `GitConfig` and `ProjectConfig` data classes.
+-   `readSrsData()`: Prompts the user for the SRS file path, reads the content, and then invokes `runConfigAgent` to perform intelligent parsing and validation.
+-   `runConfigAgent(...)`: Takes the raw SRS content as input and invokes the `ConfigAgent` (an LLM agent) to intelligently parse all configuration values. It is designed to be flexible with input formats and returns a validated `ExtractedConfig` object or throws an error if mandatory keys are missing.
 -   `buildWorkflow(...)`: Constructs the `SequentialAgent`. It initializes all the individual AI agents (`CodeGenAgent`, `TestGenAgent`, etc.) with their specific, detailed prompts.
 -   `runMainWorkflow(...)`: Executes the `SequentialAgent` using the Google ADK `InMemoryRunner`. It aggregates all the raw text outputs from the agents into the `WorkflowResult` data class.
 -   `writeClassesToFileSystem(...)`: The intelligent file parser. It uses a flexible regular expression to find `// File: ...` markers in the AI's output and extracts the associated code content, handling variations in formatting (like markdown code blocks).
@@ -145,6 +153,7 @@ classDiagram
 
 The reliability of the system depends on highly refined prompts for the AI agents.
 
+-   **`ConfigAgent`**: Framed as an "expert configuration parser," it is instructed to be flexible with various phrasings (e.g., "java 21", "Java-Version: 21") and to normalize them into a canonical key-value format. It is responsible for extracting all Git and project version configurations.
 -   **`CodeGenAgent`**: Is instructed to use a specific base package (`com.generated.microservice`) and to include modern best practices like OpenAPI annotations and `jakarta.validation`.
 -   **`DependencyAgent`**: Is given the Java and Spring Boot versions from the `ProjectConfig` and is explicitly told to find compatible dependency versions for third-party libraries.
 -   **`TestGenAgent`**: Is given a detailed, multi-point set of instructions on how to write modern JUnit 5 tests, including how to mock dependencies and, critically, how to correctly test `void` methods.
