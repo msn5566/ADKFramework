@@ -1,10 +1,7 @@
-package com.example.repository;
+package com.generated.microservice.repository;
 
-import com.example.entity.Student;
+import com.generated.microservice.entity.Student;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface StudentRepository extends MongoRepository<Student, String> {
 }
-```
-
-```java
