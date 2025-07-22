@@ -50,13 +50,13 @@ graph TD
         B --> D{Clone or Update Git Repository};
     end
 
-    subgraph "2. Change Analysis"
+    subgraph "2.Change Analysis"
         D --> E{Compare New SRS with Previous Version};
         E --> F{"Any functional<br/>changes?"};
         F -- "No" --> G[Exit Gracefully];
     end
 
-    subgraph "3. AI Code Generation"
+    subgraph "3.AI Code Generation"
         F -- "Yes" --> H[Create New Feature Branch];
         H --> I[Run Main AI Workflow];
         I --> J("Requirements Agent");
@@ -66,7 +66,7 @@ graph TD
         M --> N[Assemble Project Files];
     end
 
-    subgraph "4. Quality Gate & Submission"
+    subgraph "4.Quality Gate & Submission"
         N --> O{Verify Build & Run Tests};
         O --> P{"Build Succeeded?"};
         P -- "Yes" --> Q[Commit & Push Code];
