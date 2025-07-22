@@ -335,7 +335,7 @@ If there are no functional changes between the two versions, respond with ONLY t
     }
 
     private static String parseSrsForValue(String srsContent, String key) {
-        Pattern pattern = Pattern.compile("^" + key + ":\\s*(.+)$", Pattern.MULTILINE);
+        Pattern pattern = Pattern.compile("^" + key + ":\\s*(.+)$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(srsContent);
         if (matcher.find()) {
             return matcher.group(1).trim();
@@ -795,6 +795,102 @@ jobs:
         }
     }
 
+    /**
+     * A simple data class to hold configuration extracted by the ConfigAgent.
+     */
+    private static class ExtractedConfig {
+        final GitConfig gitConfig;
+        final ProjectConfig projectConfig;
+
+        ExtractedConfig(GitConfig gitConfig, ProjectConfig projectConfig) {
+            this.gitConfig = gitConfig;
+            this.projectConfig = projectConfig;
+        }
+    }
+
+    private static ExtractedConfig runConfigAgent(String srsContent) throws IOException {
+        logger.info("🤖 Running Config Agent to extract all project configurations...");
+        LlmAgent configAgent = LlmAgent.builder()
+                .name("ConfigAgent")
+                .description("Extracts all key project configurations from SRS text.")
+                .instruction("""
+                    You are an expert configuration parser. Analyze the following Software Requirements Specification (SRS) text.
+                    Your task is to intelligently extract values for a predefined set of configuration keys.
+
+                    **Be flexible with the input format.** The keys in the SRS text might be phrased differently, have different casing, or lack hyphens. You must map them to the canonical keys below.
+                    For example:
+                    - "java 21", "java-version: 21", or "Java Version 21" should all map to `Java-Version: 21`.
+                    - "spring boot 3.5.*", "springboot-version: 3.5.2", or "Spring Boot Version 3.5" should all map to `SpringBoot-Version: 3.5.2` (or whatever the specified version is).
+                    - "Repo Name my-project" or "Repository-Name: my-project" should map to `Repository-Name: my-project`.
+
+                    **Output Format:**
+                    You MUST respond with ONLY the canonical key-value pairs, one per line. Do not include any other text or explanation.
+
+                    **Canonical Keys to Extract:**
+                    - `GitHub-URL`
+                    - `checkout_branch`
+                    - `Repository-Name`
+                    - `Java-Version`
+                    - `SpringBoot-Version`
+
+                    **Default Values:**
+                    If a value is not specified for `Java-Version` or `SpringBoot-Version`, you MUST use the following default values:
+                    - `Java-Version: 17`
+                    - `SpringBoot-Version: 3.2.5`
+
+                    **Mandatory Keys:**
+                    The keys `GitHub-URL`, `checkout_branch`, and `Repository-Name` are mandatory. If you cannot find them in the text, respond with an empty value for that key.
+                    """)
+                .model("gemini-2.0-flash")
+                .outputKey("config")
+                .build();
+
+        try {
+            final InMemoryRunner runner = new InMemoryRunner(configAgent);
+            final Content userMsg = Content.fromParts(Part.fromText(srsContent));
+
+            Event finalEvent = retryWithBackoff(() -> {
+                Session session = runner.sessionService().createSession(runner.appName(), "user-config-analyzer").blockingGet();
+                return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
+            });
+
+            String response = finalEvent != null ? finalEvent.stringifyContent() : "";
+            logger.debug("ConfigAgent Response:\\n{}", response);
+
+            String repoUrl = parseSrsForValue(response, SRS_KEY_GITHUB_URL);
+            String baseBranch = parseSrsForValue(response, SRS_KEY_CHECKOUT_BRANCH);
+            String repoPath = parseSrsForValue(response, SRS_KEY_REPO_NAME);
+            String javaVersion = parseSrsForValue(response, SRS_KEY_JAVA_VERSION);
+            String springBootVersion = parseSrsForValue(response, SRS_KEY_SPRING_BOOT_VERSION);
+
+            // --- NEW: Validate mandatory fields and fail fast ---
+            List<String> missingKeys = new ArrayList<>();
+            if (repoUrl == null || repoUrl.isBlank()) missingKeys.add(SRS_KEY_GITHUB_URL);
+            if (baseBranch == null || baseBranch.isBlank()) missingKeys.add(SRS_KEY_CHECKOUT_BRANCH);
+            if (repoPath == null || repoPath.isBlank()) missingKeys.add(SRS_KEY_REPO_NAME);
+
+            if (!missingKeys.isEmpty()) {
+                String errorMessage = "ConfigAgent failed to extract mandatory keys: " + String.join(", ", missingKeys)
+                    + ". Please ensure they are present and have values in the SRS document.";
+                throw new IOException(errorMessage);
+            }
+            // --- END NEW LOGIC ---
+
+            GitConfig gitConfig = new GitConfig(repoUrl, baseBranch, repoPath);
+            ProjectConfig projectConfig = new ProjectConfig(javaVersion, springBootVersion);
+
+            return new ExtractedConfig(gitConfig, projectConfig);
+        } catch (IOException e) {
+            // Re-throw IOExceptions (from our validation) directly
+            throw e;
+        } catch (Exception e) {
+            String errorMessage = "The Config Agent failed to execute due to an internal error.";
+            logger.error("❌ " + errorMessage, e);
+            // Wrap other exceptions in IOException to signal a configuration failure
+            throw new IOException(errorMessage, e);
+        }
+    }
+
     private static SrsData readSrsData() throws IOException {
         String srsPath;
         try (Scanner s = new Scanner(System.in, StandardCharsets.UTF_8)) {
@@ -805,26 +901,16 @@ jobs:
         logger.info("Reading SRS document from: {}", srsPath);
         String userInput = Files.readString(Paths.get(srsPath), StandardCharsets.UTF_8);
 
-        String repoUrl = parseSrsForValue(userInput, SRS_KEY_GITHUB_URL);
-        String baseBranch = parseSrsForValue(userInput, SRS_KEY_CHECKOUT_BRANCH);
-        String repoPath = parseSrsForValue(userInput, SRS_KEY_REPO_NAME); // Changed from repoName
-        String javaVersion = parseSrsForValue(userInput, SRS_KEY_JAVA_VERSION);
-        String springBootVersion = parseSrsForValue(userInput, SRS_KEY_SPRING_BOOT_VERSION);
+        // The runConfigAgent method now handles its own validation and throws on failure.
+        ExtractedConfig config = runConfigAgent(userInput);
 
-        if (repoUrl == null || baseBranch == null || repoPath == null) {
-            throw new IOException("SRS document must contain 'GitHub-URL', 'checkout_branch', and 'Repository-Name' keys.");
-        }
+        logger.info("  - Found Repo URL: {}", config.gitConfig.repoUrl);
+        logger.info("  - Found Base Branch: {}", config.gitConfig.baseBranch);
+        logger.info("  - Found Repo Name: {}", config.gitConfig.repoPath);
+        logger.info("  - Using Java Version: {}", config.projectConfig.javaVersion);
+        logger.info("  - Using Spring Boot Version: {}", config.projectConfig.springBootVersion);
 
-        logger.info("  - Found Repo URL: {}", repoUrl);
-        logger.info("  - Found Base Branch: {}", baseBranch);
-        logger.info("  - Found Repo Name: {}", repoPath);
-        
-        GitConfig gitConfig = new GitConfig(repoUrl, baseBranch, repoPath);
-        ProjectConfig projectConfig = new ProjectConfig(javaVersion, springBootVersion);
-        logger.info("  - Using Java Version: {}", projectConfig.javaVersion);
-        logger.info("  - Using Spring Boot Version: {}", projectConfig.springBootVersion);
-
-        return new SrsData(gitConfig, projectConfig, userInput);
+        return new SrsData(config.gitConfig, config.projectConfig, userInput);
     }
 
     private static WorkflowResult runMainWorkflow(String userInput, ProjectConfig projectConfig, Map<String, String> agentPrompts) {

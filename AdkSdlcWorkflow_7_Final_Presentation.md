@@ -46,9 +46,8 @@ The choice of the Google Agents Development Kit (ADK) and the Gemini model was s
 ```mermaid
 graph TD
     subgraph "1. Initialization"
-        A[User provides SRS file path] --> B{Read SRS & Config};
-        B --> C{Parse Git, Java & Spring Boot Versions};
-        C --> D{Clone or Update Git Repository};
+        A[User provides SRS file path] --> B["ConfigAgent intelligently parses<br/>all configurations from SRS"];
+        B --> D{Clone or Update Git Repository};
     end
 
     subgraph "2. Change Analysis"
@@ -92,6 +91,7 @@ graph TD
 
 The workflow's intelligence is distributed across several specialized agents:
 
+-   **`ConfigAgent`**: The project manager. Intelligently parses the SRS document for all project configurations (Git repo, branches, versions), understanding natural language variations to avoid rigid formatting requirements.
 -   **`ChangeAnalysisAgent`**: The gatekeeper. Prevents redundant work by checking for meaningful changes in the requirements.
 -   **`RequirementsAgent`**: The analyst. Extracts a structured summary and a Git commit message from the SRS.
 -   **`DependencyAgent`**: The architect. Determines the required Maven dependencies based on the specified Java and Spring Boot versions.
@@ -153,6 +153,8 @@ SpringBoot-Version: 3.2.5
 Feature: User Management API
 ...
 ```
+
+**Note:** The `ConfigAgent` is flexible! You can use variations like `java 21` or `Repo Name: my-project`. The agent will intelligently map them to the correct configuration.
 
 ### Run the Application
 1.  Execute the `main` method in `AdkSdlcWorkflow_7.java`.
