@@ -24,6 +24,40 @@ It takes a **Software Requirements Specification (SRS)** and produces a **produc
 
 ---
 
+### Use Case: Rapid Microservice Prototyping
+
+*   **Actor**: A software developer.
+*   **Goal**: To accelerate the creation of a new Spring Boot microservice by automating the entire initial development setup, from code generation to the final pull request.
+*   **Scenario**: The developer is tasked with creating a new API. Instead of manually setting up the project, writing boilerplate code, creating tests, and configuring the repository, they simply author a high-level **Software Requirements Specification (SRS)** document. They then run the `AdkSdlcWorkflow` application, which takes the SRS as input and autonomously produces a production-ready, tested microservice, ready for their review on GitHub.
+
+---
+
+### Acceptance Criteria
+
+These are the success conditions that the system must meet:
+
+1.  **Successful End-to-End Run (Happy Path)**
+    *   **Given** a valid SRS file with all required configurations and functional requirements.
+    *   **When** the workflow is executed.
+    *   **Then** the system **must** generate a complete Spring Boot project, pass all build and test verifications, and create a new pull request in the specified GitHub repository.
+
+2.  **Intelligent Handling of Build Failures**
+    *   **Given** the AI generates code that fails the build verification.
+    *   **When** the workflow is executed.
+    *   **Then** the system **must** detect the failure, use the `ReviewAgent` to generate a failure analysis report, commit the broken code *and* the analysis to a new branch, and **must not** create a pull request.
+
+3.  **Graceful Exit on Invalid Configuration**
+    *   **Given** an SRS file is missing a mandatory configuration (e.g., `GitHub-URL`).
+    *   **When** the workflow is executed.
+    *   **Then** the system **must** fail fast, log a clear error message specifying which keys are missing, and exit without attempting to generate code.
+
+4.  **Efficiency with Unchanged Requirements**
+    *   **Given** an SRS file is provided with no functional changes from the previous run.
+    *   **When** the workflow is executed.
+    *   **Then** the system **must** detect the lack of changes and exit gracefully without performing any redundant work.
+
+---
+
 ## Why Google ADK & Gemini?
 
 The choice of the Google Agents Development Kit (ADK) and the Gemini model was strategic for building this autonomous workflow.
