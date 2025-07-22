@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.generated.microservice.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -18,8 +18,6 @@ public class Student {
     @NotBlank(message = "Major is required")
     private String major;
 
-    private Double gpa;
-}
-```
+    private String studentId;
 
-```java
+}

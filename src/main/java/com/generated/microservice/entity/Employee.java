@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.generated.microservice.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -18,8 +18,6 @@ public class Employee {
     @NotBlank(message = "Department is required")
     private String department;
 
-    private Double salary;
-}
-```
+    private String employeeId;
 
-```java
+}

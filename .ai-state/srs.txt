@@ -14,7 +14,7 @@ This microservice will handle CRUD operations for employee and student data. It 
 - The service must validate input data.
 
 3. Non-Functional Requirements
-- Must be written in Java 17 using Spring Boot 3.x.
+- Must be written in Java 21 using Spring Boot 3.5.*
 - Should follow layered architecture (Controller, Service, Repository).
 - Must use Maven for build.
 - Data should be stored in a Mongodb database.

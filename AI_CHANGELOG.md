@@ -1,9 +1,8 @@
 ```markdown
 ## Changelog
 
-### Title
-- Modified: "Employee Management Microservice" changed to "Employee and student Management Microservice"
+**Non-Functional Requirements:**
 
-### Repository Information
-- Modified: `GitHub-Branch` changed to `checkout_branch`
+*   **Modified:** Java version updated from 17 to 21.
+*   **Modified:** Spring Boot version updated from 3.x to 3.5.*.
 ```
