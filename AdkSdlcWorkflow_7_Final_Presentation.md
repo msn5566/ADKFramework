@@ -45,7 +45,7 @@ The choice of the Google Agents Development Kit (ADK) and the Gemini model was s
 
 ```mermaid
 graph TD
-    subgraph "1. Initialization"
+    subgraph "1.Initialization"
         A[User provides SRS file path] --> B["ConfigAgent intelligently parses<br/>all configurations from SRS"];
         B --> D{Clone or Update Git Repository};
     end
