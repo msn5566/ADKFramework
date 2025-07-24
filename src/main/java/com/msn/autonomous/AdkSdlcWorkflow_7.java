@@ -54,6 +54,7 @@ public class AdkSdlcWorkflow_7 {
     private static final String REVIEW_AGENT_NAME = "ReviewAgent";
     private static final String CORRECTOR_AGENT_NAME = "CorrectorAgent";
     private static final String CODE_MERGE_AGENT_NAME = "CodeMergeAgent";
+    private static final String CONTEXT_EXTRACTION_AGENT_NAME = "ContextExtractionAgent";
 
     private static final String KEY_REQUIREMENTS = "requirements";
     private static final String KEY_DEPENDENCIES = "dependencies";
@@ -281,23 +282,22 @@ If there are no functional changes between the two versions, respond with ONLY t
         return finalEvent != null ? finalEvent.stringifyContent() : "";
     }
 
-    private static String runCodeMergeAgent(String existingCode, String newCodeSnippet) {
+    private static String runCodeMergeAgent(String existingCode, String newFullFile) {
         logger.info("🤖 Running Code Merge Agent to integrate new feature...");
         LlmAgent mergeAgent = LlmAgent.builder()
             .name(CODE_MERGE_AGENT_NAME)
-            .description("Intelligently merges a new Java code snippet into an existing Java file.")
-            .instruction("""
-                You are an expert Java developer specializing in refactoring.
-                You will be given the full content of an existing Java file and a new code snippet (e.g., a new method, a new field, a new annotation), separated by markers.
-                Your task is to intelligently merge the new snippet into the existing file content.
-
-                RULES:
-                1.  Place new methods logically alongside existing methods, respecting code organization.
-                2.  Place new fields with existing fields at the top of the class.
-                3.  Add required import statements if the new snippet needs them. Do not add duplicate imports.
-                4.  Preserve all existing code, formatting, and comments perfectly.
-                5.  The final output MUST be the complete, merged content of the Java file. Do not add any explanation, markers, or ```java ... ``` code blocks. Your response must be only the raw, compilable Java code.
-                """)
+            .description("Intelligently merges a new full Java file into an existing Java file.")
+        .instruction("""
+            You are an expert Java developer and code merger.
+            You will be given the full content of an existing Java file and a new, full version of the same file (with new or updated features).
+            Your task is to intelligently merge the new file into the existing file:
+            - Add or update only the code related to the new feature.
+            - Do not remove or overwrite unrelated existing code.
+            - Avoid duplicating imports, methods, or class-level annotations.
+            - If a method or class exists in both, use the version from the new file.
+            - The final output must be a single, compilable Java file, with all necessary imports and no duplicate code.
+            - Do not add any explanation or code block markers, just output the merged Java code.
+            """)
             .model("gemini-2.0-flash")
             .outputKey("merged_code")
             .build();
@@ -310,10 +310,10 @@ If there are no functional changes between the two versions, respond with ONLY t
             %s
             --- END EXISTING FILE CONTENT ---
 
-            --- NEW CODE SNIPPET TO MERGE ---
+            --- NEW FILE CONTENT ---
             %s
-            --- END NEW CODE SNIPPET TO MERGE ---
-            """, existingCode, newCodeSnippet);
+            --- END NEW FILE CONTENT ---
+            """, existingCode, newFullFile);
 
         final Content userMsg = Content.fromParts(Part.fromText(combinedInput));
 
@@ -335,6 +335,10 @@ If there are no functional changes between the two versions, respond with ONLY t
             }
             // --- END NEW LOGIC ---
 
+            System.out.println("existingCode: " + existingCode);
+            System.out.println("newFullFile: " + newFullFile);
+            System.out.println("mergedCode: "+ mergedCode);
+
             // If the agent returns an empty response, it's safer to return the original code.
             return mergedCode.isEmpty() ? existingCode : mergedCode;
         } catch (Exception e) {
@@ -354,21 +358,14 @@ If there are no functional changes between the two versions, respond with ONLY t
             String action = matcher.group(1).trim();
             String relativePath = matcher.group(2).trim();
             String rawContent = matcher.group(3).trim();
-            String content;
 
-            System.out.println("action: " + action);
-            System.out.println("relativePath: " + relativePath);
-            System.out.println("rawContent: " + rawContent);
-
-            // Extract content from markdown code blocks (e.g., ```java ... ```) if they exist.
-            Pattern codeBlockPattern = Pattern.compile("```(?:java)?\\s*\\n(.*?)\\n```", Pattern.DOTALL);
-            Matcher codeMatcher = codeBlockPattern.matcher(rawContent);
-
-            if (codeMatcher.find()) {
-                content = codeMatcher.group(1).trim();
-            } else {
-                content = rawContent; // Use raw content if no markdown block is found
+            if (!rawContent.startsWith("```")) {
+                rawContent = "```java\n" + rawContent ;
             }
+
+            String content = filteredContent(rawContent);
+
+            
 
             if (content.isEmpty()) {
                 logger.warn("⚠️ Skipping empty code block for {}", relativePath);
@@ -387,7 +384,7 @@ If there are no functional changes between the two versions, respond with ONLY t
                 }
             } else if ("Modify File".equals(action)) {
                 if (!Files.exists(filePath)) {
-                    logger.error("❌ Cannot modify file that does not exist: {}. Treating as a new file.", filePath);
+                    logger.info("❌ Cannot modify file that does not exist: {}. Treating as a new file.", filePath);
                      try {
                         Files.createDirectories(filePath.getParent());
                         Files.writeString(filePath, content, StandardCharsets.UTF_8);
@@ -400,15 +397,11 @@ If there are no functional changes between the two versions, respond with ONLY t
 
                 try {
                     String existingCode = Files.readString(filePath, StandardCharsets.UTF_8);
-                    String newCodeSnippet = content;
-
-                    System.out.println("existingCode: " + existingCode);
-                    System.out.println("newCodeSnippet: " + newCodeSnippet);
+                    String newJavaCode = content;               
 
                     // Run the merge agent to combine existing code with the new snippet.
-                    String mergedCode = runCodeMergeAgent(existingCode, newCodeSnippet);
+                    String mergedCode = filteredContent(runCodeMergeAgent(existingCode, newJavaCode));
                     System.out.println("mergedCode: " + mergedCode);
-
                     Files.writeString(filePath, mergedCode, StandardCharsets.UTF_8); // Overwrite with merged content
                     logger.info("✅ Merged and updated: {}", filePath);
 
@@ -417,6 +410,22 @@ If there are no functional changes between the two versions, respond with ONLY t
                 }
             }
         }
+    }
+
+    private static String filteredContent(String rawContent) {
+        // Always wrap rawContent in ```java ... ``` if not already present
+        String content = "";
+
+        // Extract content from markdown code blocks (e.g., ```java ... ```) if they exist.
+        Pattern codeBlockPattern = Pattern.compile("```(?:java)?\\s*\\n(.*?)\\n```", Pattern.DOTALL);
+        Matcher codeMatcher = codeBlockPattern.matcher(rawContent);
+
+        if (codeMatcher.find()) {
+            content = codeMatcher.group(1).trim();
+        } else {
+            content = rawContent; // Use raw content if no markdown block is found
+        }
+        return content;
     }
 
     /**
@@ -1345,11 +1354,27 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
         // Get the list of existing files to provide context to the agent.
         String existingFiles = getCurrentProjectFiles(gitConfig.repoPath);
 
+        // --- Context Extraction for EmployeeController (DEMO) ---
+        String controllerPath = gitConfig.repoPath + "/src/main/java/com/generated/microservice/controller/EmployeeController.java";
+        String controllerContextSummary = "";
+        try {
+            if (Files.exists(Paths.get(controllerPath))) {
+                String controllerFileContent = Files.readString(Paths.get(controllerPath));
+                controllerContextSummary = runContextExtractionAgent(controllerFileContent);
+                System.out.println("controllerContextSummary: " + controllerContextSummary);
+            }
+        } catch (IOException e) {
+            logger.warn("Could not extract context for EmployeeController: {}", e.getMessage());
+        }
+        // --- END Context Extraction ---
 
         // --- Original Workflow (Self-Healing Disabled) ---
         Map<String, String> agentPrompts = new HashMap<>();
         agentPrompts.put(CODEGEN_AGENT_NAME, String.format("""
 You are a specialist Java developer. Your ONLY task is to add a single, new feature to an existing Spring Boot project.
+
+**EXISTING FILE CONTEXT:**
+%s
 
 **MASTER DIRECTIVE: Principle of Least Functionality**
 This is your most important instruction. You are FORBIDDEN from generating any code, methods, or endpoints that are not EXPLICITLY required by the new feature description.
@@ -1378,6 +1403,7 @@ This is your most important instruction. You are FORBIDDEN from generating any c
 **NEW FEATURE REQUIREMENTS:**
 {requirements}
 """,
+  controllerContextSummary,
   srsData.projectConfig.packageName,
   srsData.projectConfig.javaVersion,
   existingFiles
@@ -1550,5 +1576,53 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
         }
         // If we've exited the loop, it means all retries failed.
         throw new RuntimeException("Model request failed after " + maxRetries + " attempts.", lastException);
+    }
+
+    private static String runContextExtractionAgent(String existingFileContent) {
+        logger.info("🤖 Running Context Extraction Agent to analyze existing class structure...");
+        LlmAgent contextAgent = LlmAgent.builder()
+            .name(CONTEXT_EXTRACTION_AGENT_NAME)
+            .description("Extracts class-level context and conventions from an existing Java file for use in code generation.")
+            .instruction("""
+You are an expert Java code analyst. Given the full content of a Java class, extract the following information as a structured summary for use in code generation:
+- The class name and its type (e.g., Controller, Service, Repository, Entity)
+- All class-level annotations (e.g., @RestController, @RequestMapping, @Service)
+- The value of any base @RequestMapping or similar annotation
+- All static variables/constants (names and values)
+- All field declarations (names, types, and annotations)
+- The names of injected dependencies (e.g., services, repositories)
+- Any naming conventions for objects or references
+
+Output the information as a structured summary, e.g.:
+Class: EmployeeController
+Type: Controller
+Class-level Annotations: @RestController, @RequestMapping("/employees")
+Base RequestMapping: /employees
+Static Variables: [String API_VERSION = "v1"]
+Fields: [private final EmployeeService employeeService]
+Injected Dependencies: [employeeService]
+Naming Conventions: [employeeService for EmployeeService]
+
+Do not include any code, only the structured summary.
+""")
+            .model("gemini-2.0-flash")
+            .outputKey("context")
+            .build();
+
+        final InMemoryRunner runner = new InMemoryRunner(contextAgent);
+        final Content userMsg = Content.fromParts(Part.fromText(existingFileContent));
+
+        try {
+            Event finalEvent = retryWithBackoff(() -> {
+                Session session = runner.sessionService().createSession(runner.appName(), "user-context-extractor").blockingGet();
+                return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
+            });
+            String contextSummary = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
+            logger.info("✅ ContextExtractionAgent summary:\n{}", contextSummary);
+            return contextSummary;
+        } catch (Exception e) {
+            logger.error("❌ The ContextExtractionAgent failed to run. Returning empty context. Error: {}", e.getMessage(), e);
+            return "";
+        }
     }
 }
