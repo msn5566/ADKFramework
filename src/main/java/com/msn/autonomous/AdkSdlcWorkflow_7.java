@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,6 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.HashMap;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Base64;
+import org.json.JSONObject;
+
 
 public class AdkSdlcWorkflow_7 {
 
@@ -46,6 +53,7 @@ public class AdkSdlcWorkflow_7 {
     private static final String CHANGE_ANALYSIS_AGENT_NAME = "ChangeAnalysisAgent";
     private static final String REVIEW_AGENT_NAME = "ReviewAgent";
     private static final String CORRECTOR_AGENT_NAME = "CorrectorAgent";
+    private static final String CODE_MERGE_AGENT_NAME = "CodeMergeAgent";
 
     private static final String KEY_REQUIREMENTS = "requirements";
     private static final String KEY_DEPENDENCIES = "dependencies";
@@ -63,10 +71,11 @@ public class AdkSdlcWorkflow_7 {
     private static final String SRS_KEY_REPO_NAME = "Repository-Name";
     private static final String SRS_KEY_JAVA_VERSION = "Java-Version";
     private static final String SRS_KEY_SPRING_BOOT_VERSION = "SpringBoot-Version";
+    private static final String SRS_KEY_PACKAGE_NAME = "Package-Name";
 
     // --- Constants for File System and Git ---
     private static final String AI_STATE_DIR = ".ai-state";
-    private static final String SRS_FILE_NAME = "srs.txt";
+    private static final String JIRA_STATE_FILE_NAME = "jira_issue.txt";
     private static final String CHANGELOG_FILE_NAME = "AI_CHANGELOG.md";
 
 
@@ -102,10 +111,12 @@ public class AdkSdlcWorkflow_7 {
     private static class ProjectConfig {
         final String javaVersion;
         final String springBootVersion;
+        final String packageName;
 
-        ProjectConfig(String javaVersion, String springBootVersion) {
+        ProjectConfig(String javaVersion, String springBootVersion, String packageName) {
             this.javaVersion = (javaVersion != null && !javaVersion.isBlank()) ? javaVersion : "17";
-            this.springBootVersion = (springBootVersion != null && !springBootVersion.isBlank()) ? springBootVersion : "3.2.5";
+            this.springBootVersion = (springBootVersion != null && !springBootVersion.isBlank()) ? springBootVersion : "3.5.3";
+            this.packageName = (packageName != null && !packageName.isBlank()) ? packageName : "com.generated.microservice";
         }
     }
 
@@ -124,6 +135,42 @@ public class AdkSdlcWorkflow_7 {
         }
     }
 
+    private static class JiraConfig {
+        final String jiraUrl;
+        final String username;
+        final String apiToken;
+        final String issueKey;
+
+        private JiraConfig(String jiraUrl, String username, String apiToken, String issueKey) {
+            this.jiraUrl = jiraUrl;
+            this.username = username;
+            this.apiToken = apiToken;
+            this.issueKey = issueKey;
+        }
+
+        private static JiraConfig fromEnvAndUserInput() throws IOException {
+            String url = System.getenv("JIRA_URL");
+            String email = System.getenv("JIRA_EMAIL");
+            String token = System.getenv("JIRA_API_TOKEN");
+
+            List<String> missingVars = new ArrayList<>();
+            if (url == null || url.isBlank()) missingVars.add("JIRA_URL");
+            if (email == null || email.isBlank()) missingVars.add("JIRA_EMAIL");
+            if (token == null || token.isBlank()) missingVars.add("JIRA_API_TOKEN");
+
+            if (!missingVars.isEmpty()) {
+                throw new IOException("Missing required environment variables: " + String.join(", ", missingVars));
+            }
+
+            String issue;
+            try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
+                logger.info("Enter the Jira Issue Key (e.g., PROJ-123):");
+                issue = scanner.nextLine().trim();
+            }
+            return new JiraConfig(url, email, token, issue);
+        }
+    }
+
     private static class CorrectorResult {
         final String failingAgentName;
         final String correctedPrompt;
@@ -137,10 +184,10 @@ public class AdkSdlcWorkflow_7 {
     public static SequentialAgent buildWorkflow(ProjectConfig projectConfig, Map<String, String> agentPrompts) {
         LlmAgent req = LlmAgent.builder()
                 .name(REQUIREMENTS_AGENT_NAME)
-                .description("Extracts structured functional requirements from a feature prompt.")
+                .description("Extracts structured functional requirements from a Jira user story.")
                 .instruction("""
-First, create a one-line summary of the following SRS, formatted as a conventional Git commit message. Prefix it with "Commit-Summary: ".
-Then, on new lines, extract the structured requirements from the same SRS.
+First, create a one-line summary of the following Jira user story, formatted as a conventional Git commit message. Prefix it with "Commit-Summary: ".
+Then, on new lines, extract the structured requirements from the same user story.
 
 The structured requirements format is:
 Feature:
@@ -209,11 +256,11 @@ Requirements:
         logger.info("🤖 Running Change Analysis Agent...");
         LlmAgent changeAgent = LlmAgent.builder()
                 .name(CHANGE_ANALYSIS_AGENT_NAME)
-                .description("Compares old and new SRS to generate a changelog.")
+                .description("Compares old and new Jira stories to generate a changelog.")
                 .instruction("""
-You will be given an old and a new version of a Software Requirements Specification (SRS), separated by markers.
+You will be given an old and a new version of a Jira user story, separated by markers.
 Analyze the differences and generate a concise, human-readable changelog in Markdown format.
-Focus on added, removed, and modified features. If the old SRS is empty, state that this is the initial version of the project.
+Focus on added, removed, and modified features. If the old story is empty, state that this is the initial version of the project.
 If there are no functional changes between the two versions, respond with ONLY the text "No changes detected.".
 """)
                 .model("gemini-2.0-flash")
@@ -234,44 +281,140 @@ If there are no functional changes between the two versions, respond with ONLY t
         return finalEvent != null ? finalEvent.stringifyContent() : "";
     }
 
+    private static String runCodeMergeAgent(String existingCode, String newCodeSnippet) {
+        logger.info("🤖 Running Code Merge Agent to integrate new feature...");
+        LlmAgent mergeAgent = LlmAgent.builder()
+            .name(CODE_MERGE_AGENT_NAME)
+            .description("Intelligently merges a new Java code snippet into an existing Java file.")
+            .instruction("""
+                You are an expert Java developer specializing in refactoring.
+                You will be given the full content of an existing Java file and a new code snippet (e.g., a new method, a new field, a new annotation), separated by markers.
+                Your task is to intelligently merge the new snippet into the existing file content.
+
+                RULES:
+                1.  Place new methods logically alongside existing methods, respecting code organization.
+                2.  Place new fields with existing fields at the top of the class.
+                3.  Add required import statements if the new snippet needs them. Do not add duplicate imports.
+                4.  Preserve all existing code, formatting, and comments perfectly.
+                5.  The final output MUST be the complete, merged content of the Java file. Do not add any explanation, markers, or ```java ... ``` code blocks. Your response must be only the raw, compilable Java code.
+                """)
+            .model("gemini-2.0-flash")
+            .outputKey("merged_code")
+            .build();
+
+        final InMemoryRunner runner = new InMemoryRunner(mergeAgent);
+        
+        // Pass dynamic content in the user message, not the instruction prompt.
+        String combinedInput = String.format("""
+            --- EXISTING FILE CONTENT ---
+            %s
+            --- END EXISTING FILE CONTENT ---
+
+            --- NEW CODE SNIPPET TO MERGE ---
+            %s
+            --- END NEW CODE SNIPPET TO MERGE ---
+            """, existingCode, newCodeSnippet);
+
+        final Content userMsg = Content.fromParts(Part.fromText(combinedInput));
+
+
+        try {
+            Event finalEvent = retryWithBackoff(() -> {
+                Session session = runner.sessionService().createSession(runner.appName(), "user-code-merger").blockingGet();
+                return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
+            });
+            String mergedCode = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
+
+            // --- NEW: Add detailed logging ---
+            if (mergedCode.isEmpty()) {
+                logger.warn("⚠️ CodeMergeAgent returned an empty response. Falling back to original code.");
+            } else {
+                logger.info("✅ CodeMergeAgent returned merged code. Content length: {}", mergedCode.length());
+                // For debugging, log a snippet of the merged code
+                logger.debug("Merged code snippet:\n---\n{}\n---", mergedCode.substring(0, Math.min(mergedCode.length(), 200)));
+            }
+            // --- END NEW LOGIC ---
+
+            // If the agent returns an empty response, it's safer to return the original code.
+            return mergedCode.isEmpty() ? existingCode : mergedCode;
+        } catch (Exception e) {
+            logger.error("❌ The CodeMergeAgent failed to run. Returning original code. Error: {}", e.getMessage(), e);
+            return existingCode; // Fallback to old code on any failure
+        }
+    }
+
+
     public static void writeClassesToFileSystem(String combinedOutput, String baseDir) {
-        // More flexible regex to tolerate optional newlines and whitespace between the file marker and the code block.
-        Pattern pattern = Pattern.compile(FILE_PATH_MARKER_PREFIX + "([^\\n]+)\\s*\\n(.*?)(?=\\n" + FILE_PATH_MARKER_PREFIX + "|\\z)", Pattern.DOTALL);
+        // Regex to capture the action (Create/Modify), file path, and the code block.
+        // It looks for a marker like "// Create File: " or "// Modify File: "
+        Pattern pattern = Pattern.compile("// (Create File|Modify File): ([^\\n]+)\\s*\\n(.*?)(?=\\n// (?:Create|Modify) File:|$)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(combinedOutput);
 
         while (matcher.find()) {
-            String relativePath = matcher.group(1).trim();
-            String rawContent = matcher.group(2).trim();
-            String content = "";
+            String action = matcher.group(1).trim();
+            String relativePath = matcher.group(2).trim();
+            String rawContent = matcher.group(3).trim();
+            String content;
 
-            // Regex to find content inside ```java ... ``` or ``` ... ``` blocks.
+            System.out.println("action: " + action);
+            System.out.println("relativePath: " + relativePath);
+            System.out.println("rawContent: " + rawContent);
+
+            // Extract content from markdown code blocks (e.g., ```java ... ```) if they exist.
             Pattern codeBlockPattern = Pattern.compile("```(?:java)?\\s*\\n(.*?)\\n```", Pattern.DOTALL);
-            Matcher codeMatcher = codeBlockPattern.matcher(rawContent.replace(DEPS_SEPARATOR, ""));
+            Matcher codeMatcher = codeBlockPattern.matcher(rawContent);
 
             if (codeMatcher.find()) {
-                String extracted = codeMatcher.group(1);
-                if (extracted != null && !extracted.trim().isEmpty()) {
-                    content = extracted;
-                }
+                content = codeMatcher.group(1).trim();
+            } else {
+                content = rawContent; // Use raw content if no markdown block is found
             }
 
-            // If content is still empty, it means either the regex didn't match,
-            // or it matched an empty block. In either case, we fall back to
-            // treating the raw content as the source, just needing cleanup.
             if (content.isEmpty()) {
-                content = rawContent.replaceAll("(?m)^```(java)?|```$", "").replace(DEPS_SEPARATOR, "");
+                logger.warn("⚠️ Skipping empty code block for {}", relativePath);
+                continue;
             }
 
-            content = content.trim();
+            Path filePath = Paths.get(baseDir, relativePath);
 
-            File file = new File(baseDir, relativePath);
-            file.getParentFile().mkdirs();
+            if ("Create File".equals(action)) {
+                try {
+                    Files.createDirectories(filePath.getParent());
+                    Files.writeString(filePath, content, StandardCharsets.UTF_8);
+                    logger.info("✅ Created: {}", filePath);
+                } catch (IOException e) {
+                    logger.error("❌ Failed to write new file: {} - {}", filePath, e.getMessage());
+                }
+            } else if ("Modify File".equals(action)) {
+                if (!Files.exists(filePath)) {
+                    logger.error("❌ Cannot modify file that does not exist: {}. Treating as a new file.", filePath);
+                     try {
+                        Files.createDirectories(filePath.getParent());
+                        Files.writeString(filePath, content, StandardCharsets.UTF_8);
+                        logger.info("✅ Created (as fallback): {}", filePath);
+                    } catch (IOException e) {
+                        logger.error("❌ Failed to write fallback file: {} - {}", filePath, e.getMessage());
+                    }
+                    continue;
+                }
 
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(content);
-                logger.info("✅ Created: {}", file.getPath());
-            } catch (IOException e) {
-                logger.error("❌ Failed to write: {} - {}", file.getPath(), e.getMessage());
+                try {
+                    String existingCode = Files.readString(filePath, StandardCharsets.UTF_8);
+                    String newCodeSnippet = content;
+
+                    System.out.println("existingCode: " + existingCode);
+                    System.out.println("newCodeSnippet: " + newCodeSnippet);
+
+                    // Run the merge agent to combine existing code with the new snippet.
+                    String mergedCode = runCodeMergeAgent(existingCode, newCodeSnippet);
+                    System.out.println("mergedCode: " + mergedCode);
+
+                    Files.writeString(filePath, mergedCode, StandardCharsets.UTF_8); // Overwrite with merged content
+                    logger.info("✅ Merged and updated: {}", filePath);
+
+                } catch (IOException e) {
+                    logger.error("❌ Failed to read or write modified file: {} - {}", filePath, e.getMessage());
+                }
             }
         }
     }
@@ -346,9 +489,12 @@ If there are no functional changes between the two versions, respond with ONLY t
     private static void ensureRepositoryIsReady(String outputDir, String repoUrl, String baseBranch) throws IOException, InterruptedException {
         File dir = new File(outputDir);
         if (dir.exists()) {
-            logger.info("Repository directory exists. Ensuring it's on the correct base branch and up-to-date.");
-            runCommand(dir, "git", "checkout", baseBranch);
-            runCommand(dir, "git", "pull", "origin", baseBranch);
+            logger.info("Repository directory exists. Resetting to a clean state from origin/{}.", baseBranch);
+            runCommand(dir, "git", "fetch", "origin"); // Make sure remote refs are up-to-date
+            runCommand(dir, "git", "checkout", baseBranch); // Switch to the branch
+            runCommand(dir, "git", "reset", "--hard", "origin/" + baseBranch); // Hard reset to match remote
+            runCommand(dir, "git", "clean", "-fdx"); // Remove all untracked files and directories
+            logger.info("✅ Repository is now in a pristine state matching origin/{}.", baseBranch);
         } else {
             logger.info("Cloning repository from {}", repoUrl);
             // More efficient clone: only get the single-branch history needed for analysis.
@@ -356,38 +502,38 @@ If there are no functional changes between the two versions, respond with ONLY t
         }
     }
 
-    private static String createFeatureBranchAndClean(String outputDir) throws IOException, InterruptedException {
+    private static String createFeatureBranch(String outputDir, String issueKey) throws IOException, InterruptedException {
         File dir = new File(outputDir);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String timestamp = LocalDateTime.now().format(dtf);
-        String featureBranch = "feature_" + timestamp;
+        String featureBranch = "feature/" + issueKey + "_" + timestamp;
 
         logger.info("Creating and checking out new feature branch: {}", featureBranch);
         runCommand(dir, "git", "checkout", "-b", featureBranch);
 
-        logger.info("Cleaning workspace on new feature branch...");
-        // List of files/directories to remove before generating new code.
-        // This ensures no stale files are left from previous runs.
-        String[] itemsToClean = {"src", "pom.xml", ".github"};
-        for (String itemName : itemsToClean) {
-            Path itemPath = Paths.get(outputDir, itemName);
-            if (Files.exists(itemPath)) {
-                try {
-                    if (Files.isDirectory(itemPath)) {
-                        // Recursively delete directory
-                        Files.walk(itemPath)
-                            .sorted(Comparator.reverseOrder())
-                            .map(Path::toFile)
-                            .forEach(File::delete);
-                    } else {
-                        Files.delete(itemPath);
-                    }
-                    logger.info("  - Removed: {}", itemName);
-                } catch (IOException e) {
-                    logger.warn("⚠️  Could not remove '{}'. Please check file permissions. Error: {}", itemPath, e.getMessage());
-                }
-            }
-        }
+        // logger.info("Cleaning workspace on new feature branch...");
+        // // List of files/directories to remove before generating new code.
+        // // This ensures no stale files are left from previous runs.
+        // String[] itemsToClean = {"src", "pom.xml", ".github"};
+        // for (String itemName : itemsToClean) {
+        //     Path itemPath = Paths.get(outputDir, itemName);
+        //     if (Files.exists(itemPath)) {
+        //         try {
+        //             if (Files.isDirectory(itemPath)) {
+        //                 // Recursively delete directory
+        //                 Files.walk(itemPath)
+        //                     .sorted(Comparator.reverseOrder())
+        //                     .map(Path::toFile)
+        //                     .forEach(File::delete);
+        //             } else {
+        //                 Files.delete(itemPath);
+        //             }
+        //             logger.info("  - Removed: {}", itemName);
+        //         } catch (IOException e) {
+        //             logger.warn("⚠️  Could not remove '{}'. Please check file permissions. Error: {}", itemPath, e.getMessage());
+        //         }
+        //     }
+        // }
         return featureBranch;
     }
 
@@ -534,7 +680,10 @@ jobs:
         // --- Resilient Dependency Management ---
         // Ensure required starters are present without creating duplicates.
         addDependencyIfNotExists(managedDependencies, "org.springframework.boot:spring-boot-starter-validation");
-        addDependencyIfNotExists(managedDependencies, "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0");
+        // For springdoc, we ENFORCE the version to avoid agent hallucinations.
+        enforceDependency(managedDependencies, "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0");
+        // Always ensure the test starter is present.
+        addDependencyIfNotExists(managedDependencies, "org.springframework.boot:spring-boot-starter-test:test");
 
 
         for (String dep : managedDependencies) {
@@ -583,12 +732,6 @@ jobs:
             + "    </properties>\n"
             + "    <dependencies>\n"
             + dependenciesXml.toString()
-            // Always add test dependency
-            + "        <dependency>\n"
-            + "            <groupId>org.springframework.boot</groupId>\n"
-            + "            <artifactId>spring-boot-starter-test</artifactId>\n"
-            + "            <scope>test</scope>\n"
-            + "        </dependency>\n"
             + "        <!-- Logging dependencies for SLF4J with Logback -->\n"
             + "        <dependency>\n"
             + "            <groupId>org.slf4j</groupId>\n"
@@ -613,21 +756,20 @@ jobs:
             + "                    </excludes>\n"
             + "                </configuration>\n"
             + "            </plugin>\n"
-            + "            <!-- Static analysis plugin to find bugs and vulnerabilities -->\n"
-            + "            <plugin>\n"
-            + "                <groupId>com.github.spotbugs</groupId>\n"
-            + "                <artifactId>spotbugs-maven-plugin</artifactId>\n"
-            + "                <version>4.8.3.1</version>\n"
-            + "                <executions>\n"
-            + "                    <execution>\n"
-            + "                        <goals>\n"
-            + "                            <goal>check</goal>\n"
-            + "                        </goals>\n"
-            + "                    </execution>\n"
-            + "                </executions>\n"
-            + "            </plugin>\n"
             + "        </plugins>\n"
             + "    </build>\n"
+            + "\n"
+            + "    <repositories>\n"
+            + "        <repository>\n"
+            + "            <id>maven-central</id>\n"
+            + "            <url>https://repo.maven.apache.org/maven2</url>\n"
+            + "        </repository>\n"
+            + "        <repository>\n"
+            + "            <id>atlassian-public</id>\n"
+            + "            <url>https://packages.atlassian.com/maven/repository/public</url>\n"
+            + "        </repository>\n"
+            + "    </repositories>\n"
+            + "\n"
             + "</project>\n";
 
         try {
@@ -653,119 +795,20 @@ jobs:
         }
     }
 
-    /**
-     * Intelligently updates the README.md file.
-     * This method is not used for comparing changes, but for injecting the AI-generated
-     * project summary into a designated, marked-off section. This preserves any
-     * human-made edits outside of the AI-managed block.
-     *
-     * @param baseDir The project's root directory.
-     * @param requirements The high-level requirements summary from the AI.
-     * @param dependencies The list of dependencies identified by the AI.
-     */
-    public static void updateReadme(String baseDir, String requirements, List<String> dependencies) {
-        StringBuilder summarySection = new StringBuilder();
-        summarySection.append("## 📝 Project Summary\n\n");
-        summarySection.append("This microservice was automatically generated based on the following high-level requirements:\n\n");
+    private static void enforceDependency(List<String> dependencies, String dependencyToEnforce) {
+        String[] parts = dependencyToEnforce.split(":");
+        String groupId = parts[0];
+        String artifactId = parts[1];
 
-        // Format requirements as an attractive blockquote
-        String quotedRequirements = "> " + requirements.replace("\n", "\n> ");
-        summarySection.append(quotedRequirements).append("\n\n");
+        // Remove any existing dependency with the same groupId and artifactId, regardless of version
+        dependencies.removeIf(dep -> {
+            String[] depParts = dep.split(":");
+            return depParts.length >= 2 && depParts[0].equals(groupId) && depParts[1].equals(artifactId);
+        });
 
-        if (!dependencies.isEmpty()) {
-            summarySection.append("### 🛠️ Core Dependencies\n\n");
-            summarySection.append("The following core dependencies were automatically included to support these requirements:\n\n");
-
-            // Format dependencies as a markdown table for better readability
-            summarySection.append("| Group ID | Artifact ID | Scope |\n");
-            summarySection.append("|---|---|---|\n");
-            for (String dep : dependencies) {
-                String[] parts = dep.split(":");
-                String groupId = parts.length > 0 ? parts[0].trim() : "";
-                String artifactId = parts.length > 1 ? parts[1].trim() : "";
-                String scope = parts.length > 2 ? parts[2].trim() : "compile"; // Default to compile
-                summarySection.append(String.format("| `%s` | `%s` | `%s` |\n", groupId, artifactId, scope));
-            }
-            summarySection.append("\n");
-        }
-
-        String newSummaryBlock = summarySection.toString();
-        final String startTag = "<!-- AI-SUMMARY-START -->";
-        final String endTag = "<!-- AI-SUMMARY-END -->";
-
-        // This is the default full content if README.md doesn't exist
-        String fullFileContent = String.format("""
-            # Generated Spring Boot Microservice
-
-            This project was generated using a multi-agent AI system from an SRS document.
-
-%s
-            ## ⚙️ Configuration
-
-            Before running the application, you must set the following environment variables for the database connection:
-
-            ```bash
-            export DB_USERNAME=your_database_username
-            export DB_PASSWORD=your_database_password
-            ```
-
-            ## 📦 Build
-
-            ```bash
-            mvn clean install
-            ```
-
-            ## 🚀 Run
-
-            ```bash
-            mvn spring-boot:run
-            ```
-
-            ## 🤖 CI/CD
-
-            This project uses GitHub Actions for Maven build automation.
-
-            ## 🧠 High-Level Architecture
-
-            ```mermaid
-            graph TD
-                A[SRS Document] --> B[AI Agent - Gemini Code Agent]
-                B --> C[Spring Boot Code Generator]
-                C --> D[Java Source Files + pom.xml]
-                D --> E[Git Repo + CI/CD]
-                E --> F[Deployable Spring Boot Artifact]
-            ```
-            """, startTag + "\n\n" + newSummaryBlock + "\n" + endTag);
-
-        Path readmePath = Paths.get(baseDir, "README.md");
-        try {
-            if (Files.exists(readmePath)) {
-                String existingContent = Files.readString(readmePath);
-                int startIndex = existingContent.indexOf(startTag);
-                int endIndex = existingContent.indexOf(endTag);
-
-                if (startIndex != -1 && endIndex != -1) {
-                    // Found tags, replace content between them
-                    StringBuilder builder = new StringBuilder();
-                    builder.append(existingContent, 0, startIndex + startTag.length());
-                    builder.append("\n\n").append(newSummaryBlock).append("\n");
-                    builder.append(existingContent, endIndex, existingContent.length());
-                    fullFileContent = builder.toString();
-                    logger.info("✅ Updated existing README.md with new summary.");
-                } else {
-                    // No tags found, prepend the new summary block to the existing file
-                    fullFileContent = startTag + "\n\n" + newSummaryBlock + "\n" + endTag + "\n\n" + existingContent;
-                    logger.info("✅ Prepended AI summary to existing README.md.");
-                }
-            } else {
-                logger.info("✅ Created new README.md.");
-            }
-
-            Files.writeString(readmePath, fullFileContent);
-
-        } catch (IOException e) {
-            logger.error("❌ Failed to write README.md: {}", e.getMessage());
-        }
+        // Add the dependency with the correct, enforced version
+        dependencies.add(dependencyToEnforce);
+        logger.info("🤖 Enforced known-good version for dependency: {}", dependencyToEnforce);
     }
 
     public static void addApplicationYml(String baseDir) {
@@ -795,6 +838,39 @@ jobs:
         }
     }
 
+    private static String getJiraIssueContent(JiraConfig jiraConfig) throws Exception {
+        logger.info("Connecting to Jira to fetch issue: {}", jiraConfig.issueKey);
+
+        HttpClient client = HttpClient.newHttpClient();
+        String url = jiraConfig.jiraUrl + "/rest/api/2/issue/" + jiraConfig.issueKey;
+
+        String auth = jiraConfig.username + ":" + jiraConfig.apiToken;
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(new URI(url))
+            .header("Authorization", "Basic " + encodedAuth)
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new IOException("Failed to fetch Jira issue. Status code: " + response.statusCode() + " - " + response.body());
+        }
+
+        JSONObject issueJson = new JSONObject(response.body());
+        JSONObject fields = issueJson.getJSONObject("fields");
+
+        String summary = "Feature: " + fields.getString("summary");
+        String description = fields.optString("description", "");
+
+        logger.info("✅ Successfully fetched Jira issue: {}", jiraConfig.issueKey);
+        logger.debug("  - Summary: {}", summary);
+        logger.debug("  - Description: {}", description);
+
+        return summary + "\n\n" + description;
+    }
+
     /**
      * A simple data class to hold configuration extracted by the ConfigAgent.
      */
@@ -812,15 +888,17 @@ jobs:
         logger.info("🤖 Running Config Agent to extract all project configurations...");
         LlmAgent configAgent = LlmAgent.builder()
                 .name("ConfigAgent")
-                .description("Extracts all key project configurations from SRS text.")
+                .description("Extracts all key project configurations from a Jira user story.")
                 .instruction("""
-                    You are an expert configuration parser. Analyze the following Software Requirements Specification (SRS) text.
+                    You are an expert configuration parser. Analyze the following Jira user story text.
                     Your task is to intelligently extract values for a predefined set of configuration keys.
 
-                    **Be flexible with the input format.** The keys in the SRS text might be phrased differently, have different casing, or lack hyphens. You must map them to the canonical keys below.
+                    **Be flexible with the input format.** The keys in the story text might be phrased differently, have different casing, or lack hyphens. You must map them to the canonical keys below.
+                    - **Handle Partial Versions**: If the `SpringBoot-Version` in the text is a partial or wildcard version (e.g., `3.2.x`, `3.2.*`, or just `3.2`), you MUST ignore it and use the default version instead. Only use a version from the text if it is a complete, concrete version (e.g., `3.5.3`).
                     For example:
                     - "java 21", "java-version: 21", or "Java Version 21" should all map to `Java-Version: 21`.
-                    - "spring boot 3.5.*", "springboot-version: 3.5.2", or "Spring Boot Version 3.5" should all map to `SpringBoot-Version: 3.5.2` (or whatever the specified version is).
+                    - "spring boot 3.5.3" should be mapped to `SpringBoot-Version: 3.5.3`.
+                    - "spring boot 3.2.x" or "springboot-version: 3.2" MUST be ignored, and you should use the default.
                     - "Repo Name my-project" or "Repository-Name: my-project" should map to `Repository-Name: my-project`.
 
                     **Output Format:**
@@ -832,11 +910,13 @@ jobs:
                     - `Repository-Name`
                     - `Java-Version`
                     - `SpringBoot-Version`
+                    - `Package-Name`
 
                     **Default Values:**
-                    If a value is not specified for `Java-Version` or `SpringBoot-Version`, you MUST use the following default values:
+                    If a value is not specified for `Java-Version`, `SpringBoot-Version`, or if the `SpringBoot-Version` is partial/wildcard, you MUST use the following default values:
                     - `Java-Version: 17`
-                    - `SpringBoot-Version: 3.2.5`
+                    - `SpringBoot-Version: 3.5.3`
+                    If `Package-Name` is not specified, default to `com.generated.microservice`.
 
                     **Mandatory Keys:**
                     The keys `GitHub-URL`, `checkout_branch`, and `Repository-Name` are mandatory. If you cannot find them in the text, respond with an empty value for that key.
@@ -862,6 +942,15 @@ jobs:
             String repoPath = parseSrsForValue(response, SRS_KEY_REPO_NAME);
             String javaVersion = parseSrsForValue(response, SRS_KEY_JAVA_VERSION);
             String springBootVersion = parseSrsForValue(response, SRS_KEY_SPRING_BOOT_VERSION);
+            String packageName = parseSrsForValue(response, SRS_KEY_PACKAGE_NAME);
+
+            // --- NEW: Sanitize the repository URL to handle formatting issues from Jira ---
+            if (repoUrl != null && repoUrl.contains("|")) {
+                logger.warn("Malformed repository URL detected: '{}'. Sanitizing...", repoUrl);
+                repoUrl = repoUrl.split("\\|")[0].trim();
+                logger.info("Sanitized URL: '{}'", repoUrl);
+            }
+            // --- END NEW LOGIC ---
 
             // --- NEW: Validate mandatory fields and fail fast ---
             List<String> missingKeys = new ArrayList<>();
@@ -871,13 +960,13 @@ jobs:
 
             if (!missingKeys.isEmpty()) {
                 String errorMessage = "ConfigAgent failed to extract mandatory keys: " + String.join(", ", missingKeys)
-                    + ". Please ensure they are present and have values in the SRS document.";
+                    + ". Please ensure they are present and have values in the Jira user story description.";
                 throw new IOException(errorMessage);
             }
             // --- END NEW LOGIC ---
 
             GitConfig gitConfig = new GitConfig(repoUrl, baseBranch, repoPath);
-            ProjectConfig projectConfig = new ProjectConfig(javaVersion, springBootVersion);
+            ProjectConfig projectConfig = new ProjectConfig(javaVersion, springBootVersion, packageName);
 
             return new ExtractedConfig(gitConfig, projectConfig);
         } catch (IOException e) {
@@ -909,6 +998,7 @@ jobs:
         logger.info("  - Found Repo Name: {}", config.gitConfig.repoPath);
         logger.info("  - Using Java Version: {}", config.projectConfig.javaVersion);
         logger.info("  - Using Spring Boot Version: {}", config.projectConfig.springBootVersion);
+        logger.info("  - Using Package Name: {}", config.projectConfig.packageName);
 
         return new SrsData(config.gitConfig, config.projectConfig, userInput);
     }
@@ -967,7 +1057,7 @@ jobs:
         return workflowResult;
     }
 
-    private static void generateProjectFiles(String repoName, WorkflowResult result, String srsContent, String changeAnalysis, ProjectConfig projectConfig) {
+    private static void generateProjectFiles(String repoName, WorkflowResult result, String srsContent, String changeAnalysis, ProjectConfig projectConfig, String featureBranch) {
         writeClassesToFileSystem(result.codeAndTestOutput, repoName);
 
         if (result.dependencyList.isEmpty()) {
@@ -983,28 +1073,27 @@ jobs:
             addPomXml(repoName, result.dependencyList, projectConfig);
         }
 
-        updateReadme(repoName, result.requirementsSummary, result.dependencyList);
+        // For README, we'll create the full summary content first.
+        StringBuilder readmeContent = new StringBuilder();
+        readmeContent.append("## 📝 Project Summary\n\n")
+            .append(result.requirementsSummary)
+            .append("\n\n### 🛠️ Core Dependencies\n\n");
+        for(String dep : result.dependencyList) {
+            readmeContent.append("- `").append(dep).append("`\n");
+        }
+
+        // Append to changelog, state file, and README to keep a running history.
+        appendContentWithMetadata(Paths.get(repoName, CHANGELOG_FILE_NAME), changeAnalysis, featureBranch);
+        appendContentWithMetadata(Paths.get(repoName, AI_STATE_DIR, JIRA_STATE_FILE_NAME), srsContent, featureBranch);
+        appendContentWithMetadata(Paths.get(repoName, "README.md"), readmeContent.toString(), featureBranch);
+
         addApplicationYml(repoName);
         addGithubActionsCiConfig(repoName);
-
-        try {
-            // Write changelog and state file together after all other code is generated.
-            Path changelogPath = Paths.get(repoName, CHANGELOG_FILE_NAME);
-            Files.writeString(changelogPath, changeAnalysis);
-            logger.info("✅ Wrote change analysis to {}", CHANGELOG_FILE_NAME);
-
-            Path aiStateDir = Paths.get(repoName, AI_STATE_DIR);
-            Files.createDirectories(aiStateDir);
-            Files.writeString(aiStateDir.resolve(SRS_FILE_NAME), srsContent);
-            logger.info("✅ Saved current SRS to state file for next run.");
-        } catch (IOException e) {
-            logger.error("❌ Failed to write analysis or state files: {}", e.getMessage());
-        }
     }
 
     private static String verifyProjectBuild(String repoName) {
         logger.info("\n--- 🛡️  Running Build & Static Analysis Verification ---");
-        logger.info("This will compile the code, run tests, and check for vulnerabilities...");
+        logger.info("This will compile the code, run tests ...");
         try {
             File workingDir = new File(repoName);
             // Using 'verify' phase runs compilation, tests, and the spotbugs:check goal
@@ -1151,17 +1240,57 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
         }
     }
 
-    public static void main(String[] args) {
-        SrsData srsData;
+    private static String getCurrentProjectFiles(String repoPath) {
+        StringBuilder fileList = new StringBuilder();
+        Path startPath = Paths.get(repoPath);
         try {
-            srsData = readSrsData();
+            Files.walk(startPath)
+                .filter(path -> path.toString().endsWith(".java"))
+                .forEach(path -> {
+                    // Make path relative to the repo root for clarity
+                    Path relativePath = startPath.relativize(path);
+                    fileList.append(relativePath.toString().replace('\\', '/')).append("\n");
+                });
         } catch (IOException e) {
-            logger.error("❌ Failed to read SRS configuration: {}", e.getMessage());
+            logger.error("❌ Could not read existing project files: {}", e.getMessage());
+            return "Could not read project file structure.";
+        }
+        if (fileList.length() == 0) {
+            return "No existing .java files found. This appears to be a new project.";
+        }
+        return fileList.toString();
+    }
+
+    public static void main(String[] args) {
+        JiraConfig jiraConfig;
+        try {
+            jiraConfig = JiraConfig.fromEnvAndUserInput();
+        } catch (IOException e) {
+            logger.error("❌ Configuration error: {}", e.getMessage());
+            logger.error("  - Please set JIRA_URL, JIRA_EMAIL, and JIRA_API_TOKEN environment variables.");
             return;
         }
 
-        GitConfig gitConfig = srsData.gitConfig;
-        String userInput = srsData.srsContent;
+        String userInput;
+        try {
+            userInput = getJiraIssueContent(jiraConfig);
+        } catch (Exception e) {
+            logger.error("❌ Failed to fetch Jira issue: {}. Please check your credentials, URL, and issue key.", e.getMessage());
+            return;
+        }
+
+        ExtractedConfig extractedConfig;
+        try {
+            extractedConfig = runConfigAgent(userInput);
+        } catch (IOException e) {
+            logger.error("❌ Failed to read configuration from Jira issue description: {}", e.getMessage());
+            return;
+        }
+
+        GitConfig gitConfig = extractedConfig.gitConfig;
+        ProjectConfig projectConfig = extractedConfig.projectConfig;
+        SrsData srsData = new SrsData(gitConfig, projectConfig, userInput);
+
 
         // --- NEW: Resolve output directory to a temp folder outside the current project ---
         try {
@@ -1204,48 +1333,73 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
             return;
         }
 
-        // Since changes were detected, proceed with creating a feature branch and cleaning it.
+        // Since changes were detected, proceed with creating a feature branch.
         String featureBranch;
         try {
-            featureBranch = createFeatureBranchAndClean(gitConfig.repoPath);
+            featureBranch = createFeatureBranch(gitConfig.repoPath, jiraConfig.issueKey);
         } catch (Exception e) {
             logger.error("❌ Failed to create feature branch. Aborting. Error: {}", e.getMessage());
             return;
         }
 
+        // Get the list of existing files to provide context to the agent.
+        String existingFiles = getCurrentProjectFiles(gitConfig.repoPath);
+
+
         // --- Original Workflow (Self-Healing Disabled) ---
         Map<String, String> agentPrompts = new HashMap<>();
-        agentPrompts.put(CODEGEN_AGENT_NAME, """
-You will be provided with text that contains a list of dependencies followed by structured requirements, separated by "---END-DEPS---".
-You MUST IGNORE the dependency list and generate the core Java source code based ONLY on the structured requirements that appear AFTER the separator.
+        agentPrompts.put(CODEGEN_AGENT_NAME, String.format("""
+You are a specialist Java developer. Your ONLY task is to add a single, new feature to an existing Spring Boot project.
 
-Generate the core Java source code for a Spring Boot microservice. The generated code MUST use the base package `com.generated.microservice`.
+**MASTER DIRECTIVE: Principle of Least Functionality**
+This is your most important instruction. You are FORBIDDEN from generating any code, methods, or endpoints that are not EXPLICITLY required by the new feature description.
+- **Example:** If the requirement is to "find an employee by name," you will ONLY generate the controller endpoint, service method, and repository method for that search. You are FORBIDDEN from creating `getAllEmployees`, `getEmployeeById`, `addEmployee`, `updateEmployee`, or `deleteEmployee`.
+- You must write the minimum amount of code to satisfy the requirement.
 
-This includes:
-- A main `Application` class in `com.generated.microservice`.
-- Entity classes in `com.generated.microservice.entity`.
-- Repository interfaces in `com.generated.microservice.repository`.
-- Service classes in `com.generated.microservice.service`.
-- Controller classes in `com.generated.microservice.controller`.
+**CRITICAL INSTRUCTIONS:**
+1.  **Analyze Existing Structure:** Review the list of existing files to understand the current project structure and conventions.
+2.  **Generate Code Snippets:**
+    - For **new files**, provide the complete content.
+    - For **existing files**, you MUST ONLY generate the new code snippet (e.g., a new method, a new DTO class within a file, a new field, a new endpoint). DO NOT output the entire file.
+3.  **Output Format:**
+    - For a **NEW file**, use the format: `// Create File: [full/path/to/file.java]`
+    - For **MODIFYING an existing file**, use the format: `// Modify File: [full/path/to/file.java]`
+4.  **Adhere to Project Standards:**
+    - Use the existing base package: `%s`.
+    - Follow the existing coding style and patterns (e.g., constructor injection).
+    - Use Java `%s`.
+    - All generated code MUST use `jakarta.validation` for validation, not `javax.validation`.
+    - For all injected dependencies (like Services and Repositories), declare the fields as `private final` and use constructor injection. Lombok's `@RequiredArgsConstructor` is preferred.
+    - If an update method is requested, you MUST first fetch the existing entity, update its fields, and then save the modified entity.
 
-Also include:
-- REST endpoints with proper annotations.
-- OpenAPI documentation annotations (`@Operation`, `@ApiResponse`, etc.).
-- Validation using the `jakarta.validation` package (e.g., `@Valid`, `@NotBlank`).
-- PostgreSQL integration using Spring Data JPA.
-- Lombok annotations for boilerplate code.
+**EXISTING PROJECT FILES:**
+%s
 
-The structured requirements are:
+**NEW FEATURE REQUIREMENTS:**
 {requirements}
-
-Wrap each file with proper syntax and include a comment at the top indicating the file path, matching the package structure. For example:
-// File: src/main/java/com/generated/microservice/service/UserService.java
-""");
-        agentPrompts.put(TESTGEN_AGENT_NAME, """
+""",
+  srsData.projectConfig.packageName,
+  srsData.projectConfig.javaVersion,
+  existingFiles
+));
+        agentPrompts.put(TESTGEN_AGENT_NAME, String.format("""
 You are a senior test engineer. Your task is to write high-quality JUnit 5 test cases for the provided Spring Boot source code.
+
+**MASTER DIRECTIVE: USE CORRECT LIBRARIES**
+- All test code MUST use `org.junit.jupiter.api` for JUnit 5.
+- All mocking MUST use `org.mockito`.
+- DO NOT use any other testing or mocking frameworks (e.g., JUnit 4, TestNG, EasyMock). This is a strict requirement.
+
 The source code consists of multiple concatenated Java files. Analyze it carefully.
 
 **Instructions:**
+1.  **Use ONLY Existing Methods:** You MUST write tests that compile successfully against the `Input Code`. Before using any method on an object (especially entities or DTOs), you MUST verify that the method is actually defined in the provided source code.
+2.  **No Assumed Setters:** DO NOT assume standard setter methods like `setName()` or `setEmail()` exist. If the entity uses a constructor or a builder for initialization, you MUST use that in your test setup.
+3.  **Use Correct Libraries:** You MUST use `org.junit.jupiter.api` for all JUnit 5 classes (`@Test`, `@BeforeEach`, etc.) and `org.mockito` for all mocking classes (`@Mock`, `when`, `verify`, etc.). Do not use any other testing or mocking frameworks.
+
+**Instructions:**
+You MUST use JUnit 5 for the test structure (`@Test`, `@BeforeEach`, etc.) and the Mockito library for all mocking (`@Mock`, `when`, `verify`, etc.). Do not use any other testing or mocking frameworks.
+
 1.  **Identify Services and Controllers:** Find all `@Service` and `@RestController` classes in the code below.
 2.  **Test the Service Layer:**
     -   For each service class, create a corresponding test class (e.g., `UserServiceTest`).
@@ -1253,25 +1407,29 @@ The source code consists of multiple concatenated Java files. Analyze it careful
     -   Use `@Mock` to create a mock of the repository dependency (e.g., `UserRepository`).
     -   Use `@InjectMocks` to inject the mock repository into the service instance.
     -   Write tests for each public method in the service, using Mockito's `when(...).thenReturn(...)` to define mock behavior.
-3.  **Test the Controller Layer:**
+5.  **Test the Controller Layer:**
     -   For each controller class, create a corresponding test class (e.g., `UserControllerTest`).
     -   Use `@WebMvcTest(ControllerClassName.class)` to test the web layer without starting a full application context.
     -   Use `@MockBean` to provide a mock of the service dependency (e.g., `UserService`).
     -   Use `MockMvc` to perform requests and assert responses.
-4.  **Testing Void Methods:**
+6.  **Testing Void Methods:**
     -   For methods that return `void` (like a `delete` method), you CANNOT use `when(...).thenReturn(...)`.
     -   Instead, use `doNothing().when(mockedService).voidMethod(any());` to configure the mock.
     -   Use `verify(mockedService, times(1)).voidMethod(any());` in your test to confirm the method was called.
-5.  **Pay Close Attention to Packages:** Ensure all `import` statements in your test files are correct and match the package structure of the provided source code.
-    - The main source code will be in packages like `com.generated.microservice.controller`, `com.generated.microservice.service`, etc.
-    - Your test source code MUST mirror this structure, e.g., `com.generated.microservice.controller` for controller tests.
+7.  **Pay Close Attention to Packages:** Ensure all `import` statements in your test files are correct and match the package structure of the provided source code.
+    - The main source code is in the `%s` package and its subpackages.
+    - Your test source code MUST mirror this structure (e.g., `%s.controller` for controller tests).
 
 **Input Code:**
 {code}
 
 Wrap each test class in Java syntax and include a comment at the top indicating the file path, for example:
-// File: src/test/java/com/generated/microservice/service/UserServiceTest.java
-""");
+// File: src/test/java/%s/service/UserServiceTest.java
+""",
+  srsData.projectConfig.packageName,
+  srsData.projectConfig.packageName,
+  srsData.projectConfig.packageName.replace('.', '/')
+));
 
         final WorkflowResult workflowResult = runMainWorkflow(userInput, srsData.projectConfig, agentPrompts);
 
@@ -1280,7 +1438,7 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
             return;
         }
 
-        generateProjectFiles(gitConfig.repoPath, workflowResult, userInput, changeAnalysis, srsData.projectConfig);
+        generateProjectFiles(gitConfig.repoPath, workflowResult, userInput, changeAnalysis, srsData.projectConfig, featureBranch);
 
         // --- Quality Gate: Verify the build before committing ---
         String buildResult = verifyProjectBuild(gitConfig.repoPath);
@@ -1310,15 +1468,36 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
         }
     }
 
+    private static void appendContentWithMetadata(Path filePath, String content, String branchName) {
+        try {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String timestamp = LocalDateTime.now().format(dtf);
+
+            String header = String.format(
+                "\n\n---\n**Date:** %s\n**Branch:** %s\n---\n\n",
+                timestamp,
+                branchName
+            );
+
+            String fullContent = header + content + "\n--- END ---\n";
+
+            // Create file if it doesn't exist, then append.
+            Files.writeString(filePath, fullContent, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            logger.info("✅ Appended content with metadata to {}", filePath.getFileName());
+        } catch (IOException e) {
+            logger.error("❌ Failed to append content to {}: {}", filePath.getFileName(), e.getMessage());
+        }
+    }
+
     private static String performChangeAnalysis(String repoDir, String newSrs) {
         try {
-            Path oldSrsPath = Paths.get(repoDir, AI_STATE_DIR, SRS_FILE_NAME);
+            Path oldSrsPath = Paths.get(repoDir, AI_STATE_DIR, JIRA_STATE_FILE_NAME);
             String oldSrsContent = "";
             if (Files.exists(oldSrsPath)) {
-                logger.info("Found previous SRS state file for comparison.");
+                logger.info("Found previous Jira issue state file for comparison.");
                 oldSrsContent = Files.readString(oldSrsPath);
             } else {
-                logger.info("No previous SRS state file found. This will be an initial analysis.");
+                logger.info("No previous Jira issue state file found. This will be an initial analysis.");
             }
             return runChangeAnalysisAgent(oldSrsContent, newSrs);
         } catch (RuntimeException e) {
