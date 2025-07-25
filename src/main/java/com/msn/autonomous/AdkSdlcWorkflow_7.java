@@ -55,6 +55,7 @@ public class AdkSdlcWorkflow_7 {
     private static final String CORRECTOR_AGENT_NAME = "CorrectorAgent";
     private static final String CODE_MERGE_AGENT_NAME = "CodeMergeAgent";
     private static final String CONTEXT_EXTRACTION_AGENT_NAME = "ContextExtractionAgent";
+    private static final String BUILD_CORRECTOR_AGENT_NAME = "BuildCorrectorAgent";
 
     private static final String KEY_REQUIREMENTS = "requirements";
     private static final String KEY_DEPENDENCIES = "dependencies";
@@ -254,7 +255,7 @@ Requirements:
     }
 
     private static String runChangeAnalysisAgent(String oldSrs, String newSrs) {
-        logger.info("🤖 Running Change Analysis Agent...");
+        logger.info("--- 🤖 Starting Change Analysis Agent ---");
         LlmAgent changeAgent = LlmAgent.builder()
                 .name(CHANGE_ANALYSIS_AGENT_NAME)
                 .description("Compares old and new Jira stories to generate a changelog.")
@@ -279,24 +280,31 @@ If there are no functional changes between the two versions, respond with ONLY t
             Session session = runner.sessionService().createSession(runner.appName(), "user-change-analyzer").blockingGet();
             return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
         });
+        logger.info("--- ✅ Finished Change Analysis Agent ---");
         return finalEvent != null ? finalEvent.stringifyContent() : "";
     }
 
     private static String runCodeMergeAgent(String existingCode, String newFullFile) {
-        logger.info("🤖 Running Code Merge Agent to integrate new feature...");
+        logger.info("--- 🤖 Starting Code Merge Agent ---");
         LlmAgent mergeAgent = LlmAgent.builder()
             .name(CODE_MERGE_AGENT_NAME)
             .description("Intelligently merges a new full Java file into an existing Java file.")
-        .instruction("""
-            You are an expert Java developer and code merger.
-            You will be given the full content of an existing Java file and a new, full version of the same file (with new or updated features).
-            Your task is to intelligently merge the new file into the existing file:
-            - Add or update only the code related to the new feature.
-            - Do not remove or overwrite unrelated existing code.
-            - Avoid duplicating imports, methods, or class-level annotations.
-            - If a method or class exists in both, use the version from the new file.
-            - The final output must be a single, compilable Java file, with all necessary imports and no duplicate code.
-            - Do not add any explanation or code block markers, just output the merged Java code.
+            .instruction("""
+You are an expert Java developer specializing in code merging. You will be given two versions of the same Java file: "EXISTING FILE CONTENT" and "NEW FILE CONTENT".
+
+Your task is to perform a careful, intelligent merge. Follow these steps precisely:
+
+1.  **Identify the differences.** Compare the two files to find what has been added, modified, or removed in the "NEW FILE CONTENT". The "NEW FILE CONTENT" represents the desired state for a new feature, while the "EXISTING FILE CONTENT" contains other, unrelated features that MUST be preserved.
+
+2.  **Preserve existing code.** All methods, fields, imports, and annotations from the "EXISTING FILE CONTENT" MUST be kept unless they are explicitly replaced by an updated version in the "NEW FILE CONTENT".
+
+3.  **Integrate new code.** Add all new methods, fields, and necessary imports from the "NEW FILE CONTENT" into the "EXISTING FILE CONTENT".
+
+4.  **Handle conflicts.** If a method or field exists in both files but has been modified, use the version from the "NEW FILE CONTENT".
+
+5.  **Combine imports.** The final code must contain a clean, de-duplicated list of all necessary imports from both files.
+
+The final output MUST be a single, complete, and compilable Java file that contains **ALL** features from both the existing and new versions. Do not add any explanation, markers, or ```java ... ``` code blocks. Your response must be only the raw, merged Java code.
             """)
             .model("gemini-2.0-flash")
             .outputKey("merged_code")
@@ -337,12 +345,13 @@ If there are no functional changes between the two versions, respond with ONLY t
 
             System.out.println("existingCode: " + existingCode);
             System.out.println("newFullFile: " + newFullFile);
-            System.out.println("mergedCode: "+ mergedCode);
-
             // If the agent returns an empty response, it's safer to return the original code.
-            return mergedCode.isEmpty() ? existingCode : mergedCode;
+            String result = mergedCode.isEmpty() ? existingCode : mergedCode;
+            logger.info("--- ✅ Finished Code Merge Agent ---");
+            return result;
         } catch (Exception e) {
             logger.error("❌ The CodeMergeAgent failed to run. Returning original code. Error: {}", e.getMessage(), e);
+            logger.info("--- ❌ Finished Code Merge Agent with error ---");
             return existingCode; // Fallback to old code on any failure
         }
     }
@@ -353,11 +362,18 @@ If there are no functional changes between the two versions, respond with ONLY t
         // It looks for a marker like "// Create File: " or "// Modify File: "
         Pattern pattern = Pattern.compile("// (Create File|Modify File): ([^\\n]+)\\s*\\n(.*?)(?=\\n// (?:Create|Modify) File:|$)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(combinedOutput);
+        System.out.println("==========combinedOutput start: =================");
+        System.out.println(combinedOutput);
+        System.out.println("============combinedOutput end=================");
 
         while (matcher.find()) {
             String action = matcher.group(1).trim();
             String relativePath = matcher.group(2).trim();
             String rawContent = matcher.group(3).trim();
+
+            System.out.println("action: " + action);
+            System.out.println("relativePath: " + relativePath);
+            System.out.println("rawContent: " + rawContent);
 
             if (!rawContent.startsWith("```")) {
                 rawContent = "```java\n" + rawContent ;
@@ -405,7 +421,7 @@ If there are no functional changes between the two versions, respond with ONLY t
                     Files.writeString(filePath, mergedCode, StandardCharsets.UTF_8); // Overwrite with merged content
                     logger.info("✅ Merged and updated: {}", filePath);
 
-                } catch (IOException e) {
+            } catch (IOException e) {
                     logger.error("❌ Failed to read or write modified file: {} - {}", filePath, e.getMessage());
                 }
             }
@@ -894,7 +910,7 @@ jobs:
     }
 
     private static ExtractedConfig runConfigAgent(String srsContent) throws IOException {
-        logger.info("🤖 Running Config Agent to extract all project configurations...");
+        logger.info("--- 🤖 Starting Config Agent ---");
         LlmAgent configAgent = LlmAgent.builder()
                 .name("ConfigAgent")
                 .description("Extracts all key project configurations from a Jira user story.")
@@ -977,14 +993,17 @@ jobs:
             GitConfig gitConfig = new GitConfig(repoUrl, baseBranch, repoPath);
             ProjectConfig projectConfig = new ProjectConfig(javaVersion, springBootVersion, packageName);
 
+            logger.info("--- ✅ Finished Config Agent ---");
             return new ExtractedConfig(gitConfig, projectConfig);
         } catch (IOException e) {
             // Re-throw IOExceptions (from our validation) directly
+            logger.info("--- ❌ Finished Config Agent with error ---");
             throw e;
         } catch (Exception e) {
             String errorMessage = "The Config Agent failed to execute due to an internal error.";
             logger.error("❌ " + errorMessage, e);
             // Wrap other exceptions in IOException to signal a configuration failure
+            logger.info("--- ❌ Finished Config Agent with error ---");
             throw new IOException(errorMessage, e);
         }
     }
@@ -1125,7 +1144,7 @@ jobs:
     }
 
     private static String runReviewAgent(String buildLog) {
-        logger.info("🤖 A build error was detected. Running Review Agent to analyze the failure...");
+        logger.info("--- 🤖 Starting Review Agent ---");
         LlmAgent reviewAgent = LlmAgent.builder()
                 .name(REVIEW_AGENT_NAME)
                 .description("Analyzes Maven build logs to find the root cause of a failure.")
@@ -1154,15 +1173,17 @@ The fix is to update the import statements to use the `jakarta.validation` packa
                 Session session = runner.sessionService().createSession(runner.appName(), "user-review-analyzer").blockingGet();
                 return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
             });
+            logger.info("--- ✅ Finished Review Agent ---");
             return finalEvent != null ? finalEvent.stringifyContent() : "Review Agent failed to produce an analysis.";
         } catch (Exception e) {
             logger.error("❌ The Review Agent itself failed to run.", e);
+            logger.info("--- ❌ Finished Review Agent with error ---");
             return "Review Agent execution failed: " + e.getMessage();
         }
     }
 
     private static CorrectorResult runCorrectorAgent(String buildLog, Map<String, String> currentPrompts) {
-        logger.info("🤖 A build error was detected. Running Corrector Agent to generate a fix...");
+        logger.info("--- 🤖 A build error was detected. Starting Corrector Agent ---");
         LlmAgent correctorAgent = LlmAgent.builder()
                 .name(CORRECTOR_AGENT_NAME)
                 .description("Analyzes a build log and the failing prompts to suggest a fix.")
@@ -1222,13 +1243,16 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
                 String agentName = agentMatcher.group(1).trim();
                 String newPrompt = promptMatcher.group(1).trim();
                 logger.info("✅ Corrector Agent suggests a new prompt for: {}", agentName);
+                logger.info("--- ✅ Finished Corrector Agent ---");
                 return new CorrectorResult(agentName, newPrompt);
             } else {
                 logger.error("❌ Corrector Agent returned a malformed response:\n{}", response);
+                logger.info("--- ❌ Finished Corrector Agent with error ---");
                 return null;
             }
         } catch (Exception e) {
             logger.error("❌ The Corrector Agent itself failed to run.", e);
+            logger.info("--- ❌ Finished Corrector Agent with error ---");
             return null;
         }
     }
@@ -1354,24 +1378,38 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
         // Get the list of existing files to provide context to the agent.
         String existingFiles = getCurrentProjectFiles(gitConfig.repoPath);
 
-        // --- Context Extraction for EmployeeController (DEMO) ---
-        String controllerPath = gitConfig.repoPath + "/src/main/java/com/generated/microservice/controller/EmployeeController.java";
-        String controllerContextSummary = "";
+        // --- NEW: Context Extraction for ALL existing Java files ---
+        StringBuilder allContextSummaries = new StringBuilder();
         try {
-            if (Files.exists(Paths.get(controllerPath))) {
-                String controllerFileContent = Files.readString(Paths.get(controllerPath));
-                controllerContextSummary = runContextExtractionAgent(controllerFileContent);
-                System.out.println("controllerContextSummary: " + controllerContextSummary);
+            Path srcPath = Paths.get(gitConfig.repoPath, "src", "main", "java");
+            if (Files.exists(srcPath)) {
+                Files.walk(srcPath)
+                    .filter(path -> path.toString().endsWith(".java"))
+                    .forEach(path -> {
+                        try {
+                            if(path.toString().contains("Controller") || path.toString().contains("entity") || path.toString().contains("model")) {
+                                String fileContent = Files.readString(path);
+                                String contextSummary = runContextExtractionAgent(fileContent);
+                                allContextSummaries.append("--- File: ").append(srcPath.relativize(path)).append(" ---\n");
+                                allContextSummaries.append(contextSummary).append("\n\n");
+                            }
+                        } catch (IOException e) {
+                            logger.warn("Could not read or process file for context: {}", path);
+                        }
+                    });
             }
         } catch (IOException e) {
-            logger.warn("Could not extract context for EmployeeController: {}", e.getMessage());
+            logger.error("❌ Could not walk source tree for context extraction: {}", e.getMessage());
         }
+        String combinedContext = allContextSummaries.toString();
         // --- END Context Extraction ---
 
         // --- Original Workflow (Self-Healing Disabled) ---
         Map<String, String> agentPrompts = new HashMap<>();
         agentPrompts.put(CODEGEN_AGENT_NAME, String.format("""
-You are a specialist Java developer. Your ONLY task is to add a single, new feature to an existing Spring Boot project.
+You are a specialist Java developer. Your task is to implement features in a Spring Boot project.
+
+**Primary Objective:** First, analyze the `EXISTING PROJECT FILES` list. If you do not see a main application class (one annotated with `@SpringBootApplication`), you MUST create it in the base package (`%s`). After ensuring the main class exists, proceed to implement the new feature.
 
 **EXISTING FILE CONTEXT:**
 %s
@@ -1380,6 +1418,11 @@ You are a specialist Java developer. Your ONLY task is to add a single, new feat
 This is your most important instruction. You are FORBIDDEN from generating any code, methods, or endpoints that are not EXPLICITLY required by the new feature description.
 - **Example:** If the requirement is to "find an employee by name," you will ONLY generate the controller endpoint, service method, and repository method for that search. You are FORBIDDEN from creating `getAllEmployees`, `getEmployeeById`, `addEmployee`, `updateEmployee`, or `deleteEmployee`.
 - You must write the minimum amount of code to satisfy the requirement.
+- You MUST NOT generate any test classes (files ending in Test.java). Test generation is handled by a separate agent.
+
+**SERVICE LAYER DIRECTIVE:**
+- For any service class you create, you MUST define an interface (e.g., `EmployeeService`) and a corresponding implementation class (e.g., `EmployeeServiceImpl`).
+- All dependent classes (like controllers) MUST inject and use the interface, not the concrete implementation.
 
 **CRITICAL INSTRUCTIONS:**
 1.  **Analyze Existing Structure:** Review the list of existing files to understand the current project structure and conventions.
@@ -1387,8 +1430,8 @@ This is your most important instruction. You are FORBIDDEN from generating any c
     - For **new files**, provide the complete content.
     - For **existing files**, you MUST ONLY generate the new code snippet (e.g., a new method, a new DTO class within a file, a new field, a new endpoint). DO NOT output the entire file.
 3.  **Output Format:**
-    - For a **NEW file**, use the format: `// Create File: [full/path/to/file.java]`
-    - For **MODIFYING an existing file**, use the format: `// Modify File: [full/path/to/file.java]`
+    - For a **NEW file**, use the format with a full path from the project root. Example: `// Create File: src/main/java/com/yourcompany/service/UserService.java`
+    - For **MODIFYING an existing file**, use the format with a full path from the project root. Example: `// Modify File: src/main/java/com/yourcompany/service/UserService.java`
 4.  **Adhere to Project Standards:**
     - Use the existing base package: `%s`.
     - Follow the existing coding style and patterns (e.g., constructor injection).
@@ -1403,56 +1446,45 @@ This is your most important instruction. You are FORBIDDEN from generating any c
 **NEW FEATURE REQUIREMENTS:**
 {requirements}
 """,
-  controllerContextSummary,
+  srsData.projectConfig.packageName,
+  combinedContext,
   srsData.projectConfig.packageName,
   srsData.projectConfig.javaVersion,
   existingFiles
 ));
         agentPrompts.put(TESTGEN_AGENT_NAME, String.format("""
-You are a senior test engineer. Your task is to write high-quality JUnit 5 test cases for the provided Spring Boot source code.
-
-**MASTER DIRECTIVE: USE CORRECT LIBRARIES**
-- All test code MUST use `org.junit.jupiter.api` for JUnit 5.
-- All mocking MUST use `org.mockito`.
-- DO NOT use any other testing or mocking frameworks (e.g., JUnit 4, TestNG, EasyMock). This is a strict requirement.
-
-The source code consists of multiple concatenated Java files. Analyze it carefully.
+You are a senior test engineer. Your task is to write high-quality JUnit 5 unit tests to verify that the provided Java code correctly implements the given feature requirements.
 
 **Instructions:**
-1.  **Use ONLY Existing Methods:** You MUST write tests that compile successfully against the `Input Code`. Before using any method on an object (especially entities or DTOs), you MUST verify that the method is actually defined in the provided source code.
-2.  **No Assumed Setters:** DO NOT assume standard setter methods like `setName()` or `setEmail()` exist. If the entity uses a constructor or a builder for initialization, you MUST use that in your test setup.
-3.  **Use Correct Libraries:** You MUST use `org.junit.jupiter.api` for all JUnit 5 classes (`@Test`, `@BeforeEach`, etc.) and `org.mockito` for all mocking classes (`@Mock`, `when`, `verify`, etc.). Do not use any other testing or mocking frameworks.
+- For a **new test file**, generate the full test class.
+- For an **existing test file**, generate ONLY the new `@Test` methods required for the new feature. Do NOT regenerate the whole class. Output only the new methods.
 
-**Instructions:**
-You MUST use JUnit 5 for the test structure (`@Test`, `@BeforeEach`, etc.) and the Mockito library for all mocking (`@Mock`, `when`, `verify`, etc.). Do not use any other testing or mocking frameworks.
+**Output Format:**
+- For a new file: `// Create File: src/test/java/com/yourcompany/service/UserServiceTest.java`
+- For modifying an existing file: `// Modify File: src/test/java/com/yourcompany/service/UserServiceTest.java` with only the new `@Test` methods.
 
-1.  **Identify Services and Controllers:** Find all `@Service` and `@RestController` classes in the code below.
-2.  **Test the Service Layer:**
-    -   For each service class, create a corresponding test class (e.g., `UserServiceTest`).
-    -   Use `@ExtendWith(MockitoExtension.class)` to enable Mockito.
-    -   Use `@Mock` to create a mock of the repository dependency (e.g., `UserRepository`).
-    -   Use `@InjectMocks` to inject the mock repository into the service instance.
-    -   Write tests for each public method in the service, using Mockito's `when(...).thenReturn(...)` to define mock behavior.
-5.  **Test the Controller Layer:**
-    -   For each controller class, create a corresponding test class (e.g., `UserControllerTest`).
-    -   Use `@WebMvcTest(ControllerClassName.class)` to test the web layer without starting a full application context.
-    -   Use `@MockBean` to provide a mock of the service dependency (e.g., `UserService`).
-    -   Use `MockMvc` to perform requests and assert responses.
-6.  **Testing Void Methods:**
-    -   For methods that return `void` (like a `delete` method), you CANNOT use `when(...).thenReturn(...)`.
-    -   Instead, use `doNothing().when(mockedService).voidMethod(any());` to configure the mock.
-    -   Use `verify(mockedService, times(1)).voidMethod(any());` in your test to confirm the method was called.
-7.  **Pay Close Attention to Packages:** Ensure all `import` statements in your test files are correct and match the package structure of the provided source code.
-    - The main source code is in the `%s` package and its subpackages.
-    - Your test source code MUST mirror this structure (e.g., `%s.controller` for controller tests).
+**STRICT TESTING DIRECTIVES:**
+- For ALL test classes, you MUST use ONLY classic Mockito-based unit tests.
+- DO NOT use `@Autowired`, `@WebMvcTest`, `@DataMongoTest`, or `@SpringBootTest`.
+- All test classes MUST be annotated with `@ExtendWith(MockitoExtension.class)`.
+- All test classes SHOULD be annotated with `@MockitoSettings(strictness = Strictness.LENIENT)` to avoid unnecessary stubbing errors.
+- All dependencies MUST be mocked with `@Mock`.
+- The class under test MUST be instantiated with `@InjectMocks`.
+- If you need to test a controller with `MockMvc`, set it up manually in a `@BeforeEach` method using `MockMvcBuilders.standaloneSetup(...)`.
 
-**Input Code:**
+**DO NOT USE THE FOLLOWING ANNOTATIONS IN ANY TEST CLASS:**
+- `@Autowired`
+- `@WebMvcTest`
+- `@DataMongoTest`
+- `@SpringBootTest`
+- `@MockBean`
+
+**FEATURE REQUIREMENTS:**
+{requirements}
+
+**CODE TO TEST:**
 {code}
-
-Wrap each test class in Java syntax and include a comment at the top indicating the file path, for example:
-// File: src/test/java/%s/service/UserServiceTest.java
 """,
-  srsData.projectConfig.packageName,
   srsData.projectConfig.packageName,
   srsData.projectConfig.packageName.replace('.', '/')
 ));
@@ -1472,11 +1504,65 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
         if (buildResult == null) {
             // --- HAPPY PATH: Build Succeeded ---
             logger.info("\n\n✅✅✅ Build Succeeded! Proceeding to commit and create Pull Request...");
+
+            // --- NEW: Delete target directory before commit ---
+            try {
+                Path targetDir = Paths.get(gitConfig.repoPath, "target");
+                if (Files.exists(targetDir)) {
+                    logger.info("Deleting target directory before commit: {}", targetDir);
+                    Files.walk(targetDir)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                }
+            } catch (IOException e) {
+                logger.warn("Could not delete target directory: {}", e.getMessage());
+            }
+            // --- END DELETE ---
+
             finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
         } else {
-            // --- FAILURE PATH: Build Failed ---
-            logger.error("\n\n❌❌❌ Build Failed. Committing generated code with failure analysis...");
-            String analysis = runReviewAgent(buildResult);
+            // --- FAILURE PATH: Build Failed, attempting self-healing ---
+            boolean buildSuccess = false;
+            for (int i = 0; i < 3; i++) { // Max 3 retries
+                logger.error("\n\n❌❌❌ Build Failed on attempt {}. Starting self-healing process...", i + 1);
+                String reviewAnalysis = runReviewAgent(buildResult);
+                String faultyFilePath = findFaultyFile(reviewAnalysis, gitConfig.repoPath);
+
+                if (faultyFilePath == null) {
+                    logger.error("Could not identify the faulty file from the review agent's analysis. Aborting self-healing.");
+                    break;
+                }
+
+                try {
+                    String faultyFileContent = Files.readString(Paths.get(faultyFilePath));
+                    String correctedCode = runBuildCorrectorAgent(buildResult, reviewAnalysis, faultyFileContent, faultyFilePath);
+
+                    if (correctedCode != null && !correctedCode.isBlank()) {
+                        logger.info("🤖 BuildCorrectorAgent provided a fix. Overwriting file: {}", faultyFilePath);
+                        Files.writeString(Paths.get(faultyFilePath), correctedCode);
+                        
+                        // Retry the build
+                        buildResult = verifyProjectBuild(gitConfig.repoPath);
+                        if (buildResult == null) {
+                            buildSuccess = true;
+                            logger.info("\n\n✅✅✅ Build Succeeded after self-healing! Proceeding to commit...");
+                            finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
+                            break;
+                        }
+                    } else {
+                        logger.error("BuildCorrectorAgent failed to provide a fix. Aborting self-healing.");
+                        break;
+                    }
+                } catch (IOException e) {
+                    logger.error("Error during self-healing file operations: {}", e.getMessage());
+                    break;
+                }
+            }
+
+            if (!buildSuccess) {
+                logger.error("\n\n❌❌❌ Self-healing failed. Committing generated code with final failure analysis...");
+                String analysis = runReviewAgent(buildResult); // Final analysis
             try {
                 Path analysisFile = Paths.get(gitConfig.repoPath, "BUILD_FAILURE_ANALYSIS.md");
                 String fileContent = "# AI Build Failure Analysis\n\n"
@@ -1488,9 +1574,9 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
             } catch (IOException e) {
                 logger.error("❌ Failed to write build failure analysis file.", e);
             }
-            // Commit and push the broken code and the analysis file, but do not create a PR.
             String failedCommitMessage = "fix(ai): [BUILD FAILED] " + workflowResult.commitMessage;
             commitAndPush(gitConfig.repoPath, failedCommitMessage, featureBranch);
+            }
         }
     }
 
@@ -1579,7 +1665,7 @@ Wrap each test class in Java syntax and include a comment at the top indicating 
     }
 
     private static String runContextExtractionAgent(String existingFileContent) {
-        logger.info("🤖 Running Context Extraction Agent to analyze existing class structure...");
+        logger.info("--- 🤖 Starting Context Extraction Agent ---");
         LlmAgent contextAgent = LlmAgent.builder()
             .name(CONTEXT_EXTRACTION_AGENT_NAME)
             .description("Extracts class-level context and conventions from an existing Java file for use in code generation.")
@@ -1619,10 +1705,93 @@ Do not include any code, only the structured summary.
             });
             String contextSummary = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
             logger.info("✅ ContextExtractionAgent summary:\n{}", contextSummary);
+            logger.info("--- ✅ Finished Context Extraction Agent ---");
             return contextSummary;
         } catch (Exception e) {
             logger.error("❌ The ContextExtractionAgent failed to run. Returning empty context. Error: {}", e.getMessage(), e);
+            logger.info("--- ❌ Finished Context Extraction Agent with error ---");
             return "";
         }
+    }
+
+    private static String runBuildCorrectorAgent(String buildLog, String reviewAnalysis, String faultyFileContent, String faultyFilePath) {
+        logger.info("--- 🤖 Starting Build Corrector Agent ---");
+        LlmAgent correctorAgent = LlmAgent.builder()
+            .name(BUILD_CORRECTOR_AGENT_NAME)
+            .description("Analyzes build failures and corrects the faulty Java code.")
+            .instruction(String.format("""
+You are a Senior Software Engineer specializing in debugging and fixing build failures. You will be given a Maven build log, an analysis of the failure, and the full content of the file that is causing the error. Your task is to fix the bug and provide the complete, corrected content of the file.
+
+**RULES:**
+1.  Analyze the `BUILD LOG` and `REVIEW ANALYSIS` to understand the root cause.
+2.  Carefully examine the `FAULTY FILE CONTENT`.
+3.  Rewrite the file to fix the error. You MUST provide the **full and complete** content for the corrected file.
+4.  Your response MUST start with the file path marker `// File: %s` followed by the corrected code.
+5.  Do not add any explanation or any other text. Your entire response must be the file marker and the code block.
+
+**BUILD LOG:**
+```
+%s
+```
+
+**REVIEW ANALYSIS:**
+```
+%s
+```
+
+**FAULTY FILE CONTENT:**
+```java
+%s
+```
+""", faultyFilePath, buildLog, reviewAnalysis, faultyFileContent))
+            .model("gemini-2.0-flash")
+            .outputKey("corrected_code")
+            .build();
+
+        final InMemoryRunner runner = new InMemoryRunner(correctorAgent);
+        final Content userMsg = Content.fromParts(Part.fromText("Fix the build error based on the provided context."));
+        
+        try {
+            Event finalEvent = retryWithBackoff(() -> {
+                Session session = runner.sessionService().createSession(runner.appName(), "user-build-corrector").blockingGet();
+                return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
+            });
+            String response = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
+
+            // Parse the corrected code from the response
+            Pattern pattern = Pattern.compile(FILE_PATH_MARKER_PREFIX + "([^\\n]+)\\s*\\n(.*?)(?=\\z)", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(response);
+            if (matcher.find()) {
+                logger.info("--- ✅ Finished Build Corrector Agent ---");
+                return matcher.group(2).trim(); // Return just the code content
+            } else {
+                logger.warn("BuildCorrectorAgent returned a malformed response. Could not parse corrected code.");
+                logger.info("--- ❌ Finished Build Corrector Agent with error ---");
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("❌ The BuildCorrectorAgent failed to run. Error: {}", e.getMessage(), e);
+            logger.info("--- ❌ Finished Build Corrector Agent with error ---");
+            return null;
+        }
+    }
+
+    private static String findFaultyFile(String reviewAnalysis, String baseDir) {
+        Pattern pattern = Pattern.compile("`([^`]+\\.java)`");
+        Matcher matcher = pattern.matcher(reviewAnalysis);
+        if (matcher.find()) {
+            String fileName = matcher.group(1);
+            try (var stream = Files.walk(Paths.get(baseDir))) {
+                return stream
+                    .filter(p -> p.toString().endsWith(fileName))
+                    .findFirst()
+                    .map(Path::toString)
+                    .orElse(null);
+            } catch (IOException e) {
+                logger.error("Error finding faulty file '{}': {}", fileName, e.getMessage());
+                return null;
+            }
+        }
+        return null;
     }
 }
