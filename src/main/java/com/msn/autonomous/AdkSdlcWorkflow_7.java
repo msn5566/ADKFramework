@@ -441,7 +441,7 @@ The final output MUST be a single, complete, and compilable Java file that conta
         } else {
             content = rawContent; // Use raw content if no markdown block is found
         }
-        return content;
+        return content.replace("```java", "").replace("```", "");
     }
 
     /**
@@ -1387,12 +1387,12 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
                     .filter(path -> path.toString().endsWith(".java"))
                     .forEach(path -> {
                         try {
-                            if(path.toString().contains("Controller") || path.toString().contains("entity") || path.toString().contains("model")) {
+                          //  if(path.toString().contains("Controller") || path.toString().contains("entity") || path.toString().contains("model")) {
                                 String fileContent = Files.readString(path);
                                 String contextSummary = runContextExtractionAgent(fileContent);
                                 allContextSummaries.append("--- File: ").append(srcPath.relativize(path)).append(" ---\n");
                                 allContextSummaries.append(contextSummary).append("\n\n");
-                            }
+                            //}
                         } catch (IOException e) {
                             logger.warn("Could not read or process file for context: {}", path);
                         }
@@ -1425,14 +1425,17 @@ This is your most important instruction. You are FORBIDDEN from generating any c
 - All dependent classes (like controllers) MUST inject and use the interface, not the concrete implementation.
 
 **CRITICAL INSTRUCTIONS:**
-1.  **Analyze Existing Structure:** Review the list of existing files to understand the current project structure and conventions.
-2.  **Generate Code Snippets:**
+1.  **Analyze Existing Structure:** Review the list of existing files and the `EXISTING FILE CONTEXT` to understand the current project state.
+2.  **Dependency Method Generation:** When your new code needs to call a method on a dependency (like a Service or Repository), you MUST first check the `EXISTING FILE CONTEXT` to see if that method already exists.
+     - If the method **already exists**, simply call it.
+     - If the method **does not exist**, you MUST generate the new method in the appropriate file using a `// Modify File:` block, in addition to generating the code that calls it. This is critical for ensuring the project compiles. For example, if you need `employeeRepository.findByName(name)`, but it doesn't exist, you must add the method to the `EmployeeRepository` interface/class.
+3.  **Generate Code Snippets:**
     - For **new files**, provide the complete content.
     - For **existing files**, you MUST ONLY generate the new code snippet (e.g., a new method, a new DTO class within a file, a new field, a new endpoint). DO NOT output the entire file.
-3.  **Output Format:**
+4.  **Output Format:**
     - For a **NEW file**, use the format with a full path from the project root. Example: `// Create File: src/main/java/com/yourcompany/service/UserService.java`
     - For **MODIFYING an existing file**, use the format with a full path from the project root. Example: `// Modify File: src/main/java/com/yourcompany/service/UserService.java`
-4.  **Adhere to Project Standards:**
+5.  **Adhere to Project Standards:**
     - Use the existing base package: `%s`.
     - Follow the existing coding style and patterns (e.g., constructor injection).
     - Use Java `%s`.
@@ -1455,13 +1458,14 @@ This is your most important instruction. You are FORBIDDEN from generating any c
         agentPrompts.put(TESTGEN_AGENT_NAME, String.format("""
 You are a senior test engineer. Your task is to write high-quality JUnit 5 unit tests to verify that the provided Java code correctly implements the given feature requirements.
 
-**Instructions:**
-- For a **new test file**, generate the full test class.
-- For an **existing test file**, generate ONLY the new `@Test` methods required for the new feature. Do NOT regenerate the whole class. Output only the new methods.
-
-**Output Format:**
-- For a new file: `// Create File: src/test/java/com/yourcompany/service/UserServiceTest.java`
-- For modifying an existing file: `// Modify File: src/test/java/com/yourcompany/service/UserServiceTest.java` with only the new `@Test` methods.
+**CRITICAL INSTRUCTIONS:**
+1.  **Analyze Existing Structure:** Review the list of existing files to understand the current project structure and conventions.
+2.  **Generate Code Snippets:**
+    - For **new files**, provide the complete content.
+    - For **existing files**, you MUST ONLY generate the new code snippet (e.g., a new test method). DO NOT output the entire file.
+3.  **Output Format:**
+    - For a **NEW file**, use the format with a full path from the project root. Example: `// Create File: src/test/java/com/yourcompany/service/UserServiceTest.java`
+    - For **MODIFYING an existing file**, use the format with a full path from the project root. Example: `// Modify File: src/test/java/com/yourcompany/service/UserServiceTest.java`
 
 **STRICT TESTING DIRECTIVES:**
 - For ALL test classes, you MUST use ONLY classic Mockito-based unit tests.
@@ -1479,15 +1483,17 @@ You are a senior test engineer. Your task is to write high-quality JUnit 5 unit 
 - `@SpringBootTest`
 - `@MockBean`
 
+**EXISTING PROJECT FILES:**
+%s
+
 **FEATURE REQUIREMENTS:**
 {requirements}
 
 **CODE TO TEST:**
 {code}
 """,
-  srsData.projectConfig.packageName,
-  srsData.projectConfig.packageName.replace('.', '/')
-));
+                existingFiles
+        ));
 
         final WorkflowResult workflowResult = runMainWorkflow(userInput, srsData.projectConfig, agentPrompts);
 
@@ -1716,6 +1722,17 @@ Do not include any code, only the structured summary.
 
     private static String runBuildCorrectorAgent(String buildLog, String reviewAnalysis, String faultyFileContent, String faultyFilePath) {
         logger.info("--- 🤖 Starting Build Corrector Agent ---");
+
+        // --- INPUT LOGGING ---
+        // Log key details to understand what the agent is working with.
+        // Using DEBUG level to avoid cluttering standard logs unless needed.
+        logger.info("BuildCorrectorAgent INPUT - Faulty File Path: {}", faultyFilePath);
+        logger.info("BuildCorrectorAgent INPUT - Review Analysis:\n---\n{}\n---", reviewAnalysis);
+        // Log only the first 1000 characters of potentially long inputs to keep logs clean.
+        logger.info("BuildCorrectorAgent INPUT - Build Log (first 1000 chars):\n---\n{}\n---", buildLog.substring(0, Math.min(buildLog.length(), 1000)));
+        logger.info("BuildCorrectorAgent INPUT - Faulty File Content (first 1000 chars):\n---\n{}\n---", faultyFileContent);
+        // --- END INPUT LOGGING ---
+
         LlmAgent correctorAgent = LlmAgent.builder()
             .name(BUILD_CORRECTOR_AGENT_NAME)
             .description("Analyzes build failures and corrects the faulty Java code.")
@@ -1757,7 +1774,9 @@ You are a Senior Software Engineer specializing in debugging and fixing build fa
                 return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
             });
             String response = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
-
+            // --- RAW OUTPUT LOGGING ---
+            logger.info("Full raw response from BuildCorrectorAgent:\n---\n{}\n---", response);
+            // --- END RAW OUTPUT LOGGING ---
             // Parse the corrected code from the response
             Pattern pattern = Pattern.compile(FILE_PATH_MARKER_PREFIX + "([^\\n]+)\\s*\\n(.*?)(?=\\z)", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(response);
