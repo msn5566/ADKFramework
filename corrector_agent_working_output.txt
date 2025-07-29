@@ -1,0 +1,2038 @@
+PS D:\GitHub\latest git server\ADKFramework>  d:; cd 'd:\GitHub\latest git server\ADKFramework'; & 'C:\Program Files\Java\jdk-21\bin\java.exe' '@C:\Users\USER\AppData\Local\Temp\cp_qc5ei4tyrj2pqdlh3cb2v2kh.argfile' 'com.msn.autonomous.AdkSdlcWorkflow_7' 
+11:47:55.010 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Enter the Jira Issue Key (e.g., PROJ-123):
+
+11:49:44.109 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Connecting to Jira to fetch issue:
+PS D:\GitHub\latest git server\ADKFramework> ^C
+PS D:\GitHub\latest git server\ADKFramework>  d:; cd 'd:\GitHub\latest git server\ADKFramework'; & 'C:\Program Files\Java\jdk-21\bin\java.exe' '@C:\Users\USER\AppData\Local\Temp\cp_qc5ei4tyrj2pqdlh3cb2v2kh.argfile' 'com.msn.autonomous.AdkSdlcWorkflow_7' 
+kflow_7' ;fac056e8-4ce4-4bec-9c57-83d0716af37f11:49:54.028 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Enter the Jira Issue Key (e.g., PROJ-123):
+AG-18
+11:50:03.121 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Connecting to Jira to fetch issue: AG-18
+11:50:04.834 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Successfully fetched Jira issue: AG-18
+11:50:04.836 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Config Agent ---
+11:50:09.435 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Config Agent ---
+11:50:09.471 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Generated project will be created in: D:\GitHub\latest git server\temp\employemanagementsystem
+11:50:09.475 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Repository directory exists. Resetting to a clean state from origin/development.
+11:50:11.769 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Repository is now in a pristine state matching origin/development.
+11:50:11.773 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- No previous Jira issue state file found. This will be an initial analysis.
+11:50:11.774 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Change Analysis Agent ---
+11:50:12.752 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Change Analysis Agent ---
+11:50:12.752 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Creating and checking out new feature branch: feature/AG-18_20250729115012
+11:50:13.192 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:14.317 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeController
+Type: Controller
+Class-level Annotations: @RestController, @RequestMapping("/employees"), @RequiredArgsConstructor
+Base RequestMapping: /employees
+Static Variables: []
+Fields: [private final EmployeeService employeeService]
+Injected Dependencies: [employeeService]
+Naming Conventions: [employeeService for EmployeeService]
+11:50:14.317 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:14.317 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:15.720 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeDTO
+Type: DTO
+Class-level Annotations: @Data
+Base RequestMapping: null
+Static Variables: []
+Fields: [private String name, @NotEmpty(message = "Name cannot be empty"), private String contactInformation, @NotEmpty(message = "Contact information cannot be empty")]
+Injected Dependencies: []
+Naming Conventions: []
+11:50:15.720 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:15.720 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:16.682 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeManagementApplication
+Type: Application
+Class-level Annotations: @SpringBootApplication
+Base RequestMapping: null
+Static Variables: []
+Fields: []
+Injected Dependencies: []
+Naming Conventions: []
+11:50:16.685 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:16.688 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:18.228 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: Employee
+Type: Entity
+Class-level Annotations: @Data, @Document(collection = "employees")
+Base RequestMapping: null
+Static Variables: []
+Fields: [private String id, private String employeeId, private String name, private String contactInformation]
+Injected Dependencies: []
+Naming Conventions: []
+11:50:18.231 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:18.234 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:19.122 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeRepository
+Type: Repository
+Class-level Annotations: None
+Base RequestMapping: None
+Static Variables: None
+Fields: None
+Injected Dependencies: None
+Naming Conventions: None
+11:50:19.129 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:19.135 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:20.473 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeService
+Type: Service
+Class-level Annotations: None
+Base RequestMapping: None
+Static Variables: None
+Fields: None
+Injected Dependencies: None
+Naming Conventions: None
+11:50:20.479 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:20.483 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+11:50:21.519 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeServiceImpl
+Type: Service
+Class-level Annotations: @Service, @RequiredArgsConstructor
+Base RequestMapping: null
+Static Variables: []
+Fields: [private final EmployeeRepository employeeRepository]
+Injected Dependencies: [employeeRepository]
+Naming Conventions: [employeeRepository for EmployeeRepository]
+11:50:21.532 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+11:50:21.552 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting parseExistingDependenciesFromPom ---
+11:50:21.557 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished parseExistingDependenciesFromPom. Found 9 dependencies. 
+---
+11:50:21.573 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Existing pom.xml content: [org.springframework.boot:spring-boot-starter-web, org.springframework.boot:spring-boot-starter-data-mongodb, org.springframework.boot:spring-boot-starter-test, org.springframework.boot:spring-boot-devtools, org.projectlombok:lombok:1.18.30:optional, org.springframework.boot:spring-boot-starter-validation, org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0, org.slf4j:slf4j-api, ch.qos.logback:logback-classic]
+11:50:21.611 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Found existing pom.xml with 9 dependencies.
+11:50:21.630 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- 
+--- Running Main AI Workflow ---
+11:50:37.821 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [RequirementsAgent]
+Commit-Summary: Implement feature to allow admins to view materials issued to an employee.
+
+Feature: View materials per employee
+Input: Employee identifier (e.g., employee ID)
+Output: A list of all materials issued to the specified employee, including details such as material name, issue date, and any relevant information.
+Constraints: Only admins should be able to access this feature.
+Logic: The system should retrieve and display all materials associated with the provided employee identifier from the database.
+
+
+11:50:37.826 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [DependencyAgent]
+org.springframework.boot:spring-boot-starter-web
+org.springframework.boot:spring-boot-starter-data-mongodb
+org.springframework.boot:spring-boot-starter-test
+org.springframework.boot:spring-boot-devtools
+org.projectlombok:lombok:1.18.30:optional
+org.springframework.boot:spring-boot-starter-validation
+org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
+org.slf4j:slf4j-api
+ch.qos.logback:logback-classic
+org.springframework.boot:spring-boot-starter-security
+org.springframework.security:spring-security-test
+---END-DEPS---
+Commit-Summary: Implement feature to allow admins to view materials issued to an employee.
+
+Feature: View materials per employee
+Input: Employee identifier (e.g., employee ID)
+Output: A list of all materials issued to the specified employee, including details such as material name, issue date, and any relevant information.
+Constraints: Only admins should be able to access this feature.
+Logic: The system should retrieve and display all materials associated with the provided employee identifier from the database.
+
+
+11:50:37.835 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [CodeGenAgent]
+Okay, I will implement the feature to view materials per employee. Here's the plan:
+
+1.  **Create `Material` Entity:** Create a `Material` entity to represent materials issued to employees.
+2.  **Create `MaterialDTO` DTO:** Create a `MaterialDTO` to transfer `Material` data.
+3.  **Update `Employee` Entity:** Add a list of `Material` to the `Employee` entity.
+4.  **Create `MaterialRepository`:** Create a `MaterialRepository` to manage `Material` entities in the database.
+5.  **Create `MaterialService` and `MaterialServiceImpl`:** Create a `MaterialService` and its implementation to handle the business logic for retrieving materials.
+6.  **Update `EmployeeController`:** Add an endpoint to the `EmployeeController` to retrieve materials for a specific employee ID.        
+7.  **Add necessary methods to existing files (Repository, Service).**
+
+```java
+// Create File: src/main/java/com/generated/microservice/entity/Material.java
+package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
+
+@Data
+@Document(collection = "materials")
+public class Material {
+
+    @Id
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/dto/MaterialDTO.java
+package com.generated.microservice.dto;
+
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class MaterialDTO {
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/entity/Employee.java
+package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+    private List<Material> materials;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/repository/MaterialRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Material;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface MaterialRepository extends MongoRepository<Material, String> {
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/MaterialService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.MaterialDTO;
+import java.util.List;
+
+public interface MaterialService {
+    List<MaterialDTO> getMaterialsByEmployeeId(String employeeId);
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/MaterialServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class MaterialServiceImpl implements MaterialService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<MaterialDTO> getMaterialsByEmployeeId(String employeeId) {
+        Employee employee = employeeRepository.findByEmployeeId(employeeId);
+        if (employee != null && employee.getMaterials() != null) {
+            return employee.getMaterials().stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    private MaterialDTO convertToDto(Material material) {
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId(material.getId());
+        materialDTO.setMaterialName(material.getMaterialName());
+        materialDTO.setIssueDate(material.getIssueDate());
+        materialDTO.setDescription(material.getDescription());
+        return materialDTO;
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/controller/EmployeeController.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+    private final MaterialService materialService;
+
+    @GetMapping("/{employeeId}/materials")
+    public ResponseEntity<List<MaterialDTO>> getMaterialsByEmployeeId(@PathVariable String employeeId) {
+        List<MaterialDTO> materials = materialService.getMaterialsByEmployeeId(employeeId);
+        return ResponseEntity.ok(materials);
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeService.java
+package com.generated.microservice.service;
+
+public interface EmployeeService {
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+    Employee findByEmployeeId(String employeeId);
+}
+```
+
+11:50:37.865 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [TestGenAgent]
+```java
+// Create File: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+
+
+==========combinedOutput start: =================
+Okay, I will implement the feature to view materials per employee. Here's the plan:
+
+1.  **Create `Material` Entity:** Create a `Material` entity to represent materials issued to employees.
+2.  **Create `MaterialDTO` DTO:** Create a `MaterialDTO` to transfer `Material` data.
+3.  **Update `Employee` Entity:** Add a list of `Material` to the `Employee` entity.
+4.  **Create `MaterialRepository`:** Create a `MaterialRepository` to manage `Material` entities in the database.
+5.  **Create `MaterialService` and `MaterialServiceImpl`:** Create a `MaterialService` and its implementation to handle the business logic for retrieving materials.
+6.  **Update `EmployeeController`:** Add an endpoint to the `EmployeeController` to retrieve materials for a specific employee ID.        
+7.  **Add necessary methods to existing files (Repository, Service).**
+
+```java
+// Create File: src/main/java/com/generated/microservice/entity/Material.java
+package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
+
+@Data
+@Document(collection = "materials")
+public class Material {
+
+    @Id
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/dto/MaterialDTO.java
+package com.generated.microservice.dto;
+
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class MaterialDTO {
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/entity/Employee.java
+package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+    private List<Material> materials;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/repository/MaterialRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Material;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface MaterialRepository extends MongoRepository<Material, String> {
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/MaterialService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.MaterialDTO;
+import java.util.List;
+
+public interface MaterialService {
+    List<MaterialDTO> getMaterialsByEmployeeId(String employeeId);
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/MaterialServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class MaterialServiceImpl implements MaterialService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<MaterialDTO> getMaterialsByEmployeeId(String employeeId) {
+        Employee employee = employeeRepository.findByEmployeeId(employeeId);
+        if (employee != null && employee.getMaterials() != null) {
+            return employee.getMaterials().stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    private MaterialDTO convertToDto(Material material) {
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId(material.getId());
+        materialDTO.setMaterialName(material.getMaterialName());
+        materialDTO.setIssueDate(material.getIssueDate());
+        materialDTO.setDescription(material.getDescription());
+        return materialDTO;
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/controller/EmployeeController.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+    private final MaterialService materialService;
+
+    @GetMapping("/{employeeId}/materials")
+    public ResponseEntity<List<MaterialDTO>> getMaterialsByEmployeeId(@PathVariable String employeeId) {
+        List<MaterialDTO> materials = materialService.getMaterialsByEmployeeId(employeeId);
+        return ResponseEntity.ok(materials);
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeService.java
+package com.generated.microservice.service;
+
+public interface EmployeeService {
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+    Employee findByEmployeeId(String employeeId);
+}
+```
+
+```java
+// Create File: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+
+
+
+============combinedOutput end=================
+action: Create File
+relativePath: src/main/java/com/generated/microservice/entity/Material.java
+rawContent: package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
+
+@Data
+@Document(collection = "materials")
+public class Material {
+
+    @Id
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+11:50:37.986 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\entity\Material.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/dto/MaterialDTO.java
+rawContent: package com.generated.microservice.dto;
+
+import lombok.Data;
+
+import java.util.Date;
+
+@Data
+public class MaterialDTO {
+    private String id;
+    private String materialName;
+    private Date issueDate;
+    private String description;
+}
+```
+
+```java
+11:50:37.992 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\dto\MaterialDTO.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/entity/Employee.java
+rawContent: package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+    private List<Material> materials;
+}
+```
+
+```java
+11:50:38.015 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:50:39.299 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 431
+existingCode: package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+
+}
+newFullFile: package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+    private List<Material> materials;
+}
+11:50:39.316 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@Document(collection = "employees")
+public class Employee {
+
+    @Id
+    private String id;
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+    private List<Material> materials;
+}
+11:50:39.334 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\entity\Employee.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/repository/MaterialRepository.java
+rawContent: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Material;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface MaterialRepository extends MongoRepository<Material, String> {
+}
+```
+
+```java
+11:50:39.367 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\repository\MaterialRepository.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/service/MaterialService.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.MaterialDTO;
+import java.util.List;
+
+public interface MaterialService {
+    List<MaterialDTO> getMaterialsByEmployeeId(String employeeId);
+}
+```
+
+```java
+11:50:39.395 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\MaterialService.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/service/MaterialServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class MaterialServiceImpl implements MaterialService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<MaterialDTO> getMaterialsByEmployeeId(String employeeId) {
+        Employee employee = employeeRepository.findByEmployeeId(employeeId);
+        if (employee != null && employee.getMaterials() != null) {
+            return employee.getMaterials().stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    private MaterialDTO convertToDto(Material material) {
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId(material.getId());
+        materialDTO.setMaterialName(material.getMaterialName());
+        materialDTO.setIssueDate(material.getIssueDate());
+        materialDTO.setDescription(material.getDescription());
+        return materialDTO;
+    }
+}
+```
+
+```java
+11:50:39.431 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\MaterialServiceImpl.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/controller/EmployeeController.java
+rawContent: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+    private final MaterialService materialService;
+
+    @GetMapping("/{employeeId}/materials")
+    public ResponseEntity<List<MaterialDTO>> getMaterialsByEmployeeId(@PathVariable String employeeId) {
+        List<MaterialDTO> materials = materialService.getMaterialsByEmployeeId(employeeId);
+        return ResponseEntity.ok(materials);
+    }
+}
+```
+
+```java
+11:50:39.449 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:50:41.386 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 1306
+existingCode: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.service.EmployeeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+
+    @PostMapping
+    public ResponseEntity<String> addEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
+        String employeeId = employeeService.addEmployee(employeeDTO);
+        return new ResponseEntity<>("Employee added successfully with ID: " + employeeId, HttpStatus.CREATED);
+    }
+}
+newFullFile: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+    private final MaterialService materialService;
+
+    @GetMapping("/{employeeId}/materials")
+    public ResponseEntity<List<MaterialDTO>> getMaterialsByEmployeeId(@PathVariable String employeeId) {
+        List<MaterialDTO> materials = materialService.getMaterialsByEmployeeId(employeeId);
+        return ResponseEntity.ok(materials);
+    }
+}
+11:50:41.407 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.MaterialService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+    private final MaterialService materialService;
+
+    @PostMapping
+    public ResponseEntity<String> addEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) {
+        String employeeId = employeeService.addEmployee(employeeDTO);
+        return new ResponseEntity<>("Employee added successfully with ID: " + employeeId, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{employeeId}/materials")
+    public ResponseEntity<List<MaterialDTO>> getMaterialsByEmployeeId(@PathVariable String employeeId) {
+        List<MaterialDTO> materials = materialService.getMaterialsByEmployeeId(employeeId);
+        return ResponseEntity.ok(materials);
+    }
+}
+11:50:41.431 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\controller\EmployeeController.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/service/EmployeeService.java
+rawContent: package com.generated.microservice.service;
+
+public interface EmployeeService {
+}
+```
+
+```java
+11:50:41.434 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:50:42.260 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 184
+existingCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+
+public interface EmployeeService {
+
+    String addEmployee(EmployeeDTO employeeDTO);
+
+}
+newFullFile: package com.generated.microservice.service;
+
+public interface EmployeeService {
+}
+11:50:42.260 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+
+public interface EmployeeService {
+
+    String addEmployee(EmployeeDTO employeeDTO);
+
+}
+11:50:42.275 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\EmployeeService.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+}
+```
+
+```java
+11:50:42.281 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:50:44.345 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 898
+existingCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public String addEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.getName());
+        employee.setContactInformation(employeeDTO.getContactInformation());
+        String employeeId = UUID.randomUUID().toString();
+        employee.setEmployeeId(employeeId);
+        employeeRepository.save(employee);
+        return employeeId;
+    }
+}
+newFullFile: package com.generated.microservice.service;
+
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+}
+11:50:44.360 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public String addEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.getName());
+        employee.setContactInformation(employeeDTO.getContactInformation());
+        String employeeId = UUID.randomUUID().toString();
+        employee.setEmployeeId(employeeId);
+        employeeRepository.save(employee);
+        return employeeId;
+    }
+}
+11:50:44.367 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\EmployeeServiceImpl.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+rawContent: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+    Employee findByEmployeeId(String employeeId);
+}
+```
+
+```java
+11:50:44.393 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:50:45.390 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 299
+existingCode: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+}
+newFullFile: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+    Employee findByEmployeeId(String employeeId);
+}
+11:50:45.392 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+    Employee findByEmployeeId(String employeeId);
+}
+11:50:45.392 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\repository\EmployeeRepository.java
+action: Create File
+relativePath: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+rawContent: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+11:50:45.414 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\test\java\com\generated\microservice\controller\MaterialControllerTest.java
+11:50:45.417 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Enforced known-good version for dependency: org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
+11:50:45.426 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: pom.xml
+11:50:45.426 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Appended content with metadata to AI_CHANGELOG.md
+11:50:45.442 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ¥î Failed to append content to jira_issue.txt: D:\GitHub\latest git server\temp\employemanagementsystem\.ai-state\jira_issue.txt
+11:50:45.445 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Appended content with metadata to README.md
+11:50:45.446 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: application.yml
+11:50:45.448 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ΓÜÖ∩╕Å  GitHub Actions CI config added at: D:\GitHub\latest git server\temp\employemanagementsystem\.github\workflows\ci.yml
+11:50:45.448 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 --
+--- ≡ƒ¢í∩╕Å  Running Build & Static Analysis Verification ---
+11:50:45.448 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- This will compile the code, run tests ...
+11:51:13.210 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Command error output:
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 68, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 72, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.pom
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.pom (2.7 kB at 4.2 kB/s)
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.jar
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.jar (132 kB at 418 kB/s)
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ microservice ---
+[INFO] skip non existing resourceDirectory D:\GitHub\latest git server\temp\employemanagementsystem\src\test\resources
+[INFO]
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug parameters release 17] to target\test-classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO]
+[INFO] --- surefire:3.5.3:test (default-test) @ microservice ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.generated.microservice.controller.EmployeeControllerTest
+11:51:10.952 [main] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.2.Final
+11:51:12.093 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.093 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.108 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 15 ms
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.224 s -- in com.generated.microservice.controller.EmployeeControllerTest
+[INFO] Running com.generated.microservice.controller.MaterialControllerTest
+11:51:12.341 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.341 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.341 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+11:51:12.640 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.640 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.640 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.516 s <<< FAILURE! -- in com.generated.microservice.controller.MaterialControllerTest
+[ERROR] com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound -- Time elapsed: 0.400 s <<< FAILURE!
+Wanted but not invoked:
+materialService.getMaterialsByEmployeeId(
+    "456"
+);
+-> at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+Actually, there were zero interactions with this mock.
+
+        at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[ERROR] com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials -- Time elapsed: 0.116 s <<< FAILURE!
+java.lang.AssertionError: No value at JSON path "$[0].id"
+        at org.springframework.test.util.JsonPathExpectationsHelper.evaluateJsonPath(JsonPathExpectationsHelper.java:351)
+        at org.springframework.test.util.JsonPathExpectationsHelper.assertValue(JsonPathExpectationsHelper.java:148)
+        at org.springframework.test.web.servlet.result.JsonPathResultMatchers.lambda$value$2(JsonPathResultMatchers.java:112)
+        at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+        at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials(MaterialControllerTest.java:57)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: com.jayway.jsonpath.PathNotFoundException: No results for path: $[0]['id']
+
+[INFO] Running com.generated.microservice.service.EmployeeServiceImplTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.231 s -- in com.generated.microservice.service.EmployeeServiceImplTest
+[INFO]
+[INFO] Results:
+[INFO]
+[ERROR] Failures:
+[ERROR]   MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound:72
+Wanted but not invoked:
+materialService.getMaterialsByEmployeeId(
+    "456"
+);
+-> at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+Actually, there were zero interactions with this mock.
+
+[ERROR]   MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials:57 No value at JSON path "$[0].id"
+[INFO]
+[ERROR] Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  23.869 s
+[INFO] Finished at: 2025-07-29T11:51:13+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project microservice: There are test failures.
+[ERROR]
+[ERROR] See D:\GitHub\latest git server\temp\employemanagementsystem\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\USER\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.6\byte-buddy-agent-1.17.6.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+11:51:13.241 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ¥î BUILD FAILED! A critical issue was found.
+java.io.IOException: Command failed with exit code 1: mvn.cmd clean verify
+
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 68, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 72, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.pom
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.pom (2.7 kB at 4.2 kB/s)
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.jar
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-test/6.5.1/spring-security-test-6.5.1.jar (132 kB at 418 kB/s)
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO]
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ microservice ---
+[INFO] skip non existing resourceDirectory D:\GitHub\latest git server\temp\employemanagementsystem\src\test\resources
+[INFO]
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 3 source files with javac [debug parameters release 17] to target\test-classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO]
+[INFO] --- surefire:3.5.3:test (default-test) @ microservice ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.generated.microservice.controller.EmployeeControllerTest
+11:51:10.952 [main] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.2.Final
+11:51:12.093 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.093 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.108 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 15 ms
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.224 s -- in com.generated.microservice.controller.EmployeeControllerTest
+[INFO] Running com.generated.microservice.controller.MaterialControllerTest
+11:51:12.341 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.341 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.341 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+11:51:12.640 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+11:51:12.640 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+11:51:12.640 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+[ERROR] Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.516 s <<< FAILURE! -- in com.generated.microservice.controller.MaterialControllerTest
+[ERROR] com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound -- Time elapsed: 0.400 s <<< FAILURE!
+Wanted but not invoked:
+materialService.getMaterialsByEmployeeId(
+    "456"
+);
+-> at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+Actually, there were zero interactions with this mock.
+
+        at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[ERROR] com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials -- Time elapsed: 0.116 s <<< FAILURE!
+java.lang.AssertionError: No value at JSON path "$[0].id"
+        at org.springframework.test.util.JsonPathExpectationsHelper.evaluateJsonPath(JsonPathExpectationsHelper.java:351)
+        at org.springframework.test.util.JsonPathExpectationsHelper.assertValue(JsonPathExpectationsHelper.java:148)
+        at org.springframework.test.web.servlet.result.JsonPathResultMatchers.lambda$value$2(JsonPathResultMatchers.java:112)
+        at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+        at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials(MaterialControllerTest.java:57)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+        at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: com.jayway.jsonpath.PathNotFoundException: No results for path: $[0]['id']
+
+[INFO] Running com.generated.microservice.service.EmployeeServiceImplTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.231 s -- in com.generated.microservice.service.EmployeeServiceImplTest
+[INFO]
+[INFO] Results:
+[INFO]
+[ERROR] Failures:
+[ERROR]   MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound:72
+Wanted but not invoked:
+materialService.getMaterialsByEmployeeId(
+    "456"
+);
+-> at com.generated.microservice.controller.MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound(MaterialControllerTest.java:72)
+Actually, there were zero interactions with this mock.
+
+[ERROR]   MaterialControllerTest.getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials:57 No value at JSON path "$[0].id"
+[INFO]
+[ERROR] Tests run: 4, Failures: 2, Errors: 0, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  23.869 s
+[INFO] Finished at: 2025-07-29T11:51:13+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project microservice: There are test failures.
+[ERROR]
+[ERROR] See D:\GitHub\latest git server\temp\employemanagementsystem\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\USER\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.6\byte-buddy-agent-1.17.6.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+        at com.msn.autonomous.AdkSdlcWorkflow_7.runCommand(AdkSdlcWorkflow_7.java:477)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.verifyProjectBuild(AdkSdlcWorkflow_7.java:1205)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.main(AdkSdlcWorkflow_7.java:1638)
+11:51:13.286 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The build failed, tests did not pass, or SpotBugs found a critical vulnerability.
+11:51:13.289 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The faulty code will NOT be committed. Please review the logs above 
+for details.
+11:51:13.294 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+11:51:16.934 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+11:51:16.934 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Review Agent Analysis:
+---
+The build failed due to test failures in `MaterialControllerTest.java`.
+
+Specifically, two tests are failing:
+
+1.  `getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound`: This test fails because the `materialService.getMaterialsByEmployeeId("456")` method was never invoked on the mock object. This suggests an issue in the test setup, the controller logic, or the way the mock is being injected or configured.
+
+2.  `getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials`: This test fails with a `PathNotFoundException: No results for path: $[0]['id']`. This indicates that the JSON response returned by the controller does not contain the expected "id" field at the first element (`$[0]`) of the JSON array. This usually means that the controller is not returning the data in the format expected by the test. It is possible that the service is not returning the expected data or the controller is not serializing the response correctly.
+
+The primary root cause is a combination of incorrect mock usage and JSON structure mismatch in the `MaterialControllerTest`.
+
+Likely Solution:
+
+1.  **Examine Mock Interactions:** In `getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound`, verify that the `MaterialController` is actually calling `materialService.getMaterialsByEmployeeId("456")`. Debug the test and controller to trace the method call. Check for any setup issues with Mockito annotations or context configuration. Ensure the mock is properly injected into the controller.  
+2.  **Inspect JSON Response:** In `getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials`, inspect the actual JSON response being returned by the controller. Compare it to what the test is expecting (an array of JSON objects, each with an "id" field). If the "id" field is missing or named differently, adjust the test to match the actual response, or modify the controller/service to return the expected JSON 
+structure.
+
+---
+11:51:16.934 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --
+
+Γ¥îΓ¥îΓ¥î Build Failed on attempt 1. Starting self-healing process...
+11:51:16.934 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+11:51:19.374 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+11:51:19.400 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Build Corrector Agent ---
+11:51:24.083 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Full raw response from BuildCorrectorAgent:
+---
+```java
+// Modify File: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+---
+11:51:24.120 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Build Corrector Agent ---
+11:51:24.121 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû BuildCorrectorAgent provided a fix. Applying changes...
+==========combinedOutput start: =================
+```java
+// Modify File: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+============combinedOutput end=================
+action: Modify File
+relativePath: src/test/java/com/generated/microservice/controller/MaterialControllerTest.java
+rawContent: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+```
+11:51:24.182 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+11:51:27.667 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 2554
+existingCode: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.entity.Material;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+newFullFile: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+11:51:27.727 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.MaterialDTO;
+import com.generated.microservice.service.MaterialService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+public class MaterialControllerTest {
+
+    @Mock
+    private MaterialService materialService;
+
+    @InjectMocks
+    private EmployeeController employeeController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(employeeController).build();
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndListOfMaterials() throws Exception {
+        String employeeId = "123";
+        MaterialDTO materialDTO = new MaterialDTO();
+        materialDTO.setId("material1");
+        materialDTO.setMaterialName("Laptop");
+        materialDTO.setIssueDate(new Date());
+        materialDTO.setDescription("Dell XPS 15");
+        List<MaterialDTO> materials = Collections.singletonList(materialDTO);
+
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(materials);
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("material1"))
+                .andExpect(jsonPath("$[0].materialName").value("Laptop"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+
+    @Test
+    void getMaterialsByEmployeeId_shouldReturnOkAndEmptyListWhenNoMaterialsFound() throws Exception {
+        String employeeId = "456";
+        when(materialService.getMaterialsByEmployeeId(employeeId)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/employees/{employeeId}/materials", employeeId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(materialService, times(1)).getMaterialsByEmployeeId(employeeId);
+    }
+}
+11:51:27.751 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\test\java\com\generated\microservice\controller\MaterialControllerTest.java
+11:51:27.761 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- 
+--- ≡ƒ¢í∩╕Å  Running Build & Static Analysis Verification ---
+11:51:27.761 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- This will compile the code, run tests ...
+11:52:00.715 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Build successful. Code compiled, tests passed, and static analysis found no critical issues.
+11:52:00.716 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- 
+
+Γ£àΓ£àΓ£à Build Succeeded after self-healing! Proceeding to commit...
+11:52:00.718 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Adding files to Git...
+11:52:03.449 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Committing changes...
+11:52:04.066 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Pushing changes to origin/feature/AG-18_20250729115012
+11:52:27.818 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒÜÇ Project pushed to GitHub successfully.
+11:52:27.821 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Attempting to create a Pull Request...
+11:52:31.556 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Successfully created Pull Request: https://github.com/msn5566/employemanagementsystem/pull/29
+PS D:\GitHub\latest git server\ADKFramework> 
