@@ -368,7 +368,7 @@ The final output MUST be a single, complete, and compilable Java file that conta
     public static void writeClassesToFileSystem(String combinedOutput, String baseDir) {
         // Regex to capture the action (Create/Modify), file path, and the code block.
         // It looks for a marker like "// Create File: " or "// Modify File: "
-        Pattern pattern = Pattern.compile("// (Create File|Modify File): ([^\\n]+)\\s*\\n(.*?)(?=\\n// (?:Create|Modify) File:|$)", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("// (Create File|Modify File|Refactored File): ([^\\n]+)\\s*\\n(.*?)(?=\\n// (?:Create|Modify|Refactored) File:|$)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(combinedOutput);
         System.out.println("==========combinedOutput start: =================");
         System.out.println(combinedOutput);
@@ -431,6 +431,18 @@ The final output MUST be a single, complete, and compilable Java file that conta
 
             } catch (IOException e) {
                     logger.error("❌ Failed to read or write modified file: {} - {}", filePath, e.getMessage());
+                }
+            } else if ("Refactored File".equals(action)) {
+                try {
+                    if (Files.exists(filePath)) {
+                        Files.delete(filePath);
+                        logger.info("🗑️ Deleted existing file for refactoring: {}", filePath);
+                    }
+                    Files.createDirectories(filePath.getParent());
+                    Files.writeString(filePath, content, StandardCharsets.UTF_8);
+                    logger.info("✅ Refactored and Created New File: {}", filePath);
+                } catch (IOException e) {
+                    logger.error("❌ Failed to refactor/write file: {} - {}", filePath, e.getMessage());
                 }
             }
         }
@@ -1198,16 +1210,16 @@ jobs:
 
     private static String verifyProjectBuild(String repoName) {
         logger.info("\n--- 🛡️  Running Build & Static Analysis Verification ---");
-        logger.info("This will compile the code, run tests ...");
+        logger.info("Wait .... Manven Build is running ...");
         try {
             File workingDir = new File(repoName);
-            // Using 'verify' phase runs compilation, tests, and the spotbugs:check goal
+            // Using 'verify' phase runs compilation, tests
             runCommand(workingDir, getMavenExecutable(), "clean", "verify");
             logger.info("✅ Build successful. Code compiled, tests passed, and static analysis found no critical issues.");
             return null; // Return null on success
         } catch (IOException | InterruptedException e) {
             logger.error("❌ BUILD FAILED! A critical issue was found.", e);
-            logger.error("  - The build failed, tests did not pass, or SpotBugs found a critical vulnerability.");
+            logger.error("  - The build failed, tests did not pass.");
             logger.error("  - The faulty code will NOT be committed. Please review the logs above for details.");
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
@@ -1656,6 +1668,10 @@ You are a senior test engineer. Your task is to write high-quality JUnit 5 unit 
             }
             // --- END DELETE ---
 
+            // --- NEW: Add target/ to .gitignore to prevent pushing build artifacts ---
+            addGitignoreEntry(gitConfig.repoPath, "target/");
+            // --- END NEW LOGIC ---
+
             finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
         } else {
             // --- FAILURE PATH: Build Failed, attempting self-healing ---
@@ -1734,6 +1750,9 @@ You are a senior test engineer. Your task is to write high-quality JUnit 5 unit 
             );
 
             String fullContent = header + content + "\n--- END ---\n";
+
+            // Ensure parent directories exist
+            Files.createDirectories(filePath.getParent());
 
             // Create file if it doesn't exist, then append.
             Files.writeString(filePath, fullContent, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -1871,7 +1890,7 @@ Your task is to identify the root cause of the build failure and provide the cor
 2.  **Examine ALL `PROJECT SOURCE FILES`** to understand the full context.
 3.  **Generate Corrected Code:** For each file that needs to be modified, you MUST provide its full and complete corrected content.
 4.  **Output Format:** You MUST format your response as one or more code blocks.
-    - For a file that needs to be **MODIFIED**, start the block with `// Modify File: [full/path/to/file.java]`.
+    - For a file that needs to be **REFACTORED**, start the block with `// Refactored File: [full/path/to/file.java]`.
     - For a file that needs to be **CREATED** (less common for a fix, but possible), start the block with `// Create File: [full/path/to/file.java]`.
     - Follow the marker with the complete, corrected code for that file.
 5.  **Do not add any other explanation or text.** Your entire response must be only the file markers and their corresponding code blocks.
@@ -1939,22 +1958,23 @@ Your task is to identify the root cause of the build failure and provide the cor
         return allCode.toString();
     }
 
-    private static String findFaultyFile(String reviewAnalysis, String baseDir) {
-        Pattern pattern = Pattern.compile("`([^`]+\\.java)`");
-        Matcher matcher = pattern.matcher(reviewAnalysis);
-        if (matcher.find()) {
-            String fileName = matcher.group(1);
-            try (var stream = Files.walk(Paths.get(baseDir))) {
-                return stream
-                    .filter(p -> p.toString().endsWith(fileName))
-                    .findFirst()
-                    .map(Path::toString)
-                    .orElse(null);
-            } catch (IOException e) {
-                logger.error("Error finding faulty file '{}': {}", fileName, e.getMessage());
-                return null;
+
+    private static void addGitignoreEntry(String repoPath, String entry) {
+        Path gitignorePath = Paths.get(repoPath, ".gitignore");
+        try {
+            if (!Files.exists(gitignorePath)) {
+                Files.createFile(gitignorePath);
+                logger.info("✅ Created .gitignore at: {}", gitignorePath);
             }
+            List<String> lines = Files.readAllLines(gitignorePath);
+            if (!lines.contains(entry)) {
+                Files.write(gitignorePath, (entry + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
+                logger.info("✅ Added '{}' to .gitignore in: {}", entry, gitignorePath);
+            } else {
+                logger.info("Skipped '{}' as it already exists in .gitignore.", entry);
+            }
+        } catch (IOException e) {
+            logger.error("❌ Failed to add '{}' to .gitignore: {}", entry, e.getMessage());
         }
-        return null;
     }
 }

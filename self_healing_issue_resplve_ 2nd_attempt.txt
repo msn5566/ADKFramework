@@ -1,0 +1,1973 @@
+21:11:27.670 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Change Analysis Agent ---
+21:11:27.671 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Creating and checking out new feature branch: feature/AG-22_20250729211127
+21:11:28.140 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:29.336 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeController
+Type: Controller
+Class-level Annotations: @RestController, @RequestMapping("/employees"), @RequiredArgsConstructor
+Base RequestMapping: /employees
+Static Variables: []
+Fields: [private final EmployeeService employeeService]
+Injected Dependencies: [employeeService]
+Naming Conventions: [employeeService for EmployeeService]
+21:11:29.338 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:29.341 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:30.521 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeDTO
+Type: DTO
+Class-level Annotations: @Data
+Base RequestMapping: null
+Static Variables: []
+Fields: [private String name, @NotEmpty; private String contactInformation, @NotEmpty]
+Injected Dependencies: []
+Naming Conventions: []
+21:11:30.524 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:30.527 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:31.642 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeManagementApplication
+Type: Application
+Class-level Annotations: @SpringBootApplication
+Base RequestMapping: null
+Static Variables: []
+Fields: []
+Injected Dependencies: []
+Naming Conventions: []
+21:11:31.644 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:31.646 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:32.950 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: Employee
+Type: Entity
+Class-level Annotations: @Data, @Document(collection = "employees")
+Base RequestMapping: null
+Static Variables: []
+Fields: [private String id, private String employeeId, private String name, private String contactInformation]
+Injected Dependencies: []
+Naming Conventions: []
+21:11:32.955 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:32.957 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:33.852 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeRepository
+Type: Repository
+Class-level Annotations: None
+Base RequestMapping: None
+Static Variables: None
+Fields: None
+Injected Dependencies: None
+Naming Conventions: None
+21:11:33.852 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:33.852 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:35.195 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeService
+Type: Service
+Class-level Annotations: None
+Base RequestMapping: None
+Static Variables: None
+Fields: None
+Injected Dependencies: None
+Naming Conventions: None
+21:11:35.195 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:35.195 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Context Extraction Agent ---
+21:11:36.272 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à ContextExtractionAgent summary:
+Class: EmployeeServiceImpl
+Type: Service
+Class-level Annotations: @Service, @RequiredArgsConstructor
+Base RequestMapping: null
+Static Variables: []
+Fields: [private final EmployeeRepository employeeRepository]
+Injected Dependencies: [employeeRepository]
+Naming Conventions: [employeeRepository for EmployeeRepository]
+21:11:36.275 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Context Extraction Agent ---
+21:11:36.277 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting parseExistingDependenciesFromPom ---
+21:11:36.290 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished parseExistingDependenciesFromPom. Found 9 dependencies. 
+---
+21:11:36.293 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Existing pom.xml content: [org.springframework.boot:spring-boot-starter-web, org.springframework.boot:spring-boot-starter-data-mongodb, org.springframework.boot:spring-boot-starter-test, org.springframework.boot:spring-boot-devtools, org.projectlombok:lombok:1.18.30:optional, org.springframework.boot:spring-boot-starter-validation, org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0, org.slf4j:slf4j-api, ch.qos.logback:logback-classic]
+21:11:36.300 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Found existing pom.xml with 9 dependencies.
+21:11:36.305 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 --
+--- Running Main AI Workflow ---
+21:12:00.304 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [RequirementsAgent]
+Commit-Summary: As an admin, fetch data from an external API as a list and push it into the database.
+
+Feature: Fetch and store data from an external API.
+Input:
+    *   Admin request to initiate data fetch.
+    *   OAuth credentials for external API authentication.
+Output:
+    *   Data fetched from the external API, formatted as a list.
+    *   Data persisted in the database.
+Constraints:
+    *   The external API is secured with OAuth authorization.
+Logic:
+    1.  Admin initiates the data fetch process.
+    2.  System authenticates with the external API using OAuth credentials.
+    3.  System retrieves data from the external API as a list.
+    4.  System persists the fetched data into the database.
+
+
+21:12:00.319 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [DependencyAgent]
+org.springframework.boot:spring-boot-starter-web
+org.springframework.boot:spring-boot-starter-data-mongodb
+org.springframework.boot:spring-boot-starter-test
+org.springframework.boot:spring-boot-devtools
+org.projectlombok:lombok:1.18.30:optional
+org.springframework.boot:spring-boot-starter-validation
+org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
+org.slf4j:slf4j-api
+ch.qos.logback:logback-classic
+org.springframework.boot:spring-boot-starter-webflux
+org.springframework.security:spring-security-oauth2-client
+org.springframework.security:spring-security-config
+org.springframework.security:spring-security-oauth2-resource-server
+---END-DEPS---
+Commit-Summary: As an admin, fetch data from an external API as a list and push it into the database.
+
+Feature: Fetch and store data from an external API.
+Input:
+    *   Admin request to initiate data fetch.
+    *   OAuth credentials for external API authentication.
+Output:
+    *   Data fetched from the external API, formatted as a list.
+    *   Data persisted in the database.
+Constraints:
+    *   The external API is secured with OAuth authorization.
+Logic:
+    1.  Admin initiates the data fetch process.
+    2.  System authenticates with the external API using OAuth credentials.
+    3.  System retrieves data from the external API as a list.
+    4.  System persists the fetched data into the database.
+
+
+21:12:00.332 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [CodeGenAgent]
+```java
+// Create File: src/main/java/com/generated/microservice/config/OAuth2ClientConfig.java
+package com.generated.microservice.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+
+@Configuration
+public class OAuth2ClientConfig {
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService authorizedClientService) {
+
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
+                new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                        clientRegistrationRepository, authorizedClientService);
+
+        authorizedClientManager.setAuthorizedClientProvider(
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .authorizationCode()
+                        .refreshToken()
+                        .clientCredentials()
+                        .build());
+
+        return authorizedClientManager;
+    }
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/dto/ExternalEmployeeDTO.java
+package com.generated.microservice.dto;
+
+import lombok.Data;
+
+@Data
+public class ExternalEmployeeDTO {
+
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/ExternalApiService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.List;
+
+public interface ExternalApiService {
+
+    List<ExternalEmployeeDTO> fetchEmployeeData();
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;       
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import java.util.List;
+
+public interface EmployeeService {
+
+    List<Employee> saveEmployees(List<Employee> employees);
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<Employee> saveEmployees(List<Employee> employees) {
+        return employeeRepository.saveAll(employees);
+    }
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/controller/AdminController.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/admin")
+@RequiredArgsConstructor
+public class AdminController {
+
+    private final ExternalApiService externalApiService;
+    private final EmployeeService employeeService;
+
+    @PostMapping("/fetch-and-save-employees")
+    public ResponseEntity<String> fetchAndSaveEmployees() {
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = externalApiService.fetchEmployeeData();
+
+        List<Employee> employees = externalEmployeeDTOs.stream()
+                .map(this::convertToEmployee)
+                .collect(Collectors.toList());
+
+        employeeService.saveEmployees(employees);
+
+        return new ResponseEntity<>("Employees fetched and saved successfully", HttpStatus.OK);
+    }
+
+    private Employee convertToEmployee(ExternalEmployeeDTO externalEmployeeDTO) {
+        Employee employee = new Employee();
+        employee.setEmployeeId(externalEmployeeDTO.getEmployeeId());
+        employee.setName(externalEmployeeDTO.getName());
+        employee.setContactInformation(externalEmployeeDTO.getContactInformation());
+        return employee;
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {}
+```
+
+21:12:00.392 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- [TestGenAgent]
+// Create File: src/test/java/com/generated/microservice/controller/AdminControllerTest.java
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.generated.microservice.controller.AdminController;
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class AdminControllerTest {
+
+    @Mock
+    private ExternalApiService externalApiService;
+
+    @Mock
+    private EmployeeService employeeService;
+
+    @InjectMocks
+    private AdminController adminController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(adminController).build();
+    }
+
+    @Test
+    void fetchAndSaveEmployees_success() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+        ExternalEmployeeDTO externalEmployeeDTO1 = new ExternalEmployeeDTO();
+        externalEmployeeDTO1.setEmployeeId("1");
+        externalEmployeeDTO1.setName("John Doe");
+        externalEmployeeDTO1.setContactInformation("john.doe@example.com");
+        externalEmployeeDTOs.add(externalEmployeeDTO1);
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void fetchAndSaveEmployees_externalApiReturnsEmptyList() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+}
+
+
+==========combinedOutput start: =================
+```java
+// Create File: src/main/java/com/generated/microservice/config/OAuth2ClientConfig.java
+package com.generated.microservice.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+
+@Configuration
+public class OAuth2ClientConfig {
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService authorizedClientService) {
+
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
+                new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                        clientRegistrationRepository, authorizedClientService);
+
+        authorizedClientManager.setAuthorizedClientProvider(
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .authorizationCode()
+                        .refreshToken()
+                        .clientCredentials()
+                        .build());
+
+        return authorizedClientManager;
+    }
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/dto/ExternalEmployeeDTO.java
+package com.generated.microservice.dto;
+
+import lombok.Data;
+
+@Data
+public class ExternalEmployeeDTO {
+
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/ExternalApiService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.List;
+
+public interface ExternalApiService {
+
+    List<ExternalEmployeeDTO> fetchEmployeeData();
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;       
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeService.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import java.util.List;
+
+public interface EmployeeService {
+
+    List<Employee> saveEmployees(List<Employee> employees);
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<Employee> saveEmployees(List<Employee> employees) {
+        return employeeRepository.saveAll(employees);
+    }
+}
+```
+
+```java
+// Create File: src/main/java/com/generated/microservice/controller/AdminController.java
+package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/admin")
+@RequiredArgsConstructor
+public class AdminController {
+
+    private final ExternalApiService externalApiService;
+    private final EmployeeService employeeService;
+
+    @PostMapping("/fetch-and-save-employees")
+    public ResponseEntity<String> fetchAndSaveEmployees() {
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = externalApiService.fetchEmployeeData();
+
+        List<Employee> employees = externalEmployeeDTOs.stream()
+                .map(this::convertToEmployee)
+                .collect(Collectors.toList());
+
+        employeeService.saveEmployees(employees);
+
+        return new ResponseEntity<>("Employees fetched and saved successfully", HttpStatus.OK);
+    }
+
+    private Employee convertToEmployee(ExternalEmployeeDTO externalEmployeeDTO) {
+        Employee employee = new Employee();
+        employee.setEmployeeId(externalEmployeeDTO.getEmployeeId());
+        employee.setName(externalEmployeeDTO.getName());
+        employee.setContactInformation(externalEmployeeDTO.getContactInformation());
+        return employee;
+    }
+}
+```
+
+```java
+// Modify File: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {}
+```
+
+// Create File: src/test/java/com/generated/microservice/controller/AdminControllerTest.java
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.generated.microservice.controller.AdminController;
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class AdminControllerTest {
+
+    @Mock
+    private ExternalApiService externalApiService;
+
+    @Mock
+    private EmployeeService employeeService;
+
+    @InjectMocks
+    private AdminController adminController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(adminController).build();
+    }
+
+    @Test
+    void fetchAndSaveEmployees_success() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+        ExternalEmployeeDTO externalEmployeeDTO1 = new ExternalEmployeeDTO();
+        externalEmployeeDTO1.setEmployeeId("1");
+        externalEmployeeDTO1.setName("John Doe");
+        externalEmployeeDTO1.setContactInformation("john.doe@example.com");
+        externalEmployeeDTOs.add(externalEmployeeDTO1);
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void fetchAndSaveEmployees_externalApiReturnsEmptyList() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+}
+
+
+
+============combinedOutput end=================
+action: Create File
+relativePath: src/main/java/com/generated/microservice/config/OAuth2ClientConfig.java
+rawContent: package com.generated.microservice.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+
+@Configuration
+public class OAuth2ClientConfig {
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientService authorizedClientService) {
+
+        AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
+                new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                        clientRegistrationRepository, authorizedClientService);
+
+        authorizedClientManager.setAuthorizedClientProvider(
+                OAuth2AuthorizedClientProviderBuilder.builder()
+                        .authorizationCode()
+                        .refreshToken()
+                        .clientCredentials()
+                        .build());
+
+        return authorizedClientManager;
+    }
+}
+```
+
+```java
+21:12:00.494 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\config\OAuth2ClientConfig.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/dto/ExternalEmployeeDTO.java
+rawContent: package com.generated.microservice.dto;
+
+import lombok.Data;
+
+@Data
+public class ExternalEmployeeDTO {
+
+    private String employeeId;
+    private String name;
+    private String contactInformation;
+}
+```
+
+```java
+21:12:00.503 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\dto\ExternalEmployeeDTO.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/service/ExternalApiService.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.List;
+
+public interface ExternalApiService {
+
+    List<ExternalEmployeeDTO> fetchEmployeeData();
+}
+```
+
+```java
+21:12:00.518 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiService.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;       
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServletOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+
+```java
+21:12:00.552 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiServiceImpl.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/service/EmployeeService.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import java.util.List;
+
+public interface EmployeeService {
+
+    List<Employee> saveEmployees(List<Employee> employees);
+}
+```
+
+```java
+21:12:00.552 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+21:12:01.907 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 318
+existingCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+
+public interface EmployeeService {
+
+    String addEmployee(EmployeeDTO employeeDTO);
+
+}
+newFullFile: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import java.util.List;
+
+public interface EmployeeService {
+
+    List<Employee> saveEmployees(List<Employee> employees);
+}
+21:12:01.907 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import java.util.List;
+import com.generated.microservice.dto.EmployeeDTO;
+
+public interface EmployeeService {
+
+    List<Employee> saveEmployees(List<Employee> employees);
+
+    String addEmployee(EmployeeDTO employeeDTO);
+}
+21:12:01.923 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\EmployeeService.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/service/EmployeeServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<Employee> saveEmployees(List<Employee> employees) {
+        return employeeRepository.saveAll(employees);
+    }
+}
+```
+
+```java
+21:12:01.939 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+21:12:03.727 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 1064
+existingCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public String addEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.getName());
+        employee.setContactInformation(employeeDTO.getContactInformation());
+        String employeeId = UUID.randomUUID().toString();
+        employee.setEmployeeId(employeeId);
+        employeeRepository.save(employee);
+        return employeeId;
+    }
+}
+newFullFile: package com.generated.microservice.service;
+
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public List<Employee> saveEmployees(List<Employee> employees) {
+        return employeeRepository.saveAll(employees);
+    }
+}
+21:12:03.744 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.EmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public String addEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.getName());
+        employee.setContactInformation(employeeDTO.getContactInformation());
+        String employeeId = UUID.randomUUID().toString();
+        employee.setEmployeeId(employeeId);
+        employeeRepository.save(employee);
+        return employeeId;
+    }
+
+    @Override
+    public List<Employee> saveEmployees(List<Employee> employees) {
+        return employeeRepository.saveAll(employees);
+    }
+}
+21:12:03.750 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\EmployeeServiceImpl.java
+action: Create File
+relativePath: src/main/java/com/generated/microservice/controller/AdminController.java
+rawContent: package com.generated.microservice.controller;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/admin")
+@RequiredArgsConstructor
+public class AdminController {
+
+    private final ExternalApiService externalApiService;
+    private final EmployeeService employeeService;
+
+    @PostMapping("/fetch-and-save-employees")
+    public ResponseEntity<String> fetchAndSaveEmployees() {
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = externalApiService.fetchEmployeeData();
+
+        List<Employee> employees = externalEmployeeDTOs.stream()
+                .map(this::convertToEmployee)
+                .collect(Collectors.toList());
+
+        employeeService.saveEmployees(employees);
+
+        return new ResponseEntity<>("Employees fetched and saved successfully", HttpStatus.OK);
+    }
+
+    private Employee convertToEmployee(ExternalEmployeeDTO externalEmployeeDTO) {
+        Employee employee = new Employee();
+        employee.setEmployeeId(externalEmployeeDTO.getEmployeeId());
+        employee.setName(externalEmployeeDTO.getName());
+        employee.setContactInformation(externalEmployeeDTO.getContactInformation());
+        return employee;
+    }
+}
+```
+
+```java
+21:12:03.762 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\controller\AdminController.java
+action: Modify File
+relativePath: src/main/java/com/generated/microservice/repository/EmployeeRepository.java
+rawContent: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {}
+```
+21:12:03.765 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Code Merge Agent ---
+21:12:04.897 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à CodeMergeAgent returned merged code. Content length: 249
+existingCode: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+}
+newFullFile: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {}
+21:12:04.897 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Code Merge Agent ---
+mergedCode: package com.generated.microservice.repository;
+
+import com.generated.microservice.entity.Employee;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface EmployeeRepository extends MongoRepository<Employee, String> {
+}
+21:12:04.913 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Merged and updated: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\repository\EmployeeRepository.java
+action: Create File
+relativePath: src/test/java/com/generated/microservice/controller/AdminControllerTest.java
+rawContent: import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.generated.microservice.controller.AdminController;
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import com.generated.microservice.entity.Employee;
+import com.generated.microservice.service.EmployeeService;
+import com.generated.microservice.service.ExternalApiService;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class AdminControllerTest {
+
+    @Mock
+    private ExternalApiService externalApiService;
+
+    @Mock
+    private EmployeeService employeeService;
+
+    @InjectMocks
+    private AdminController adminController;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(adminController).build();
+    }
+
+    @Test
+    void fetchAndSaveEmployees_success() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+        ExternalEmployeeDTO externalEmployeeDTO1 = new ExternalEmployeeDTO();
+        externalEmployeeDTO1.setEmployeeId("1");
+        externalEmployeeDTO1.setName("John Doe");
+        externalEmployeeDTO1.setContactInformation("john.doe@example.com");
+        externalEmployeeDTOs.add(externalEmployeeDTO1);
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void fetchAndSaveEmployees_externalApiReturnsEmptyList() throws Exception {
+        // Arrange
+        List<ExternalEmployeeDTO> externalEmployeeDTOs = new ArrayList<>();
+
+        when(externalApiService.fetchEmployeeData()).thenReturn(externalEmployeeDTOs);
+        when(employeeService.saveEmployees(anyList())).thenReturn(new ArrayList<>());
+
+        // Act & Assert
+        mockMvc.perform(post("/admin/fetch-and-save-employees"))
+                .andExpect(status().isOk());
+    }
+}
+21:12:04.934 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: D:\GitHub\latest git server\temp\employemanagementsystem\src\test\java\com\generated\microservice\controller\AdminControllerTest.java
+21:12:04.936 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Enforced known-good version for dependency: org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
+21:12:04.961 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: pom.xml
+21:12:04.968 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Appended content with metadata to AI_CHANGELOG.md
+21:12:04.973 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ¥î Failed to append content to jira_issue.txt: D:\GitHub\latest git server\temp\employemanagementsystem\.ai-state\jira_issue.txt
+21:12:04.983 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Appended content with metadata to README.md
+21:12:04.988 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Created: application.yml
+21:12:04.991 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ΓÜÖ∩╕Å  GitHub Actions CI config added at: D:\GitHub\latest git server\temp\employemanagementsystem\.github\workflows\ci.yml
+21:12:04.992 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 --
+--- ≡ƒ¢í∩╕Å  Running Build & Static Analysis Verification ---
+21:12:04.993 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- This will compile the code, run tests ...
+21:12:21.280 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Command error output:
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 76, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 80, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.pom
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.pom (2.7 kB at 2.4 kB/s)
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.jar
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.jar (121 kB at 558 kB/s)
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[50,47] incompatible types: java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> cannot be converted to java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>>
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,90] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[INFO] 2 errors
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.906 s
+[INFO] Finished at: 2025-07-29T21:12:21+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile (default-compile) on project microservice: Compilation failure: Compilation failure:
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[50,47] incompatible types: java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> cannot be converted to java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>>
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,90] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+
+21:12:21.308 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ¥î BUILD FAILED! A critical issue was found.
+java.io.IOException: Command failed with exit code 1: mvn.cmd clean verify
+
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 76, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 80, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.pom
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.pom (2.7 kB at 2.4 kB/s)
+Downloading from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.jar
+Downloaded from maven-central: https://repo.maven.apache.org/maven2/org/springframework/security/spring-security-oauth2-resource-server/6.5.1/spring-security-oauth2-resource-server-6.5.1.jar (121 kB at 558 kB/s)
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[50,47] incompatible types: java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> cannot be converted to java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>>
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,90] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[INFO] 2 errors
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.906 s
+[INFO] Finished at: 2025-07-29T21:12:21+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile (default-compile) on project microservice: Compilation failure: Compilation failure:
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[50,47] incompatible types: java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> cannot be converted to java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>>
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,90] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+
+        at com.msn.autonomous.AdkSdlcWorkflow_7.runCommand(AdkSdlcWorkflow_7.java:489)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.verifyProjectBuild(AdkSdlcWorkflow_7.java:1217)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.main(AdkSdlcWorkflow_7.java:1650)
+21:12:21.341 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The build failed, tests did not pass.
+21:12:21.342 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The faulty code will NOT be committed. Please review the logs above 
+for details.
+21:12:21.343 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+21:12:23.343 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+21:12:23.343 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Review Agent Analysis:
+---
+The build failed due to a compilation error in `ExternalApiServiceImpl.java`. The error "incompatible types: `java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>` cannot be converted to `java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>>`" indicates a mismatch in the expected type of a Consumer used in a lambda expression or method reference. This likely means the code is expecting a `ClientRequest.Builder` object but receiving a `Map<String, Object>` or vice versa.       
+
+The fix involves inspecting lines 50 and 63 of `ExternalApiServiceImpl.java` and ensuring that the `Consumer` interface is used with the correct type. The code likely needs to be updated to either provide the expected `ClientRequest.Builder` or handle the `Map<String, Object>` correctly. This might involve adjusting the arguments passed to a method or modifying the lambda expression to work with the correct object type. Double-check the APIs being used to confirm the expected input to the Consumer.
+---
+21:12:23.343 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --
+
+Γ¥îΓ¥îΓ¥î Build Failed on attempt 1. Starting self-healing process...
+21:12:23.343 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+21:12:25.896 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+21:12:25.925 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Build Corrector Agent ---
+21:12:31.310 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Full raw response from BuildCorrectorAgent:
+---
+```java
+// Refactored File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+---
+21:12:31.358 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Build Corrector Agent ---
+21:12:31.359 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû BuildCorrectorAgent provided a fix. Applying changes...
+==========combinedOutput start: =================
+```java
+// Refactored File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+============combinedOutput end=================
+action: Refactored File
+relativePath: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatus::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+
+    private java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder> oauth2AuthorizedClient(   
+            OAuth2AuthorizedClient authorizedClient) {
+        return ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient);
+    }
+}
+```
+21:12:31.419 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒùæ∩╕Å Deleted existing file for refactoring: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiServiceImpl.java
+21:12:31.426 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Refactored and Created New File: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiServiceImpl.java
+21:12:31.435 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 --
+--- ≡ƒ¢í∩╕Å  Running Build & Static Analysis Verification ---
+21:12:31.438 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- This will compile the code, run tests ...
+21:12:44.775 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Command error output:
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 76, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 80, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO] Deleting D:\GitHub\latest git server\temp\employemanagementsystem\target
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[52,27] incompatible types: invalid method reference
+    method isError in enum org.springframework.http.HttpStatus cannot be applied to given types
+      required: no arguments
+      found:    org.springframework.http.HttpStatusCode
+      reason: actual and formal argument lists differ in length
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,89] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[INFO] 2 errors
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.660 s
+[INFO] Finished at: 2025-07-29T21:12:44+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile (default-compile) on project microservice: Compilation failure: Compilation failure:
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[52,27] incompatible types: invalid method reference
+[ERROR]     method isError in enum org.springframework.http.HttpStatus cannot be applied to given types
+[ERROR]       required: no arguments
+[ERROR]       found:    org.springframework.http.HttpStatusCode
+[ERROR]       reason: actual and formal argument lists differ in length
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,89] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+
+21:12:44.806 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ¥î BUILD FAILED! A critical issue was found.
+java.io.IOException: Command failed with exit code 1: mvn.cmd clean verify
+
+--- STDOUT ---
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.generated:microservice:jar:1.0.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.slf4j:slf4j-api:jar -> duplicate declaration 
+of version (?) @ line 76, column 21
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: ch.qos.logback:logback-classic:jar -> duplicate declaration of version (?) @ line 80, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ---------------------< com.generated:microservice >---------------------
+[INFO] Building Generated Microservice 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- clean:3.4.1:clean (default-clean) @ microservice ---
+[INFO] Deleting D:\GitHub\latest git server\temp\employemanagementsystem\target
+[INFO]
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservice ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO]
+[INFO] --- compiler:3.14.0:compile (default-compile) @ microservice ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 12 source files with javac [debug parameters release 17] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[52,27] incompatible types: invalid method reference
+    method isError in enum org.springframework.http.HttpStatus cannot be applied to given types
+      required: no arguments
+      found:    org.springframework.http.HttpStatusCode
+      reason: actual and formal argument lists differ in length
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,89] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[INFO] 2 errors
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.660 s
+[INFO] Finished at: 2025-07-29T21:12:44+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile (default-compile) on project microservice: Compilation failure: Compilation failure:
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[52,27] incompatible types: invalid method reference
+[ERROR]     method isError in enum org.springframework.http.HttpStatus cannot be applied to given types
+[ERROR]       required: no arguments
+[ERROR]       found:    org.springframework.http.HttpStatusCode
+[ERROR]       reason: actual and formal argument lists differ in length
+[ERROR] /D:/GitHub/latest git server/temp/employemanagementsystem/src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java:[63,89] incompatible types: java.util.function.Consumer<java.util.Map<java.lang.String,java.lang.Object>> cannot be converted to java.util.function.Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+
+--- STDERR ---
+
+        at com.msn.autonomous.AdkSdlcWorkflow_7.runCommand(AdkSdlcWorkflow_7.java:489)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.verifyProjectBuild(AdkSdlcWorkflow_7.java:1217)
+        at com.msn.autonomous.AdkSdlcWorkflow_7.main(AdkSdlcWorkflow_7.java:1708)
+21:12:44.887 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The build failed, tests did not pass.
+21:12:44.889 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --   - The faulty code will NOT be committed. Please review the logs above 
+for details.
+21:12:44.889 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+21:12:47.218 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+21:12:47.218 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Review Agent Analysis:
+---
+The build failed due to a compilation error in `ExternalApiServiceImpl.java`. The first error on line 52 relates to an incompatible type when using a method reference with `HttpStatus.isError`. It seems like the code is trying to use `isError` without considering the change in Spring WebFlux where `isError` might require a different approach with `HttpStatusCode`. The second error on line 63 suggests an issue with the type of Consumer used with `ClientRequest.Builder`, where a `Consumer<java.util.Map<java.lang.String,java.lang.Object>>` cannot be converted to `Consumer<org.springframework.web.reactive.function.client.ClientRequest.Builder>`.
+
+The likely solution is to review the `ExternalApiServiceImpl.java` file, specifically lines 52 and 63. For line 52, examine how `HttpStatus.isError` is being used and adapt the code to correctly check the status code, possibly by using `HttpStatusCode.isError(HttpStatus)` or 
+a similar approach that aligns with the expected usage of Spring WebFlux. For line 63, ensure that the `Consumer` is correctly configured 
+to handle `ClientRequest.Builder`.
+
+---
+21:12:47.235 [main] ERROR com.msn.autonomous.AdkSdlcWorkflow_7 --
+
+Γ¥îΓ¥îΓ¥î Build Failed on attempt 2. Starting self-healing process...
+21:12:47.235 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Review Agent ---
+21:12:49.570 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Review Agent ---
+21:12:49.592 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- ≡ƒñû Starting Build Corrector Agent ---
+21:12:54.432 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Full raw response from BuildCorrectorAgent:
+---
+```java
+// Refactored File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+}
+```
+---
+21:12:54.444 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- --- Γ£à Finished Build Corrector Agent ---
+21:12:54.444 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû BuildCorrectorAgent provided a fix. Applying changes...
+==========combinedOutput start: =================
+```java
+// Refactored File: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+}
+```
+============combinedOutput end=================
+action: Refactored File
+relativePath: src/main/java/com/generated/microservice/service/ExternalApiServiceImpl.java
+rawContent: package com.generated.microservice.service;
+
+import com.generated.microservice.dto.ExternalEmployeeDTO;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;        
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class ExternalApiServiceImpl implements ExternalApiService {
+
+    private final OAuth2AuthorizedClientService authorizedClientService;
+
+    private final WebClient webClient;
+
+    @Value("${external.api.url}")
+    private String externalApiUrl;
+
+    @Value("${external.api.client.registration.id}")
+    private String clientRegistrationId;
+
+    @Override
+    public List<ExternalEmployeeDTO> fetchEmployeeData() {
+        OAuth2AuthenticationToken authentication =
+                (OAuth2AuthenticationToken) org.springframework.security.core.context.SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+        OAuth2AuthorizedClient authorizedClient =
+                authorizedClientService.loadAuthorizedClient(
+                        clientRegistrationId, authentication.getName());
+
+        if (authorizedClient == null) {
+            return new ArrayList<>();
+        }
+
+        return webClient
+                .get()
+                .uri(externalApiUrl)
+                .attributes(
+                        ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient(authorizedClient))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    // Handle error responses
+                    return Mono.error(
+                            new RuntimeException("Error fetching data from external API: " + clientResponse.statusCode()));
+                })
+                .bodyToMono(new ParameterizedTypeReference<List<ExternalEmployeeDTO>>() {})
+                .block();
+    }
+}
+```
+21:12:54.498 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒùæ∩╕Å Deleted existing file for refactoring: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiServiceImpl.java
+21:12:54.510 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Refactored and Created New File: D:\GitHub\latest git server\temp\employemanagementsystem\src\main\java\com\generated\microservice\service\ExternalApiServiceImpl.java
+21:12:54.512 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 --
+--- ≡ƒ¢í∩╕Å  Running Build & Static Analysis Verification ---
+21:12:54.514 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- This will compile the code, run tests ...
+21:13:23.455 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Build successful. Code compiled, tests passed, and static analysis found no critical issues.
+21:13:23.456 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- 
+
+Γ£àΓ£àΓ£à Build Succeeded after self-healing! Proceeding to commit...
+21:13:23.457 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Adding files to Git...
+21:13:26.799 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Committing changes...
+21:13:27.484 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Pushing changes to origin/feature/AG-22_20250729211127
+21:13:51.645 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒÜÇ Project pushed to GitHub successfully.
+21:13:51.646 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- ≡ƒñû Attempting to create a Pull Request...
+21:13:54.617 [main] INFO com.msn.autonomous.AdkSdlcWorkflow_7 -- Γ£à Successfully created Pull Request: https://github.com/msn5566/employemanagementsystem/pull/31
+PS D:\GitHub\latest git server\ADKFramework> 
