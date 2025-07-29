@@ -183,7 +183,7 @@ public class AdkSdlcWorkflow_7 {
         }
     }
 
-    public static SequentialAgent buildWorkflow(ProjectConfig projectConfig, Map<String, String> agentPrompts) {
+    public static SequentialAgent buildWorkflow(ProjectConfig projectConfig, Map<String, String> agentPrompts, List<String> existingPomDependencies) {
         LlmAgent req = LlmAgent.builder()
                 .name(REQUIREMENTS_AGENT_NAME)
                 .description("Extracts structured functional requirements from a Jira user story.")
@@ -209,25 +209,33 @@ Logic:
 Based on the following requirements, identify the necessary Maven dependencies for a project using Java %s and Spring Boot %s.
 This version context is CRITICAL for selecting compatible dependency versions.
 
-Provide ONLY a list of `groupId:artifactId[:version][:scope]` tuples, one per line.
+**EXISTING DEPENDENCIES:**
+%s
 
-**IMPORTANT**: For any dependency NOT managed by the specified Spring Boot parent POM (like `springdoc-openapi` or other third-party libraries), you MUST provide an explicit, recent version number that is compatible with Spring Boot %s. For dependencies managed by Spring Boot, you MUST omit the version so the parent POM can manage it.
+You are an expert at merging Maven dependencies. Your task is to produce a FINAL, MERGED list of dependencies.
+Provide ONLY a list of `groupId:artifactId[:version][:scope]` tuples, one per line.
+You MUST:
+- **INCLUDE ALL** dependencies from the `EXISTING DEPENDENCIES` section, unless a newer version is explicitly required by the new feature.
+- **ADD ONLY** new dependencies that are strictly necessary to implement the `NEW FEATURE REQUIREMENTS`.
+- **UPDATE** the version of an existing dependency ONLY if the `NEW FEATURE REQUIREMENTS` necessitate a newer, compatible version.
+- For any dependency NOT managed by the specified Spring Boot parent POM (like `springdoc-openapi` or other third-party libraries), you MUST provide an explicit, recent version number that is compatible with Spring Boot %s. For dependencies managed by Spring Boot, you MUST omit the version so the parent POM can manage it.
 
 Use 'compile' for standard dependencies, 'runtime' for runtime-only, and 'optional' for tools like Lombok. If scope is 'compile', you can omit it.
 
 After the dependency list, you MUST add a separator line containing exactly "---END-DEPS---".
 After the separator, you MUST repeat the original requirements text provided below, exactly and without modification.
 
-Example output format:
+Example output format (assuming 'existing-dep' is from EXISTING DEPENDENCIES and 'new-dep' is a new requirement):
 org.springframework.boot:spring-boot-starter-web
-org.springframework.boot:spring-boot-starter-data-jpa
+com.example:existing-dep
+com.new.feature:new-dep:1.0.0
 org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
 ---END-DEPS---
 Feature: User Management API
 ...
 Requirements:
 {requirements}
-""", projectConfig.javaVersion, projectConfig.springBootVersion, projectConfig.springBootVersion))
+""", projectConfig.javaVersion, projectConfig.springBootVersion, String.join("\n", existingPomDependencies), projectConfig.springBootVersion))
                 .model("gemini-2.0-flash")
                 .outputKey(KEY_DEPENDENCIES)
                 .build();
@@ -863,6 +871,75 @@ jobs:
         }
     }
 
+    private static List<String> parseExistingDependenciesFromPom(String pomContent) {
+        logger.info("--- 🤖 Starting parseExistingDependenciesFromPom ---");
+        logger.debug("Parsing pomContent (first 500 chars):\n{}", pomContent.substring(0, Math.min(pomContent.length(), 500)));
+
+        List<String> dependencies = new ArrayList<>();
+        Pattern dependencyBlockPattern = Pattern.compile("<dependency>(.*?)</dependency>", Pattern.DOTALL);
+        Matcher blockMatcher = dependencyBlockPattern.matcher(pomContent);
+
+        Pattern groupIdPattern = Pattern.compile("<groupId>\\s*(.*?)\\s*</groupId>", Pattern.DOTALL);
+        Pattern artifactIdPattern = Pattern.compile("<artifactId>\\s*(.*?)\\s*</artifactId>", Pattern.DOTALL);
+        Pattern versionPattern = Pattern.compile("<version>\\s*(.*?)\\s*</version>", Pattern.DOTALL);
+        Pattern scopePattern = Pattern.compile("<scope>\\s*(.*?)\\s*</scope>", Pattern.DOTALL);
+        // Make optional pattern more flexible to just check for presence of the tag, not its content
+        Pattern optionalPattern = Pattern.compile("<optional(?:\\s*[^>]*?)?>.*?</optional>|<optional\\s*/>", Pattern.DOTALL);
+
+        while (blockMatcher.find()) {
+            String dependencyXml = blockMatcher.group(1); // Content within <dependency>...</dependency>
+            logger.debug("Found dependency block:\n{}", dependencyXml);
+
+            String groupId = null;
+            String artifactId = null;
+            String version = null;
+            String scope = null;
+            boolean optional = false;
+
+            Matcher m;
+
+            m = groupIdPattern.matcher(dependencyXml);
+            if (m.find()) groupId = m.group(1).trim();
+            logger.debug("  - groupId: {}", groupId);
+
+            m = artifactIdPattern.matcher(dependencyXml);
+            if (m.find()) artifactId = m.group(1).trim();
+            logger.debug("  - artifactId: {}", artifactId);
+
+            m = versionPattern.matcher(dependencyXml);
+            if (m.find()) version = m.group(1).trim();
+            logger.debug("  - version: {}", version);
+
+            m = scopePattern.matcher(dependencyXml);
+            if (m.find()) scope = m.group(1).trim();
+            logger.debug("  - scope: {}", scope);
+
+            // Check for optional tag presence
+            optional = optionalPattern.matcher(dependencyXml).find();
+            logger.debug("  - optional: {}", optional);
+
+            if (groupId != null && artifactId != null) {
+                StringBuilder dep = new StringBuilder();
+                dep.append(groupId).append(":").append(artifactId);
+                if (version != null) {
+                    dep.append(":").append(version);
+                }
+                if (scope != null && !scope.equalsIgnoreCase("compile")) {
+                    dep.append(":").append(scope);
+                }
+                if (optional) {
+                    dep.append(":optional");
+                }
+                dependencies.add(dep.toString());
+                logger.debug("  - Added dependency: {}", dep.toString());
+            } else {
+                logger.warn("  - Skipping dependency block due to missing groupId or artifactId: {}", dependencyXml);
+            }
+        }
+        logger.info("--- ✅ Finished parseExistingDependenciesFromPom. Found {} dependencies. ---", dependencies.size());
+        return dependencies;
+    }
+
     private static String getJiraIssueContent(JiraConfig jiraConfig) throws Exception {
         logger.info("Connecting to Jira to fetch issue: {}", jiraConfig.issueKey);
 
@@ -1031,8 +1108,8 @@ jobs:
         return new SrsData(config.gitConfig, config.projectConfig, userInput);
     }
 
-    private static WorkflowResult runMainWorkflow(String userInput, ProjectConfig projectConfig, Map<String, String> agentPrompts) {
-        final SequentialAgent workflow = buildWorkflow(projectConfig, agentPrompts);
+    private static WorkflowResult runMainWorkflow(String userInput, ProjectConfig projectConfig, Map<String, String> agentPrompts, List<String> existingPomDependencies) {
+        final SequentialAgent workflow = buildWorkflow(projectConfig, agentPrompts, existingPomDependencies);
         final WorkflowResult workflowResult = new WorkflowResult();
 
         try {
@@ -1404,6 +1481,23 @@ Failing-Agent: [The name of the agent to correct, e.g., CodeGenAgent or TestGenA
         String combinedContext = allContextSummaries.toString();
         // --- END Context Extraction ---
 
+        // --- NEW: Read existing pom.xml and parse dependencies for DependencyAgent ---
+        List<String> existingPomDependencies = new ArrayList<>();
+        Path pomFilePath = Paths.get(gitConfig.repoPath, "pom.xml");
+        if (Files.exists(pomFilePath)) {
+            try {
+                String pomContent = Files.readString(pomFilePath);
+                existingPomDependencies = parseExistingDependenciesFromPom(pomContent);
+                logger.info("Existing pom.xml content: {}", existingPomDependencies);
+                logger.info("Found existing pom.xml with {} dependencies.", existingPomDependencies.size());
+            } catch (IOException e) {
+                logger.warn("Could not read or parse existing pom.xml for dependencies: {}", e.getMessage());
+            }
+        } else {
+            logger.info("No existing pom.xml found. DependencyAgent will start from a clean slate.");
+        }
+        // --- END NEW LOGIC ---
+
         // --- Original Workflow (Self-Healing Disabled) ---
         Map<String, String> agentPrompts = new HashMap<>();
         agentPrompts.put(CODEGEN_AGENT_NAME, String.format("""
@@ -1455,6 +1549,42 @@ This is your most important instruction. You are FORBIDDEN from generating any c
   srsData.projectConfig.javaVersion,
   existingFiles
 ));
+        agentPrompts.put(DEPENDENCY_AGENT_NAME, String.format("""
+Based on the following requirements, identify the necessary Maven dependencies for a project using Java %s and Spring Boot %s.
+This version context is CRITICAL for selecting compatible dependency versions.
+
+**EXISTING DEPENDENCIES:**
+%s
+
+You are an expert at merging Maven dependencies. Your task is to produce a FINAL, MERGED list of dependencies.
+Provide ONLY a list of `groupId:artifactId[:version][:scope]` tuples, one per line.
+You MUST:
+- **INCLUDE ALL** dependencies from the `EXISTING DEPENDENCIES` section, unless a newer version is explicitly required by the new feature.
+- **ADD ONLY** new dependencies that are strictly necessary to implement the `NEW FEATURE REQUIREMENTS`.
+- **UPDATE** the version of an existing dependency ONLY if the `NEW FEATURE REQUIREMENTS` necessitate a newer, compatible version.
+- For any dependency NOT managed by the specified Spring Boot parent POM (like `springdoc-openapi` or other third-party libraries), you MUST provide an explicit, recent version number that is compatible with Spring Boot %s. For dependencies managed by Spring Boot, you MUST omit the version so the parent POM can manage it.
+
+Use 'compile' for standard dependencies, 'runtime' for runtime-only, and 'optional' for tools like Lombok. If scope is 'compile', you can omit it.
+
+After the dependency list, you MUST add a separator line containing exactly "---END-DEPS---".
+After the separator, you MUST repeat the original requirements text provided below, exactly and without modification.
+
+Example output format (assuming 'existing-dep' is from EXISTING DEPENDENCIES and 'new-dep' is a new requirement):
+org.springframework.boot:spring-boot-starter-web
+com.example:existing-dep
+com.new.feature:new-dep:1.0.0
+org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0
+---END-DEPS---
+Feature: User Management API
+...
+Requirements:
+{requirements}
+""",
+                projectConfig.javaVersion,
+                projectConfig.springBootVersion,
+                String.join("\n", existingPomDependencies),
+                projectConfig.springBootVersion
+        ));
         agentPrompts.put(TESTGEN_AGENT_NAME, String.format("""
 You are a senior test engineer. Your task is to write high-quality JUnit 5 unit tests to verify that the provided Java code correctly implements the given feature requirements.
 
@@ -1495,7 +1625,7 @@ You are a senior test engineer. Your task is to write high-quality JUnit 5 unit 
                 existingFiles
         ));
 
-        final WorkflowResult workflowResult = runMainWorkflow(userInput, srsData.projectConfig, agentPrompts);
+        final WorkflowResult workflowResult = runMainWorkflow(userInput, srsData.projectConfig, agentPrompts, existingPomDependencies);
 
         if (workflowResult == null) {
             logger.error("Workflow execution failed. Could not generate project files. Aborting.");
@@ -1533,35 +1663,41 @@ You are a senior test engineer. Your task is to write high-quality JUnit 5 unit 
             for (int i = 0; i < 3; i++) { // Max 3 retries
                 logger.error("\n\n❌❌❌ Build Failed on attempt {}. Starting self-healing process...", i + 1);
                 String reviewAnalysis = runReviewAgent(buildResult);
-                String faultyFilePath = findFaultyFile(reviewAnalysis, gitConfig.repoPath);
+               // String faultyFilePath = findFaultyFile(reviewAnalysis, gitConfig.repoPath);
 
-                if (faultyFilePath == null) {
-                    logger.error("Could not identify the faulty file from the review agent's analysis. Aborting self-healing.");
+                // --- NEW: Get all source code for the agent to analyze ---
+                String allSourceCode = getAllSourceCodeForCorrection(gitConfig.repoPath);
+                if (allSourceCode.isEmpty()) {
+                    logger.error("Could not find any source code to analyze for self-healing. Aborting.");
                     break;
                 }
 
-                try {
-                    String faultyFileContent = Files.readString(Paths.get(faultyFilePath));
-                    String correctedCode = runBuildCorrectorAgent(buildResult, reviewAnalysis, faultyFileContent, faultyFilePath);
+//                if (faultyFilePath == null) {
+//                    logger.error("Could not identify the faulty file from the review agent's analysis. Aborting self-healing.");
+//                    break;
+//                }
 
-                    if (correctedCode != null && !correctedCode.isBlank()) {
-                        logger.info("🤖 BuildCorrectorAgent provided a fix. Overwriting file: {}", faultyFilePath);
-                        Files.writeString(Paths.get(faultyFilePath), correctedCode);
-                        
-                        // Retry the build
-                        buildResult = verifyProjectBuild(gitConfig.repoPath);
-                        if (buildResult == null) {
-                            buildSuccess = true;
-                            logger.info("\n\n✅✅✅ Build Succeeded after self-healing! Proceeding to commit...");
-                            finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
-                            break;
-                        }
-                    } else {
-                        logger.error("BuildCorrectorAgent failed to provide a fix. Aborting self-healing.");
+                //                    String faultyFileContent = Files.readString(Paths.get(faultyFilePath));
+//                    String correctedCode = runBuildCorrectorAgent(buildResult, reviewAnalysis, faultyFileContent, faultyFilePath);
+                String correctedCode = runBuildCorrectorAgent(buildResult, reviewAnalysis, allSourceCode);
+
+                if (correctedCode != null && !correctedCode.isBlank()) {
+//                        logger.info("🤖 BuildCorrectorAgent provided a fix. Overwriting file: {}", faultyFilePath);
+//                        Files.writeString(Paths.get(faultyFilePath), correctedCode);
+                    logger.info("🤖 BuildCorrectorAgent provided a fix. Applying changes...");
+                    // The writeClassesToFileSystem can handle create/modify based on the markers
+                    writeClassesToFileSystem(correctedCode, gitConfig.repoPath);
+
+                    // Retry the build
+                    buildResult = verifyProjectBuild(gitConfig.repoPath);
+                    if (buildResult == null) {
+                        buildSuccess = true;
+                        logger.info("\n\n✅✅✅ Build Succeeded after self-healing! Proceeding to commit...");
+                        finalizeAndSubmit(gitConfig, featureBranch, workflowResult.commitMessage);
                         break;
                     }
-                } catch (IOException e) {
-                    logger.error("Error during self-healing file operations: {}", e.getMessage());
+                } else {
+                    logger.error("BuildCorrectorAgent failed to provide a fix. Aborting self-healing.");
                     break;
                 }
             }
@@ -1720,72 +1856,51 @@ Do not include any code, only the structured summary.
         }
     }
 
-    private static String runBuildCorrectorAgent(String buildLog, String reviewAnalysis, String faultyFileContent, String faultyFilePath) {
+    private static String runBuildCorrectorAgent(String buildLog, String reviewAnalysis, String allSourceFiles) {
         logger.info("--- 🤖 Starting Build Corrector Agent ---");
-
-        // --- INPUT LOGGING ---
-        // Log key details to understand what the agent is working with.
-        // Using DEBUG level to avoid cluttering standard logs unless needed.
-        logger.info("BuildCorrectorAgent INPUT - Faulty File Path: {}", faultyFilePath);
-        logger.info("BuildCorrectorAgent INPUT - Review Analysis:\n---\n{}\n---", reviewAnalysis);
-        // Log only the first 1000 characters of potentially long inputs to keep logs clean.
-        logger.info("BuildCorrectorAgent INPUT - Build Log (first 1000 chars):\n---\n{}\n---", buildLog.substring(0, Math.min(buildLog.length(), 1000)));
-        logger.info("BuildCorrectorAgent INPUT - Faulty File Content (first 1000 chars):\n---\n{}\n---", faultyFileContent);
-        // --- END INPUT LOGGING ---
-
         LlmAgent correctorAgent = LlmAgent.builder()
-            .name(BUILD_CORRECTOR_AGENT_NAME)
-            .description("Analyzes build failures and corrects the faulty Java code.")
-            .instruction(String.format("""
-You are a Senior Software Engineer specializing in debugging and fixing build failures. You will be given a Maven build log, an analysis of the failure, and the full content of the file that is causing the error. Your task is to fix the bug and provide the complete, corrected content of the file.
+                .name(BUILD_CORRECTOR_AGENT_NAME)
+                .description("Analyzes build failures and corrects the faulty Java code across the entire project.")
+                .instruction("""
+You are a Senior Software Engineer specializing in debugging and fixing build failures. You will be given a Maven build log, an analysis of the failure, and the full content of ALL source files in the project.
 
-**RULES:**
-1.  Analyze the `BUILD LOG` and `REVIEW ANALYSIS` to understand the root cause.
-2.  Carefully examine the `FAULTY FILE CONTENT`.
-3.  Rewrite the file to fix the error. You MUST provide the **full and complete** content for the corrected file.
-4.  Your response MUST start with the file path marker `// File: %s` followed by the corrected code.
-5.  Do not add any explanation or any other text. Your entire response must be the file marker and the code block.
+Your task is to identify the root cause of the build failure and provide the corrected code for ALL files that need to be changed to fix the error.
 
-**BUILD LOG:**
-```
-%s
-```
-
-**REVIEW ANALYSIS:**
-```
-%s
-```
-
-**FAULTY FILE CONTENT:**
-```java
-%s
-```
-""", faultyFilePath, buildLog, reviewAnalysis, faultyFileContent))
-            .model("gemini-2.0-flash")
-            .outputKey("corrected_code")
-            .build();
+**CRITICAL INSTRUCTIONS:**
+1.  **Analyze the `BUILD LOG` and `REVIEW ANALYSIS`** to understand the root cause. The error may be in a different file than where the compiler reports it. For example, a missing method in a Repository will cause a compilation error in a Service that calls it. The fix is to add the method to the Repository.
+2.  **Examine ALL `PROJECT SOURCE FILES`** to understand the full context.
+3.  **Generate Corrected Code:** For each file that needs to be modified, you MUST provide its full and complete corrected content.
+4.  **Output Format:** You MUST format your response as one or more code blocks.
+    - For a file that needs to be **MODIFIED**, start the block with `// Modify File: [full/path/to/file.java]`.
+    - For a file that needs to be **CREATED** (less common for a fix, but possible), start the block with `// Create File: [full/path/to/file.java]`.
+    - Follow the marker with the complete, corrected code for that file.
+5.  **Do not add any other explanation or text.** Your entire response must be only the file markers and their corresponding code blocks.
+""")
+                .model("gemini-2.0-flash")
+                .outputKey("corrected_code")
+                .build();
 
         final InMemoryRunner runner = new InMemoryRunner(correctorAgent);
-        final Content userMsg = Content.fromParts(Part.fromText("Fix the build error based on the provided context."));
-        
+        final Content userMsg = Content.fromParts(
+            Part.fromText("**BUILD LOG:**\n" + buildLog),
+            Part.fromText("\n**REVIEW ANALYSIS:**\n" + reviewAnalysis),
+            Part.fromText("\n**PROJECT SOURCE FILES:**\n" + allSourceFiles)
+        );
+
         try {
             Event finalEvent = retryWithBackoff(() -> {
                 Session session = runner.sessionService().createSession(runner.appName(), "user-build-corrector").blockingGet();
                 return runner.runAsync(session.userId(), session.id(), userMsg).blockingLast();
             });
             String response = finalEvent != null ? finalEvent.stringifyContent().trim() : "";
-            // --- RAW OUTPUT LOGGING ---
             logger.info("Full raw response from BuildCorrectorAgent:\n---\n{}\n---", response);
-            // --- END RAW OUTPUT LOGGING ---
-            // Parse the corrected code from the response
-            Pattern pattern = Pattern.compile(FILE_PATH_MARKER_PREFIX + "([^\\n]+)\\s*\\n(.*?)(?=\\z)", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(response);
-            if (matcher.find()) {
+            // The response can be directly passed to writeClassesToFileSystem, so we just return it.
+            if (!response.isBlank()) {
                 logger.info("--- ✅ Finished Build Corrector Agent ---");
-                return matcher.group(2).trim(); // Return just the code content
+                return response;
             } else {
-                logger.warn("BuildCorrectorAgent returned a malformed response. Could not parse corrected code.");
-                logger.info("--- ❌ Finished Build Corrector Agent with error ---");
+                logger.warn("BuildCorrectorAgent returned an empty response.");
+                logger.info("--- ❌ Finished Build Corrector Agent with empty response ---");
                 return null;
             }
         } catch (Exception e) {
@@ -1793,6 +1908,35 @@ You are a Senior Software Engineer specializing in debugging and fixing build fa
             logger.info("--- ❌ Finished Build Corrector Agent with error ---");
             return null;
         }
+    }
+
+
+    private static String getAllSourceCodeForCorrection(String repoPath) {
+        StringBuilder allCode = new StringBuilder();
+        Path srcRoot = Paths.get(repoPath, "src");
+        if (!Files.exists(srcRoot)) {
+            logger.warn("Source directory does not exist in {}. Cannot get code for correction.", repoPath);
+            return "";
+        }
+        try {
+            Files.walk(srcRoot)
+                    .filter(path -> path.toString().endsWith(".java"))
+                    .forEach(path -> {
+                        try {
+                            String content = Files.readString(path);
+                            // Use a relative path from the repo root for the marker
+                            String relativePath = Paths.get(repoPath).relativize(path).toString().replace('\\', '/');
+                            allCode.append(String.format("--- FILE START: %s ---\n", relativePath));
+                            allCode.append(content).append("\n");
+                            allCode.append(String.format("--- FILE END: %s ---\n\n", relativePath));
+                        } catch (IOException e) {
+                            logger.warn("Could not read source file {}: {}", path, e.getMessage());
+                        }
+                    });
+        } catch (IOException e) {
+            logger.error("Error walking source tree for self-healing: {}", e.getMessage());
+        }
+        return allCode.toString();
     }
 
     private static String findFaultyFile(String reviewAnalysis, String baseDir) {
